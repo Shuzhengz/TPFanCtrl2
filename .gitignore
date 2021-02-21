@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+# Visual Studio Settings
+TPFC2/Debug/
+TPFC2/TPFC2/Debug/
