@@ -3,6 +3,9 @@
 
 #include "framework.h"
 #include "TPFC2.h"
+#include "tools.h"
+#include "taskbartexticon.h"
+#include "_prec.h"
 
 #define MAX_LOADSTRING 100
 
