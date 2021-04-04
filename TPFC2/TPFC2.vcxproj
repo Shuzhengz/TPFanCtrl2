@@ -139,10 +139,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="dynamicicon.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SystemTraySDK.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TaskbarTextIcon.h" />
+    <ClInclude Include="tools.h" />
     <ClInclude Include="TPFC2.h" />
+    <ClInclude Include="winstuff.h" />
+    <ClInclude Include="_prec.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TPFC2.cpp" />
