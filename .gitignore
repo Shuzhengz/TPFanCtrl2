@@ -32,6 +32,5 @@
 *.app
 
 # Visual Studio Settings
-.vs/
-Debug/
-TPFC2/Debug/
+*.vs/
+*Debug/

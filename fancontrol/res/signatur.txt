@@ -1,0 +1,15 @@
+Open an elevated command prompt (VS Command)
+
+NOTE: These instructions assume you have visual studio installed and are using a command prompt that has all the environment variables set to find SDK utilities such as makecert and signtool. If not, you will need to find these tools on your hard drive before running them.
+
+- In the command shell, execute the following commands:
+
+    makecert -r -pe -n "CN=TPFanControl by Troubadix" -ss PrivateCertStore tpfccert.cer
+    
+    signtool signwizard
+    
+oder:
+
+- In the command shell, browse to the location of your exe
+
+SignTool sign /v /s PrivateCertStore /n "TPFanControl by Troubadix" /t http://timestamp.verisign.com/scripts/timestamp.dll fancontrol.exe
