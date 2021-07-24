@@ -1205,9 +1205,9 @@ switch (msg) {
 									   NULL, NULL, SW_SHOW);
 								   break;
 
-						case 5060: // hide window
-								this->SetHdw("Thinklight", 2, 59, 16);
-								break;
+						//case 5060: // hide window
+						//		this->SetHdw("Thinklight", 2, 59, 16);
+						//		break;
 
 						case 5070: // show temp icon
 								   this->ShowTempIcon = 0;
