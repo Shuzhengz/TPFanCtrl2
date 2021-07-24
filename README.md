@@ -8,9 +8,9 @@ This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanCon
 
 To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port/index.shtm) manually or install the original version of TPFanControl found [here](https://sourceforge.net/projects/tp4xfancontrol/), and run the dual-fan version instead of the original version.
 
-## Running at startup
+## Running at startup (Not Recommended)
 
-The easiest way to run TPFC at startup is:
+You can choose to run TPFC at startup:
 
 - Right-click on fancontrol.exe and select copy
 - Press Windows-r or search for run in the start menu
