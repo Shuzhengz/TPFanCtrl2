@@ -18,3 +18,7 @@ You can choose to run TPFC at startup:
 - Right click in the window that opens and select paste shortcut
 
 Note: This won't start TPFC until you reboot.
+
+
+### License
+The author claims no copyright, copyleft, license or whatsoever for the program itself. You may use, reuse or distribute its binaries or source code in any desired way or form, Useage of binaries or source shall be entirely and without exception at your own risk.
