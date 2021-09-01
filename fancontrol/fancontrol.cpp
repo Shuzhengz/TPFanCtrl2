@@ -1096,9 +1096,9 @@ switch (msg) {
 				if (temp < 128 && temp!= 0) 
 				{
 					if (Fahrenheit)
-						sprintf_s(obuf2,sizeof(obuf2), "%d°F", temp* 9 /5 +32);
+						sprintf_s(obuf2,sizeof(obuf2), "%d° F", temp* 9 /5 +32);
 					else
-						sprintf_s(obuf2, sizeof(obuf2), "%d°C", temp);
+						sprintf_s(obuf2, sizeof(obuf2), "%d° C", temp);
 
 					size_t strlen_templist2 = strlen_s(templist2,sizeof(templist2));
 
@@ -1599,11 +1599,11 @@ void FANCONTROL::ProcessTextIcons(void){
 		
 			if (dishow && !this->NoBallons){
 				if (Fahrenheit){
-					ppTbTextIcon[0]->DiShowballon(_T("shows max. temperature in °F and sensor name, left click on icon shows or hides control window, right click shows menue"),
+					ppTbTextIcon[0]->DiShowballon(_T("shows max. temperature in ° F and sensor name, left click on icon shows or hides control window, right click shows menue"),
 						_T("TPFanControl new text icon"),NIIF_INFO,11);
 				}
 				else {
-					ppTbTextIcon[0]->DiShowballon(_T("shows max. temperature in °C and sensor name, left click on icon shows or hides control window, right click shows menue"),
+					ppTbTextIcon[0]->DiShowballon(_T("shows max. temperature in ° C and sensor name, left click on icon shows or hides control window, right click shows menue"),
 						_T("TPFanControl new text icon"),NIIF_INFO,11);
 				}
 
