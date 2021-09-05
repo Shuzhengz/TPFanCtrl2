@@ -518,7 +518,7 @@ FANCONTROL::ReadConfig(const char *configfile)
 	if (Fahrenheit){
 		strcpy_s(buf,sizeof(buf), "  ");
 		for (i= 0; this->SmartLevels[i].temp!=-1; i++) {
-			sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%s%d°F->",
+			sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%s%d° F->",
 				i>0 ? ", " : "", this->SmartLevels[i].temp);
 			if (this->SmartLevels[i].fan!=0x80)
 				sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%d", 
@@ -530,7 +530,7 @@ FANCONTROL::ReadConfig(const char *configfile)
 	else {
 		strcpy_s(buf,sizeof(buf), "  Levels= ");
 		for (i= 0; this->SmartLevels[i].temp!=-1; i++) {
-			sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%s%d°C -> ",
+			sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%s%d° C -> ",
 				i>0 ? ",  " : "",
 				this->SmartLevels[i].temp);
 			if (this->SmartLevels[i].fan!=0x80)
@@ -551,7 +551,7 @@ FANCONTROL::ReadConfig(const char *configfile)
 	if (Fahrenheit){
 		strcpy_s(buf,sizeof(buf), "  ");
 		for (i= 0; this->SmartLevels2[i].temp2!=-1; i++) {
-			sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%s%d°F->",
+			sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%s%d° F->",
 				i>0 ? ", " : "", this->SmartLevels2[i].temp2);
 			if (this->SmartLevels2[i].fan2!=0x80)
 				sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%d", 
@@ -563,7 +563,7 @@ FANCONTROL::ReadConfig(const char *configfile)
 	else {
 		strcpy_s(buf,sizeof(buf), "  Levels2= ");
 		for (i= 0; this->SmartLevels2[i].temp2!=-1; i++) {
-			sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%s%d°C -> ",
+			sprintf_s(buf+strlen(buf),sizeof(buf)-strlen(buf), "%s%d° C -> ",
 				i>0 ? ",  " : "",
 				this->SmartLevels2[i].temp2);
 			if (this->SmartLevels2[i].fan2!=0x80)
@@ -578,7 +578,7 @@ FANCONTROL::ReadConfig(const char *configfile)
 	}
 
 	if (Fahrenheit) {
-		sprintf_s(buf,sizeof(buf), "  SensorOffset1-12= %d %d %d %d %d %d %d %d %d %d %d %d °F", 
+		sprintf_s(buf,sizeof(buf), "  SensorOffset1-12= %d %d %d %d %d %d %d %d %d %d %d %d ° F", 
 			this->SensorOffset[0], this->SensorOffset[1], this->SensorOffset[2],
 			this->SensorOffset[3], this->SensorOffset[4], this->SensorOffset[5],
 			this->SensorOffset[6], this->SensorOffset[7], this->SensorOffset[8],
@@ -587,7 +587,7 @@ FANCONTROL::ReadConfig(const char *configfile)
 			for (i= 0; i<15; i++) {SensorOffset[i]= SensorOffset[i] * 5/9;}
 	}
 	else {
-		sprintf_s(buf,sizeof(buf), "  SensorOffset1-12= %d %d %d %d %d %d %d %d %d %d %d %d °C", 
+		sprintf_s(buf,sizeof(buf), "  SensorOffset1-12= %d %d %d %d %d %d %d %d %d %d %d %d ° C", 
 			this->SensorOffset[0], this->SensorOffset[1], this->SensorOffset[2],
 			this->SensorOffset[3], this->SensorOffset[4], this->SensorOffset[5],
 			this->SensorOffset[6], this->SensorOffset[7], this->SensorOffset[8],

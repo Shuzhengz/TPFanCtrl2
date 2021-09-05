@@ -22,12 +22,12 @@
 #include "TVicPort.h"
 
 #define TP_ECOFFSET_FAN_SWITCH	(char)0x31
-#define TP_ECOFFSET_FAN1	(char)0x0000
-#define TP_ECOFFSET_FAN2	(char)0x0001
-#define TP_ECOFFSET_FAN		(char)0x2F	// 1 byte (binary xyzz zzz)
-#define TP_ECOFFSET_FANSPEED 	(char)0x84 // 16 bit word, lo/hi byte
-#define TP_ECOFFSET_TEMP0    	(char)0x78	// 8 temp sensor bytes from here
-#define TP_ECOFFSET_TEMP1    	(char)0xC0 // 4 temp sensor bytes from here
+#define TP_ECOFFSET_FAN1	    (char)0x0000
+#define TP_ECOFFSET_FAN2	    (char)0x0001
+#define TP_ECOFFSET_FAN		    (char)0x2F	// 1 byte (binary xyzz zzz)
+#define TP_ECOFFSET_FANSPEED    (char)0x84  // 16 bit word, lo/hi byte
+#define TP_ECOFFSET_TEMP0       (char)0x78	// 8 temp sensor bytes from here
+#define TP_ECOFFSET_TEMP1       (char)0xC0  // 4 temp sensor bytes from here
 
 
 
@@ -99,9 +99,9 @@ FANCONTROL::HandleData(void)
 
 	// title string (for minimized window)
 	if(Fahrenheit)
-		sprintf_s(title2,sizeof(title2), "%d°F", this->MaxTemp* 9/5 +32);
+		sprintf_s(title2,sizeof(title2), "%d° F", this->MaxTemp* 9/5 +32);
 	else
-		sprintf_s(title2,sizeof(title2), "%d°C", this->MaxTemp);
+		sprintf_s(title2,sizeof(title2), "%d° C", this->MaxTemp);
 
 
 	// display fan state
@@ -160,9 +160,9 @@ FANCONTROL::HandleData(void)
 
 	// display temperature list
 	if(Fahrenheit)
-		sprintf_s(obuf2,sizeof(obuf2), "%d°F", this->MaxTemp* 9 /5 +32);
+		sprintf_s(obuf2,sizeof(obuf2), "%d° F", this->MaxTemp* 9 /5 +32);
 	else
-		sprintf_s(obuf2,sizeof(obuf2), "%d°C", this->MaxTemp);
+		sprintf_s(obuf2,sizeof(obuf2), "%d° C", this->MaxTemp);
 	::SetDlgItemText(this->hwndDialog, 8103, obuf2);
 
 
@@ -173,9 +173,9 @@ FANCONTROL::HandleData(void)
 		if (temp < 128 && temp!= 0) 
 		{
 			if(Fahrenheit)
-				sprintf_s(obuf2,sizeof(obuf2), "%d°F", temp* 9 /5 +32);
+				sprintf_s(obuf2,sizeof(obuf2), "%d° F", temp* 9 /5 +32);
 			else
-				sprintf_s(obuf2,sizeof(obuf2), "%d°C", temp);
+				sprintf_s(obuf2,sizeof(obuf2), "%d° C", temp);
 
 				if (SlimDialog && StayOnTop)
 					sprintf_s(templist2+strlen(templist2), sizeof(templist2)-strlen(templist2), "%d %s %s", i+1,
@@ -237,9 +237,9 @@ FANCONTROL::HandleData(void)
 	}
 	templist[strlen(templist)-1]= '\0';
 	if (Fahrenheit)
-		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d°F (%s)", State.FanCtrl, MaxTemp* 9 /5 +32, templist);
+		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d° F (%s)", State.FanCtrl, MaxTemp* 9 /5 +32, templist);
 	else 
-		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d°C (%s)", State.FanCtrl, MaxTemp, templist);
+		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d° C (%s)", State.FanCtrl, MaxTemp, templist);
 
 	// display fan speed (experimental, not visible)
     // fanspeed= (this->State.FanSpeedHi << 8) | this->State.FanSpeedLo;
@@ -413,17 +413,17 @@ FANCONTROL::SetFan(const char *source, int fanctrl, BOOL final)
         for (int i = 0; i < 5; i++)
         {
 		    // set new fan level
-			ok= this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
-		    ok= this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
+		    ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
 
 			::Sleep(300);
 
-			ok= this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
 
 		    // verify completion
-		    ok= this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
-			ok= this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
+		    ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
 			ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
 
             if (this->State.FanCtrl == fanctrl)
@@ -618,6 +618,7 @@ FANCONTROL::ReadEcRaw(FCSTATE *pfcstate)
 		}
 	if (!this->UseTWR){
 	idxtemp= 0;
+
 	for (i= 0; i<8 && ok; i++) {	// temp sensors 0x78 - 0x7f
 		ok= ReadByteFromEC(TP_ECOFFSET_TEMP0+i, &pfcstate->Sensors[idxtemp]);
 		if (this->ShowBiasedTemps)
