@@ -8,6 +8,8 @@ This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanCon
 
 To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port/index.shtm) manually or install the original version of TPFanControl found [here](https://sourceforge.net/projects/tp4xfancontrol/), and run the dual-fan version instead of the original version.
 
+Windows 10 is required to run the program. Windows 11 is currently untested, but should theoretically be compatible.
+
 ## Running at startup (Not Recommended)
 
 You can choose to run TPFC at startup:
