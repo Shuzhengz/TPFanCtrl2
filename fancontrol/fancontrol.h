@@ -28,7 +28,7 @@
 
 
 
-#define FANCONTROLVERSION "2.01 Dual Fan"
+#define FANCONTROLVERSION "2.0.3 Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6
