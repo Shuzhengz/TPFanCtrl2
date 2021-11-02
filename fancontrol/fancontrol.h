@@ -62,8 +62,10 @@ class FANCONTROL
         struct FCSTATE {
 
 			char FanCtrl,
-				 FanSpeedLo,
-				 FanSpeedHi;
+				FanSpeedLo1,
+				FanSpeedHi1,
+				FanSpeedLo2,
+				FanSpeedHi2;
 
 			char Sensors[12];
 			int  SensorAddr[12];

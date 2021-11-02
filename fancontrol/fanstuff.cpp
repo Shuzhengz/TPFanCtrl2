@@ -149,10 +149,11 @@ FANCONTROL::HandleData(void)
 
 	// display fan speed (experimental, not visible)
 	this->lastfanspeed = this->fanspeed;
-	this->fanspeed = (this->State.FanSpeedHi << 8) | this->State.FanSpeedLo;
+	this->fanspeed = (this->State.FanSpeedHi1 << 8) | this->State.FanSpeedLo1;
 
 	if (this->fanspeed > 0x1fff) fanspeed = lastfanspeed;
-		sprintf_s(obuf2,sizeof(obuf2), "%d RPM", this->fanspeed);
+		sprintf_s(obuf2, sizeof(obuf2), "%d/%d RPM", this->fanspeed, 
+			(this->State.FanSpeedHi2 << 8) | this->State.FanSpeedLo2);
 
 	::SetDlgItemText(this->hwndDialog, 8102, obuf2);
 
@@ -613,19 +614,36 @@ FANCONTROL::ReadEcRaw(FCSTATE *pfcstate)
 	
 	ok= ReadByteFromEC(TP_ECOFFSET_FAN, &pfcstate->FanCtrl);
 
+	ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
+
 	if (ok)
-		ok= ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo);
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo2);
+	if (!ok)
+	{
+		this->Trace("failed to read FanSpeedLowByte 2 from EC");
+	}
+
+	if (ok)
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->FanSpeedHi2);
 	if (!ok)
 		{
-			this->Trace("failed to read FanSpeedLowByte from EC");
+			this->Trace("failed to read FanSpeedHighByte 2 from EC");
 		}
 
 	if (ok)
-		ok= ReadByteFromEC(TP_ECOFFSET_FANSPEED+1, &pfcstate->FanSpeedHi);
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo1);
 	if (!ok)
 		{
-			this->Trace("failed to read FanSpeedHighByte from EC");
+			this->Trace("failed to read FanSpeedLowByte 1 from EC");
 		}
+
+	if (ok)
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->FanSpeedHi1);
+	if (!ok)
+	{
+		this->Trace("failed to read FanSpeedHighByte 1 from EC");
+	}
+
 	if (!this->UseTWR){
 	idxtemp= 0;
 
