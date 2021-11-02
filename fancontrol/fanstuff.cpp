@@ -383,6 +383,8 @@ int
 FANCONTROL::SetFan(const char *source, int fanctrl, BOOL final)
 {
 	int ok= 0;
+	int fan1_ok = 0;
+	int fan2_ok = 0;
 	char obuf[256]= "", obuf2[256], datebuf[128];
 
 	if (this->FanBeepFreq && this->FanBeepDura)
@@ -416,18 +418,26 @@ FANCONTROL::SetFan(const char *source, int fanctrl, BOOL final)
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
 		    ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
 
-			::Sleep(300);
+			::Sleep(100);
 
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
 
-		    // verify completion
-		    ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
-			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
-			ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
+			::Sleep(100);
 
-            if (this->State.FanCtrl == fanctrl)
-                break;
+			// verify completion of fan2
+			fan2_ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
+
+			::Sleep(100);
+
+			// verify completion of fan1
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
+			fan1_ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
+
+			if (fan1_ok == 1 && fan2_ok == 1) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "[i=%d] ", i);
+				break;
+			}
 
             ::Sleep(300);
         }
