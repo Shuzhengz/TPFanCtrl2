@@ -12,4 +12,4 @@ oder:
 
 - In the command shell, browse to the location of your exe
 
-SignTool sign /v /s PrivateCertStore /n "TPFanControl 2" /t http://timestamp.verisign.com/scripts/timestamp.dll fancontrol.exe
+SignTool sign /v /s PrivateCertStore /n "TPFanControl 2" /a /t http://timestamp.globalsign.com/scripts/timstamp.dll fancontrol.exe

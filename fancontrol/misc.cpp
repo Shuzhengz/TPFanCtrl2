@@ -42,8 +42,10 @@ FANCONTROL::ReadConfig(const char *configfile)
 	setzero(SensorOffset, sizeof(SensorOffset));
 	setzero(FSensorOffset, sizeof(FSensorOffset));
 
-	this->State.FanSpeedHi = 0x00;
-	this->State.FanSpeedLo = 0x00;
+	this->State.FanSpeedHi1 = 0x00;
+	this->State.FanSpeedLo1 = 0x00;
+	this->State.FanSpeedHi2 = 0x00;
+	this->State.FanSpeedLo2 = 0x00;
 	this->fanspeed = 0;
 	this->IndSmartLevel = 0;
 	//
