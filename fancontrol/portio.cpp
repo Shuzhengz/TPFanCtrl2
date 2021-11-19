@@ -112,6 +112,7 @@ int FANCONTROL::ReadByteFromEC(int offset, char *pdata) {
 //-------------------------------------------------------------------------
 int FANCONTROL::WriteByteToEC(int offset, char NewData) {
     char data = -1;
+    char data2 = -1;
     int iOK = false;
     int iTimeout = 100;
     int iTimeoutBuf = 1000;
