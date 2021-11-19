@@ -57,14 +57,14 @@ int FANCONTROL::ReadByteFromEC(int offset, char *pdata) {
 
     while (numToTrySetup > 0) {
 
-        for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {	// wait for full buffers to clear
-            data = (char)ReadPort(EC_CTRLPORT) & 0xff;			// or timeout iTimeoutBuf = 1000
+        for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {    // wait for full buffers to clear
+            data = (char) ReadPort(EC_CTRLPORT) & 0xff;            // or timeout iTimeoutBuf = 1000
             if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) break;
             ::Sleep(iTick);
         }
-        
+
         WritePort(EC_CTRLPORT, EC_CTRLPORT_READ);            // tell 'em we want to "READ"
-        
+
         for (iTime = 0; iTime < iTimeout; iTime += iTick) {    // wait for IBF and OBF to clear
             data = (char) ReadPort(EC_CTRLPORT) & 0xff;
             if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
@@ -74,7 +74,7 @@ int FANCONTROL::ReadByteFromEC(int offset, char *pdata) {
 
             ::Sleep(iTick);
 
-    } // try again after a moment
+        } // try again after a moment
 
         if (!iOK) return 0;
         iOK = false;
@@ -112,7 +112,6 @@ int FANCONTROL::ReadByteFromEC(int offset, char *pdata) {
 //-------------------------------------------------------------------------
 int FANCONTROL::WriteByteToEC(int offset, char NewData) {
     char data = -1;
-    char data2 = -1;
     int iOK = false;
     int iTimeout = 100;
     int iTimeoutBuf = 1000;
@@ -122,16 +121,16 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 
     while (numToTrySetup > 0) {
 
-        for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {	        // wait for full buffers to clear
-            data = (char)ReadPort(EC_CTRLPORT) & 0xff;			        // or timeout iTimeoutBuf = 1000
+        for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {            // wait for full buffers to clear
+            data = (char) ReadPort(EC_CTRLPORT) & 0xff;                    // or timeout iTimeoutBuf = 1000
             if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) break;
             ::Sleep(iTick);
         }
 
-        if (data & EC_STAT_OBF) data2 = (char)ReadPort(EC_DATAPORT);    //clear OBF if full
+        if (data & EC_STAT_OBF) data2 = (char) ReadPort(EC_DATAPORT);    //clear OBF if full
 
         for (iTime = 0; iTime < iTimeout; iTime += iTick) {             // wait for IOBF to clear
-            data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+            data = (char) ReadPort(EC_CTRLPORT) & 0xff;
             if (!(data & EC_STAT_OBF)) {
                 iOK = true;
                 break;
@@ -145,28 +144,28 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
         WritePort(EC_CTRLPORT, EC_CTRLPORT_WRITE);                      // tell 'em we want to "WRITE"
 
         for (iTime = 0; iTime < iTimeout; iTime += iTick) {             // wait for IBF and OBF to clear
-            data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+            data = (char) ReadPort(EC_CTRLPORT) & 0xff;
             if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
                 iOK = true;
                 break;
             }
             ::Sleep(iTick);
-        }							// try again after a moment
+        }                            // try again after a moment
 
         if (!iOK) return 0;
         iOK = false;
 
-        WritePort(EC_DATAPORT, offset);					                // tell 'em where we want to write to
+        WritePort(EC_DATAPORT, offset);                                    // tell 'em where we want to write to
 
         for (iTime = 0; iTime < iTimeout; iTime += iTick) {             // wait for IBF and OBF to clear
-            data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+            data = (char) ReadPort(EC_CTRLPORT) & 0xff;
             if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
                 iOK = true;
                 numToTrySetup = 1;
                 break;
             }
             ::Sleep(iTick);
-        }							                                    // try again after a moment
+        }                                                                // try again after a moment
         numToTrySetup -= 1;
     }
 
