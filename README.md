@@ -16,6 +16,15 @@ You can configure the behaviour of the program by editing the values inside the 
 
 The `TPFanControl.ini` file should always be in the same directory as the `fancontrol.exe` executable file
 
+Example of configurable parameters:
+
+- Temperature refresh cycle time
+- Start minimized in the taskbar tray
+- Max read errors before the program auto shuts down
+- Log program log to file & log data to CSV file
+- Configure the fan curve in smart mode
+- Configure a second smart mode that is accessable in the tray
+- Temperature threshold to exit the manual mode
 
 ## Running at startup (Not Recommended)
 
