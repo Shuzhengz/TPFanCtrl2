@@ -10,6 +10,13 @@ To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port
 
 Windows 10 is required to run the program. Windows 11 is currently untested, but should theoretically be compatible.
 
+## Configurating
+
+You can configure the behaviour of the program by editing the values inside the `TPFanControl.ini` file that comes with the program
+
+The `TPFanControl.ini` file should always be in the same directory as the `fancontrol.exe` executable file
+
+
 ## Running at startup (Not Recommended)
 
 You can choose to run TPFC at startup:
