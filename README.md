@@ -38,5 +38,7 @@ You can choose to run TPFC at startup:
 Note: This won't start TPFC until you reboot.
 
 
-### License
+## License
+This program has an Unlicense license
+
 The author claims no copyright, copyleft, license or whatsoever for the program itself. You may use, reuse or distribute its binaries or source code in any desired way or form, Useage of binaries or source shall be entirely and without exception at your own risk.
