@@ -26,6 +26,27 @@ Example of configurable parameters:
 - Configure a second smart mode that is accessable in the tray
 - Temperature threshold to exit the manual mode
 
+### Manual Fan Levels
+
+Normal:                       Advanced:
+
+0 - Off                       0 - Off
+
+1 - 30%                       50 - 40%
+
+2 - 40%                       60 - 60%
+
+3 - 45%                       70 - 100%
+
+4 - 50%                       80 - 100%
+
+5 - 60%
+
+6 - 65%
+
+7 - 65%
+
+
 ## Running at startup (Not Recommended)
 
 You can choose to run TPFC at startup:
