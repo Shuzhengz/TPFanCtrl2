@@ -131,7 +131,9 @@ extern "C" {
 #pragma pack()
 
 #ifdef __cplusplus
+
 } // extern "C"
+
 #endif
 
 #endif

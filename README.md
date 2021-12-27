@@ -39,6 +39,10 @@ Example of configurable parameters:
 | 6 - 65% |
 | 7 - 65% |
 
+### Additional Information
+
+You can find additional information here on the ThinkPad Wiki: [https://thinkwiki.de/TPFanControl](https://thinkwiki.de/TPFanControl)
+
 
 ## Running at startup (Not Recommended)
 
