@@ -8,13 +8,15 @@ This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanCon
 
 To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port/index.shtm) manually or install the original version of TPFanControl found [here](https://sourceforge.net/projects/tp4xfancontrol/) (source code [here](https://github.com/ThinkPad-Forum/TPFanControl)), and run the dual-fan version instead of the original version.
 
+Administration permission is required for the program to be able to control system fan speed.
+
 Windows 10 is required to run the program. Windows 11 is currently untested, but should theoretically be compatible.
 
 ## Configuring
 
-You can configure the behaviour of the program by editing the values inside the `TPFanControl.ini` file that comes with the program
+You can configure the behaviour of the program by editing the values inside the `TPFanControl.ini` file that comes with the program,
 
-The `TPFanControl.ini` file should always be in the same directory as the `fancontrol.exe` executable file
+The `TPFanControl.ini` file should always be in the same directory as the `fancontrol.exe` executable file.
 
 Example of configurable parameters:
 
@@ -41,7 +43,7 @@ Example of configurable parameters:
 
 ### Additional Information
 
-You can find additional information here on the ThinkPad Wiki: [https://thinkwiki.de/TPFanControl](https://thinkwiki.de/TPFanControl)
+You can find additional information here on the ThinkPad Wiki: [https://thinkwiki.de/TPFanControl](https://thinkwiki.de/TPFanControl).
 
 
 ## Running at startup (Not Recommended)
