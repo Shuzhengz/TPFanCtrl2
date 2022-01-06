@@ -2,7 +2,7 @@
 
 ## About
 
-This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanControl/tree/master/fancontrol), and is based on [byrnes' dual fan mod](https://github.com/byrnes/TPFanControl). It's updated it to work with two fan devices, such as the X1 Extreme. This has only been tested on X1 Extreme Gen. 1, but it should work on any other dual-fan Thinkpads that are released. The default fan profile that is included is a silent one, with the fans only coming on at 60c. This can be changed by editing tpfancontrol.ini in the fancontrol/Debug. Visual Studio 2019 Community was used to build and debug.
+This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanControl/tree/master/fancontrol), and is based on [byrnes' dual fan mod](https://github.com/byrnes/TPFanControl). It's updated it to work with two fan devices, such as the X1 Extreme. This has only been tested on X1 Extreme Gen. 1, but it should work on any other dual-fan Thinkpads that are released. The default fan profile that is included is a silent one, with the fans only coming on at 60c. This can be changed by editing tpfancontrol.ini in the fancontrol/Debug. Visual Studio 2022 Community was used to build and debug.
 
 ## Requirements
 
@@ -44,6 +44,15 @@ Example of configurable parameters:
 ### Additional Information
 
 You can find additional information here on the ThinkPad Wiki: [https://thinkwiki.de/TPFanControl](https://thinkwiki.de/TPFanControl).
+
+
+## Building Instructions
+
+Building this program requires Microsoft Visual Studio 2022 Community
+
+The project should have the correct configuration upon opening the project file `fancontrol.sln`
+
+The project currently builds with the configuration: `Debug` `Win32` (You will need admin permission to run the built program)
 
 
 ## Running at startup (Not Recommended)
