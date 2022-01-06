@@ -4,6 +4,11 @@
 
 This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanControl/tree/master/fancontrol), and is based on [byrnes' dual fan mod](https://github.com/byrnes/TPFanControl). It's updated it to work with two fan devices, such as the X1 Extreme. This has only been tested on X1 Extreme Gen. 1, but it should work on any other dual-fan Thinkpads that are released. The default fan profile that is included is a silent one, with the fans only coming on at 60c. This can be changed by editing tpfancontrol.ini in the fancontrol/Debug. Visual Studio 2022 Community was used to build and debug.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Shuzhengz/TPFanCtrl2/master/fancontrol/res/TPFC2.png" alt="Example Photo" width="750"/>
+</p>
+
+
 ## Requirements
 
 To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port/index.shtm) manually or install the original version of TPFanControl found [here](https://sourceforge.net/projects/tp4xfancontrol/) (source code [here](https://github.com/ThinkPad-Forum/TPFanControl)), and run the dual-fan version instead of the original version.
@@ -11,6 +16,7 @@ To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port
 Administration permission is required for the program to be able to control system fan speed.
 
 Windows 10 is required to run the program. Windows 11 is currently untested, but should theoretically be compatible.
+
 
 ## Configuring
 
