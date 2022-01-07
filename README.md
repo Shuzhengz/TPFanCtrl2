@@ -1,4 +1,4 @@
-# TPFanCtrl2
+# TPFanCtrl2 <img src="https://raw.githubusercontent.com/Shuzhengz/TPFanCtrl2/main/fancontrol/res/app.ico" alt = "App Icon" width = "30"/>
 
 ## About
 
