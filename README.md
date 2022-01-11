@@ -17,7 +17,7 @@ To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port
 
 Administration permission is required for the program to be able to control system fan speed.
 
-Windows 10 is required to run the program. Windows 11 is currently untested, but should theoretically be compatible.
+Windows 10 is required to run the program. Windows 11 is currently untested and unsupported, but should theoretically be compatible.
 
 
 ## Configuring
