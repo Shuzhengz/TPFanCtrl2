@@ -33,9 +33,9 @@
 
 // Embedded controller commands
 // (write to EC_CTRLPORT to initiate read/write operation)
-#define EC_CTRLPORT_READ     (char)0x80
-#define EC_CTRLPORT_WRITE     (char)0x81
-#define EC_CTRLPORT_QUERY     (char)0x84
+#define EC_CTRLPORT_READ     (char)0x64
+#define EC_CTRLPORT_WRITE     (char)0x65
+#define EC_CTRLPORT_QUERY     (char)0x68
 
 
 int verbosity = 0;    // verbosity for the logbuf (0= nothing)
