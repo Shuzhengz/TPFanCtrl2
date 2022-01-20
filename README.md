@@ -75,6 +75,14 @@ You can choose to run TPFC at startup:
 Note: This won't start TPFC until you reboot.
 
 
+## Uninstall
+
+Delete the folder containing the program and the ini file.
+
+That's it, there's no residual files.
+
+If you added the program to run at startup, you will have to also delete the shortcut from the start up folder.
+
 ## License
 This program has an Unlicense license
 
