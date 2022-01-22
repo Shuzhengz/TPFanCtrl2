@@ -58,7 +58,7 @@ You can find additional information here on the ThinkPad Wiki: [https://thinkwik
 
 Building this program requires Microsoft Visual Studio 2022 Community
 
-The project should have the correct configuration upon opening the project file `fancontrol.sln`
+The project should have the correct configuration upon opening the project file `fancontrol.sln`, though you might have to manually copy and past the `.ini` file into the Debug folder to test the built program
 
 The project currently builds with the configuration: `Debug` `Win32` (You will need admin permission to run the built program)
 
