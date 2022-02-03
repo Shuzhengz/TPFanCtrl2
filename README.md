@@ -49,7 +49,7 @@ Example of configurable parameters:
 | 6 - 65% |
 | 7 - 65% |
 
-<h5>The advanced level is converted into hex hex (i.e. 70 is 0x46), the value above is a rough estimate of what to expect</h5>
+<h5>Advanced level value is converted into hex (i.e. 70 is 0x46), the value above is a rough estimate of what to expect</h5>
 
 ### Additional Information
 
