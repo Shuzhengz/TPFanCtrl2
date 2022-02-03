@@ -49,6 +49,8 @@ Example of configurable parameters:
 | 6 - 65% |
 | 7 - 65% |
 
+<h5> The advanced level is converted into hex hex (i.e. 70 is 0x46), the value above is a rough estimate of what to expect
+
 ### Additional Information
 
 You can find additional information here on the ThinkPad Wiki: [https://thinkwiki.de/TPFanControl](https://thinkwiki.de/TPFanControl).
