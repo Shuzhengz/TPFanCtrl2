@@ -18,6 +18,7 @@
 #include "fancontrol.h"
 #include "tools.h"
 #include "taskbartexticon.h"
+#include "windows.h"
 
 
 //-------------------------------------------------------------------------
@@ -1712,11 +1713,19 @@ FANCONTROL::DlgProc(HWND
 
 		ok = mp1;  // equivalent of "ok= this->ReadEcStatus(&this->State);" via thread
 
+		LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
+
+		// Notifies program if pending suspension operation has occurred.
+		if (WindowProc(this->hwndDialog, WM_POWERBROADCAST, PBT_APMSUSPEND)) {
+			this->Trace("Systen suspension detected, closing to BIOS mode");
+			::Sleep(1000);
+			::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
+		}
+
 		if (ok) {
 			this->
 				ReadErrorCount = 0;
 			this->
-
 				HandleData();
 
 			if (m_needClose)
@@ -1724,6 +1733,7 @@ FANCONTROL::DlgProc(HWND
 				::PostMessage(this->hwndDialog, WM_COMMAND, 5020, 0);
 				m_needClose = false;
 			}
+			
 		}
 		else {
 			sprintf_s(buf,
