@@ -1280,6 +1280,7 @@ FANCONTROL::DlgProc(HWND
 			); //write buffer
 
 
+
 			//send to client
 			lbResult = bResult;
 			bResult = WriteFile
