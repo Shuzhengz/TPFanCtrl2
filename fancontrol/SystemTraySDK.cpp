@@ -258,7 +258,7 @@ BOOL CSystemTray::Create(
 			if (bResult) break;
 			Sleep(100);
 		}
-		m_bShowIconPending = m_bHidden = m_bRemoved = ~bResult;
+		m_bShowIconPending = m_bHidden = m_bRemoved = !bResult;
 	}
 
 #ifdef SYSTEMTRAY_USEW2K
@@ -942,10 +942,10 @@ void CSystemTray::InstallIconPending() {
 	m_tnd.uFlags = m_uCreationFlags;
 
 	// Try and recreate the icon
-	m_bHidden = ~Shell_NotifyIcon(NIM_ADD, &m_tnd);
+	m_bHidden = !Shell_NotifyIcon(NIM_ADD, &m_tnd);
 
 	// If it's STILL hidden, then have another go next time...
-	m_bShowIconPending = ~m_bHidden;
+	m_bShowIconPending = !m_bHidden;
 
 	ASSERT(m_bHidden == FALSE);
 }
