@@ -147,9 +147,11 @@ BEGIN
         BLOCK "040704b0"
         BEGIN
             VALUE "Comments", "usage on your own risk"
+            VALUE "CompanyName", "troubadix"
             VALUE "FileDescription", "TPFanControl"
             VALUE "FileVersion", "1, 0, 0, 60"
             VALUE "InternalName", "Fan Control Software"
+            VALUE "LegalCopyright", "Copyright (C) 2009 by troubadix"
             VALUE "OriginalFilename", "FanControl.rc"
             VALUE "ProductName", "TPFanControl"
             VALUE "ProductVersion", "1, 0, 0, 60"
