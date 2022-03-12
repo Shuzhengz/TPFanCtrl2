@@ -18,7 +18,7 @@
 #include "fancontrol.h"
 #include "tools.h"
 #include "taskbartexticon.h"
-#include "windows.h"
+#include "WinUser.h"
 
 
 //-------------------------------------------------------------------------
@@ -94,6 +94,7 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	pTextIconMutex(new MUTEXSEM(0, "Global\\TPFanControl_ppTbTextIcon")) {
 	int i = 0;
 	char buf[256] = "";
+
 
 	// SensorNames
 		// 78-7F (state index 0-7)
@@ -1717,14 +1718,12 @@ FANCONTROL::DlgProc(HWND
 
 		ok = mp1;  // equivalent of "ok= this->ReadEcStatus(&this->State);" via thread
 
-		//LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
-
 		// Notifies program if pending suspension operation has occurred.
-		//if (WindowProc(this->hwndDialog, WM_POWERBROADCAST, PBT_APMSUSPEND)) {
-		//	this->Trace("Systen suspension detected, closing to BIOS mode");
-		//	::Sleep(1000);
-		//	::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
-		//}
+		if (!DefWindowProc(this->hwndDialog, WM_POWERBROADCAST, PBT_APMSUSPEND, NULL)) {
+			this->Trace("Systen suspension detected, closing to BIOS mode");
+			::Sleep(1000);
+			::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
+		}
 
 		if (ok) {
 			this->
