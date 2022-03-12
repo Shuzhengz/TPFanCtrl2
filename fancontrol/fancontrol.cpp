@@ -1706,34 +1706,45 @@ FANCONTROL::DlgProc(HWND
 	case WM__NEWDATA:
 		if (this->hThread) {
 			::WaitForSingleObject(this->hThread, INFINITE);
-			if (this->hThread) ::CloseHandle(this->hThread);
+			try {
+				if (this->hThread) { ::CloseHandle(this->hThread); }
+				else { throw ("Exception thrown at 0x6E550C7A, invalid handle was specified."); }
+			}
+			catch (char e) {
+				this->Trace(e + "Closing to BIOS mode");
+				::Sleep(1000);
+				::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
+			}
 			this->
 				hThread = 0;
 		}
 
 		ok = mp1;  // equivalent of "ok= this->ReadEcStatus(&this->State);" via thread
 
-		LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
+		//LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
 
 		// Notifies program if pending suspension operation has occurred.
-		if (WindowProc(this->hwndDialog, WM_POWERBROADCAST, PBT_APMSUSPEND)) {
-			this->Trace("Systen suspension detected, closing to BIOS mode");
-			::Sleep(1000);
-			::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
-		}
+		//if (WindowProc(this->hwndDialog, WM_POWERBROADCAST, PBT_APMSUSPEND)) {
+		//	this->Trace("Systen suspension detected, closing to BIOS mode");
+		//	::Sleep(1000);
+		//	::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
+		//}
 
 		if (ok) {
 			this->
 				ReadErrorCount = 0;
 			this->
+
 				HandleData();
 
 			if (m_needClose)
 			{
+				this->Trace("Program needs to be closed, changing to BIOS mode");
+				::Sleep(1000);
 				::PostMessage(this->hwndDialog, WM_COMMAND, 5020, 0);
+				::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
 				m_needClose = false;
 			}
-			
 		}
 		else {
 			sprintf_s(buf,
