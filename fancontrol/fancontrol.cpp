@@ -1706,13 +1706,9 @@ FANCONTROL::DlgProc(HWND
 	case WM__NEWDATA:
 		if (this->hThread) {
 			::WaitForSingleObject(this->hThread, INFINITE);
-			try {
-				if (this->hThread) { ::CloseHandle(this->hThread); }
-				else { throw ("Exception thrown at 0x6E550C7A, invalid handle was specified."); }
-			}
-			catch (char e) {
-				this->Trace(e + "Closing to BIOS mode");
-				::Sleep(1000);
+			if (this->hThread) ::CloseHandle(this->hThread);
+			else {
+				this->Trace("Exception detected, closing to BIOS mode");
 				::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
 			}
 			this->
