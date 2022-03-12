@@ -169,6 +169,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="afxres.h" />
     <ClInclude Include="approot.h" />
     <ClInclude Include="dynamicicon.h" />
     <ClInclude Include="fancontrol.h" />
