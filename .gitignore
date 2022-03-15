@@ -33,4 +33,6 @@
 
 # Visual Studio Settings
 *.vs/
+
+## Debugging folder
 *Debug/

@@ -121,8 +121,8 @@ void CSystemTray::Initialise() {
 	m_uCreationFlags = 0;
 
 #ifdef SYSTEMTRAY_USEW2K
-	OSVERSIONINFO os = { sizeof(os) };
-	GetVersionEx(&os);
+	OSVERSIONINFOEX os = { sizeof(os) };
+	VerifyVersionInfoA(&os, VER_MAJORVERSION, 1);
 	m_bWin2K = (VER_PLATFORM_WIN32_NT == os.dwPlatformId && os.dwMajorVersion >= 5);
 #else
 	m_bWin2K = FALSE;
