@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{d6267229-b889-4c44-8311-213ef3061a86}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{b5961c1d-f4ef-4cf5-a4da-070f4ab4c1cc}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{5f518e36-55f5-4365-bd2f-7f065df3bd32}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="_prec.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="approot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dynamicicon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="fancontrol.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="misc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SystemTraySDK.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="winstuff.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="_prec.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dynamicicon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fancontrol.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="res\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemTraySDK.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskbarTextIcon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="winstuff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\app.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\blue.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\bw.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\error.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\ico16.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\ico17.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\ico18.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\ico19.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\ico20.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\orange.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\red.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\yellow.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\fancontrol.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\xp-manifest.txt" />
+  </ItemGroup>
+</Project>
