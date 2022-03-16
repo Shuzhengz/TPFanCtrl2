@@ -214,6 +214,8 @@ protected:
 	int SetFan(const char* source, int level, BOOL final = false);
 	int SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit);
 
+	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
+
 
 	// misc.cpp
 	int ReadConfig(const char* filename);
