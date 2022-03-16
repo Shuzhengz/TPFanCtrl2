@@ -18,6 +18,7 @@
 #include "fancontrol.h"
 #include "tools.h"
 #include "taskbartexticon.h"
+#include "WinUser.h"
 
 
 //-------------------------------------------------------------------------
@@ -93,6 +94,7 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	pTextIconMutex(new MUTEXSEM(0, "Global\\TPFanControl_ppTbTextIcon")) {
 	int i = 0;
 	char buf[256] = "";
+
 
 	// SensorNames
 		// 78-7F (state index 0-7)
@@ -1707,11 +1709,22 @@ FANCONTROL::DlgProc(HWND
 		if (this->hThread) {
 			::WaitForSingleObject(this->hThread, INFINITE);
 			if (this->hThread) ::CloseHandle(this->hThread);
+			else {
+				this->Trace("Exception detected, closing to BIOS mode");
+				::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
+			}
 			this->
 				hThread = 0;
 		}
 
 		ok = mp1;  // equivalent of "ok= this->ReadEcStatus(&this->State);" via thread
+
+		// Notifies program if pending suspension operation has occurred.
+		if (!DefWindowProc(this->hwndDialog, WM_POWERBROADCAST, PBT_APMSUSPEND, NULL)) {
+			this->Trace("Systen suspension detected, closing to BIOS mode");
+			::Sleep(1000);
+			::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
+		}
 
 		if (ok) {
 			this->
@@ -1722,7 +1735,10 @@ FANCONTROL::DlgProc(HWND
 
 			if (m_needClose)
 			{
+				this->Trace("Program needs to be closed, changing to BIOS mode");
+				::Sleep(1000);
 				::PostMessage(this->hwndDialog, WM_COMMAND, 5020, 0);
+				::SendMessage(this->hwndDialog, WM_ENDSESSION, 0, 0);
 				m_needClose = false;
 			}
 		}
