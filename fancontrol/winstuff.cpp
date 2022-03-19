@@ -545,6 +545,3 @@ MENU::Popup(HWND hwndowner, POINT* ppoint, BOOL synchtrack)
 
 	return rc;
 }
-
-
-
