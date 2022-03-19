@@ -30,7 +30,3 @@ private:
 	__inline CDynamicIcon() {};
 	__inline CDynamicIcon(const CDynamicIcon&) {};
 };
-
-
-
-

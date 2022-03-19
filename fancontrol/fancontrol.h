@@ -1,4 +1,3 @@
-
 // --------------------------------------------------------------
 //
 //  Thinkpad Fan Control
@@ -20,6 +19,7 @@
 #define FANCONTROL_H
 
 #include "_prec.h"
+
 #pragma once
 
 
@@ -28,7 +28,7 @@
 
 
 
-#define FANCONTROLVERSION "0.63 multiHotKey"
+#define FANCONTROLVERSION "2.2.0a Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6
@@ -62,8 +62,10 @@ protected:
 	struct FCSTATE {
 
 		char FanCtrl,
-			FanSpeedLo,
-			FanSpeedHi;
+			FanSpeedLo1,
+			FanSpeedHi1,
+			FanSpeedLo2,
+			FanSpeedHi2;
 
 		char Sensors[12];
 		int  SensorAddr[12];
