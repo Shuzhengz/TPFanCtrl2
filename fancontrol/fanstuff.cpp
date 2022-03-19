@@ -20,13 +20,13 @@
 #include "tools.h"
 #include "TVicPort.h"
 
-#define TP_ECOFFSET_FAN_SWITCH		(char)0x31
-#define TP_ECOFFSET_FAN1			(char)0x0000
-#define TP_ECOFFSET_FAN2			(char)0x0001
-#define TP_ECOFFSET_FAN				(char)0x2F	// 1 byte (binary xyzz zzz)
-#define TP_ECOFFSET_FANSPEED		(char)0x84 // 16 bit word, lo/hi byte
-#define TP_ECOFFSET_TEMP0			(char)0x78	// 8 temp sensor bytes from here
-#define TP_ECOFFSET_TEMP1			(char)0xC0 // 4 temp sensor bytes from here
+#define TP_ECOFFSET_FAN_SWITCH    (char)0x31
+#define TP_ECOFFSET_FAN1        (char)0x0000
+#define TP_ECOFFSET_FAN2        (char)0x0001
+#define TP_ECOFFSET_FAN            (char)0x2F    // 1 byte (binary xyzz zzz)
+#define TP_ECOFFSET_FANSPEED    (char)0x84  // 16 bit word, lo/hi byte
+#define TP_ECOFFSET_TEMP0       (char)0x78    // 8 temp sensor bytes from here
+#define TP_ECOFFSET_TEMP1       (char)0xC0  // 4 temp sensor bytes from here
 
 
 
@@ -44,8 +44,7 @@
 //  switch fan according to settings
 //-------------------------------------------------------------------------
 int
-FANCONTROL::HandleData(void)
-{
+FANCONTROL::HandleData(void) {
 	char obuf[256] = "", obuf2[128] = "",
 		templist[256] = "", templist2[512],
 		manlevel[16] = "", title2[128] = "";
@@ -54,7 +53,7 @@ FANCONTROL::HandleData(void)
 
 	//
 	// determine highest temp.
-	// 
+	//
 
 	// build a list of sensors to ignore, separated by "|", e.g. "|XC1|BAT|CPU|"
 	char what[16], list[128];
@@ -68,7 +67,8 @@ FANCONTROL::HandleData(void)
 	imaxtemp = 0;
 	int senstemp;
 	for (i = 0; i < 12; i++) {
-		sprintf_s(what, sizeof(what), "|%s|", this->State.SensorName[i]); // name (e.g. "|CPU|") to match against list above
+		sprintf_s(what, sizeof(what), "|%s|",
+			this->State.SensorName[i]); // name (e.g. "|CPU|") to match against list above
 
 		if (this->State.Sensors[i] != 0x80 && this - State.Sensors[i] != 0x00 && strstr(list, what) == 0) {
 			int isens = this->State.Sensors[i];
@@ -98,15 +98,14 @@ FANCONTROL::HandleData(void)
 
 	// title string (for minimized window)
 	if (Fahrenheit)
-		sprintf_s(title2, sizeof(title2), "%d°F", this->MaxTemp * 9 / 5 + 32);
+		sprintf_s(title2, sizeof(title2), "%d° F", this->MaxTemp * 9 / 5 + 32);
 	else
-		sprintf_s(title2, sizeof(title2), "%d°C", this->MaxTemp);
+		sprintf_s(title2, sizeof(title2), "%d° C", this->MaxTemp);
 
 
 	// display fan state
 	int fanctrl = this->State.FanCtrl;
 	fanctrl2 = fanctrl;
-
 
 
 	if (this->SlimDialog == 1) {
@@ -125,8 +124,6 @@ FANCONTROL::HandleData(void)
 				this->CurrentModeFromDialog() == 2 ? "Smart" : "Fixed");
 		}
 	}
-
-
 	else {
 		sprintf_s(obuf2, sizeof(obuf2), "0x%02x (", fanctrl);
 		if (fanctrl & 0x80) {
@@ -161,9 +158,9 @@ FANCONTROL::HandleData(void)
 
 	// display temperature list
 	if (Fahrenheit)
-		sprintf_s(obuf2, sizeof(obuf2), "%d°F", this->MaxTemp * 9 / 5 + 32);
+		sprintf_s(obuf2, sizeof(obuf2), "%d° F", this->MaxTemp * 9 / 5 + 32);
 	else
-		sprintf_s(obuf2, sizeof(obuf2), "%d°C", this->MaxTemp);
+		sprintf_s(obuf2, sizeof(obuf2), "%d° C", this->MaxTemp);
 	::SetDlgItemText(this->hwndDialog, 8103, obuf2);
 
 
@@ -171,12 +168,11 @@ FANCONTROL::HandleData(void)
 	for (i = 0; i < 12; i++) {
 		int temp = this->State.Sensors[i];
 
-		if (temp < 128 && temp != 0)
-		{
+		if (temp < 128 && temp != 0) {
 			if (Fahrenheit)
-				sprintf_s(obuf2, sizeof(obuf2), "%d°F", temp * 9 / 5 + 32);
+				sprintf_s(obuf2, sizeof(obuf2), "%d° F", temp * 9 / 5 + 32);
 			else
-				sprintf_s(obuf2, sizeof(obuf2), "%d°C", temp);
+				sprintf_s(obuf2, sizeof(obuf2), "%d° C", temp);
 
 			if (SlimDialog && StayOnTop)
 				sprintf_s(templist2 + strlen(templist2), sizeof(templist2) - strlen(templist2), "%d %s %s", i + 1,
@@ -189,8 +185,7 @@ FANCONTROL::HandleData(void)
 		}
 		else {
 			// strcat_s(templist2,sizeof(templist2), "n/a\r\n");
-			if (this->ShowAll == 1)
-			{
+			if (this->ShowAll == 1) {
 				sprintf_s(obuf2, sizeof(obuf2), "n/a");
 				size_t strlen_templist = strlen_s(templist2, sizeof(templist2));
 
@@ -199,7 +194,8 @@ FANCONTROL::HandleData(void)
 						this->State.SensorName[i],
 						obuf2);
 				else
-					sprintf_s(templist2 + strlen_templist, sizeof(templist2) - strlen_templist, "%d %s %s (0x%02x)", i + 1,
+					sprintf_s(templist2 + strlen_templist, sizeof(templist2) - strlen_templist, "%d %s %s (0x%02x)",
+						i + 1,
 						this->State.SensorName[i],
 						obuf2,
 						this->State.SensorAddr[i]);
@@ -218,7 +214,9 @@ FANCONTROL::HandleData(void)
 	if (Fahrenheit) {
 		for (i = 0; i < 12; i++) {
 			if (this->State.Sensors[i] < 128) {
-				if (this->State.Sensors[i] != 0)	sprintf_s(templist + strlen(templist), sizeof(templist) - strlen(templist), "%d;", this->State.Sensors[i] * 9 / 5 + 32);
+				if (this->State.Sensors[i] != 0)
+					sprintf_s(templist + strlen(templist), sizeof(templist) - strlen(templist), "%d;",
+						this->State.Sensors[i] * 9 / 5 + 32);
 				else sprintf_s(templist + strlen(templist), sizeof(templist) - strlen(templist), "%d;", 0);
 			}
 			else {
@@ -229,7 +227,8 @@ FANCONTROL::HandleData(void)
 	else {
 		for (i = 0; i < 12; i++) {
 			if (this->State.Sensors[i] != 128) {
-				sprintf_s(templist + strlen(templist), sizeof(templist) - strlen(templist), "%d; ", this->State.Sensors[i]);
+				sprintf_s(templist + strlen(templist), sizeof(templist) - strlen(templist), "%d; ",
+					this->State.Sensors[i]);
 			}
 			else {
 				strcat_s(templist, sizeof(templist), "0; ");
@@ -238,9 +237,11 @@ FANCONTROL::HandleData(void)
 	}
 	templist[strlen(templist) - 1] = '\0';
 	if (Fahrenheit)
-		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d°F (%s)", State.FanCtrl, MaxTemp * 9 / 5 + 32, templist);
+		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d° F (%s)", State.FanCtrl,
+			MaxTemp * 9 / 5 + 32, templist);
 	else
-		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d°C (%s)", State.FanCtrl, MaxTemp, templist);
+		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d° C (%s)", State.FanCtrl, MaxTemp,
+			templist);
 
 	// display fan speed (experimental, not visible)
 	// fanspeed= (this->State.FanSpeedHi << 8) | this->State.FanSpeedLo;
@@ -268,10 +269,18 @@ FANCONTROL::HandleData(void)
 			sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from ");
 			if (this->PreviousMode == 1) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS->"); }
 			if (this->PreviousMode == 2) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart->"); }
-			if (this->PreviousMode == 3) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual->"); }
-			if (this->CurrentMode == 1) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS, setting fan speed"); }
-			if (this->CurrentMode == 2) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed"); }
-			if (this->CurrentMode == 3) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual, setting fan speed"); }
+			if (this->PreviousMode == 3) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual->");
+			}
+			if (this->CurrentMode == 1) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS, setting fan speed");
+			}
+			if (this->CurrentMode == 2) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed");
+			}
+			if (this->CurrentMode == 3) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual, setting fan speed");
+			}
 			this->Trace(obuf);
 		}
 
@@ -290,10 +299,18 @@ FANCONTROL::HandleData(void)
 			sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from ");
 			if (this->PreviousMode == 1) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS->"); }
 			if (this->PreviousMode == 2) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart->"); }
-			if (this->PreviousMode == 3) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual->"); }
-			if (this->CurrentMode == 1) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS, setting fan speed"); }
-			if (this->CurrentMode == 2) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed"); }
-			if (this->CurrentMode == 3) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual, setting fan speed"); }
+			if (this->PreviousMode == 3) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual->");
+			}
+			if (this->CurrentMode == 1) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS, setting fan speed");
+			}
+			if (this->CurrentMode == 2) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed");
+			}
+			if (this->CurrentMode == 3) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual, setting fan speed");
+			}
 			this->Trace(obuf);
 		}
 
@@ -317,14 +334,11 @@ FANCONTROL::HandleData(void)
 }
 
 
-
-
 //-------------------------------------------------------------------------
 //  smart fan control depending on temperature
 //-------------------------------------------------------------------------
 int
-FANCONTROL::SmartControl(void)
-{
+FANCONTROL::SmartControl(void) {
 	int ok = 0, i,
 		newfanctrl = -1,
 		fanctrl = this->State.FanCtrl;
@@ -343,7 +357,10 @@ FANCONTROL::SmartControl(void)
 
 	newfanctrl = -1;
 
-	if ((fanctrl > 7 && (fanctrl != 64 || !Lev64Norm)) || this->PreviousMode == 3 || this->PreviousMode == 1) { newfanctrl = 0; fanctrl = 0; }
+	if ((fanctrl > 7 && (fanctrl != 64 || !Lev64Norm)) || this->PreviousMode == 3 || this->PreviousMode == 1) {
+		newfanctrl = 0;
+		fanctrl = 0;
+	}
 
 	//	check for fan-up, end marker for smart levels array:
 	//	this->SmartLevels[lcnt].temp= -1;
@@ -380,17 +397,14 @@ FANCONTROL::SmartControl(void)
 }
 
 
-
 //-------------------------------------------------------------------------
 //  set fan state via EC
 //-------------------------------------------------------------------------
 int
-FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final)
-{
+FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final) {
 	int ok = 0;
 	int fan1_ok = 0;
 	int fan2_ok = 0;
-
 	char obuf[256] = "", obuf2[256], datebuf[128];
 
 	if (this->FanBeepFreq && this->FanBeepDura)
@@ -418,8 +432,7 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final)
 			return 0;
 		}
 
-		for (int i = 0; i < 5; i++)
-		{
+		for (int i = 0; i < 5; i++) {
 			// set new fan level
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
@@ -442,7 +455,6 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final)
 
 			if (fan1_ok == 1 && fan2_ok == 1) {
 				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "[i=%d] ", i);
-				
 				break;
 			}
 
@@ -455,7 +467,7 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final)
 			sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "OK");
 			ok = true;
 			if (final)
-				this->FinalSeen = true;	// prevent further changes when setting final mode
+				this->FinalSeen = true;    // prevent further changes when setting final mode
 
 		}
 		else {
@@ -487,8 +499,7 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final)
 
 
 int
-FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit)
-{
+FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit) {
 	int ok = 0;
 	char obuf[256] = "", obuf2[256], datebuf[128];
 	char newhdwctrl;
@@ -505,8 +516,7 @@ FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit
 
 	this->CurrentDateTimeLocalized(datebuf, sizeof(datebuf));
 
-	for (int i = 0; i < 5; i++)
-	{
+	for (int i = 0; i < 5; i++) {
 		ok = this->ReadByteFromEC(HdwOffset, &newhdwctrl);
 		if (newhdwctrl & hdwctrl) {
 			ok = this->WriteByteToEC(HdwOffset, (newhdwctrl - hdwctrl) | AnyWayBit);
@@ -525,7 +535,8 @@ FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit
 		::Sleep(300);
 	}
 
-	sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "%s: Set EC register 0x%02x to %d, ", source, HdwOffset, hdwctrl);
+	sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "%s: Set EC register 0x%02x to %d, ", source, HdwOffset,
+		hdwctrl);
 	sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Result: ");
 
 	if (hdwctrl == newhdwctrl) {
@@ -547,12 +558,12 @@ FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit
 
 	return ok;
 }
+
 //-------------------------------------------------------------------------
 //  read fan and temperatures from embedded controller
 //-------------------------------------------------------------------------
 int
-FANCONTROL::ReadEcStatus(FCSTATE* pfcstate)
-{
+FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
 	DWORD ok = 0, rc = 0;
 
 	FCSTATE sample;  //Änderung "{0, }" wg. fanspeed transient zero
@@ -576,8 +587,7 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate)
 		return ok;
 	}
 
-	for (int i = 0; i < 3; i++)
-	{
+	for (int i = 0; i < 3; i++) {
 		ok = this->ReadEcRaw(&sample);
 		/*        if (ok)
 				{
@@ -606,13 +616,11 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate)
 }
 
 
-
 //-------------------------------------------------------------------------
 //  read fan and temperatures from embedded controller
 //-------------------------------------------------------------------------
 int
-FANCONTROL::ReadEcRaw(FCSTATE* pfcstate)
-{
+FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 	int i, idxtemp, ok;
 	//	pfcstate->FanSpeedLo= 0;
 	//	pfcstate->FanSpeedHi= 0;
@@ -638,25 +646,24 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate)
 
 	if (ok)
 		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo1);
-	if (!ok)
-	{
+	if (!ok) {
 		this->Trace("failed to read FanSpeedLowByte 1 from EC");
 	}
 
 	if (ok)
 		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->FanSpeedHi1);
-	if (!ok)
-	{
+	if (!ok) {
 		this->Trace("failed to read FanSpeedHighByte 1 from EC");
 	}
+
 	if (!this->UseTWR) {
 		idxtemp = 0;
-		for (i = 0; i < 8 && ok; i++) {	// temp sensors 0x78 - 0x7f
+
+		for (i = 0; i < 8 && ok; i++) {    // temp sensors 0x78 - 0x7f
 			ok = ReadByteFromEC(TP_ECOFFSET_TEMP0 + i, &pfcstate->Sensors[idxtemp]);
 			if (this->ShowBiasedTemps)
 				pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp];
-			if (!ok)
-			{
+			if (!ok) {
 				this->Trace("failed to read TEMP0 byte from EC");
 			}
 			pfcstate->SensorAddr[idxtemp] = TP_ECOFFSET_TEMP0 + i;
@@ -664,7 +671,7 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate)
 			idxtemp++;
 		}
 
-		for (i = 0; i < 4 && ok; i++) {	// temp sensors 0xC0 - 0xC4
+		for (i = 0; i < 4 && ok; i++) {    // temp sensors 0xC0 - 0xC4
 			pfcstate->SensorAddr[idxtemp] = TP_ECOFFSET_TEMP1 + i;
 			pfcstate->SensorName[idxtemp] = "n/a";
 			if (!this->NoExtSensor) {
@@ -685,7 +692,7 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate)
 		int iOK = false;
 		int iTimeout = 100;
 		int iTimeoutBuf = 1000;
-		int	iTime = 0;
+		int iTime = 0;
 		int iTick = 10;
 		int ivers = 0;
 
@@ -699,18 +706,18 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate)
 			return ok;
 		}
 
-		for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {	// wait for ec ready
-			data = (char)ReadPort(0x1604) & 0xff;				// or timeout iTimeoutBuf = 1000
-			if (!data)											// ec is ready: ctrlprt = 0
+		for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {    // wait for ec ready
+			data = (char)ReadPort(0x1604) & 0xff;                // or timeout iTimeoutBuf = 1000
+			if (!data)                                            // ec is ready: ctrlprt = 0
 				break;
-			if (data & 0x50)									// some unrequested outputis waiting 
-				ReadPort(0x161f);								// clear data output
+			if (data & 0x50)                                    // some unrequested outputis waiting
+				ReadPort(0x161f);                                // clear data output
 			::Sleep(iTick);
 		}
 
-		WritePort(0x1610, 0x20);							// tell them we want to read
+		WritePort(0x1610, 0x20);                            // tell them we want to read
 		data = (char)ReadPort(0x1604) & 0xff;
-		if (!(data & 0x20))									// ec is not ready 
+		if (!(data & 0x20))                                    // ec is not ready
 			goto neuerversuch;
 
 		for (int i = 1; i < 15; i++) {
@@ -719,8 +726,8 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate)
 
 		WritePort(0x161f, 0x00);
 
-		for (iTime = 0; iTime < iTimeoutBuf; iTime++) {			// wait for full buffers to clear	
-			data = (char)ReadPort(0x1604) & 0xff;				// or timeout iTimeoutBuf = 1000
+		for (iTime = 0; iTime < iTimeoutBuf; iTime++) {            // wait for full buffers to clear
+			data = (char)ReadPort(0x1604) & 0xff;                // or timeout iTimeoutBuf = 1000
 			if (data == 0x50)
 				break;
 		}
@@ -782,5 +789,3 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate)
 	}
 	return ok;
 }
-
-
