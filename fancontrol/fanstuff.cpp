@@ -1,4 +1,3 @@
-
 // --------------------------------------------------------------
 //
 //  Thinkpad Fan Control
@@ -21,10 +20,13 @@
 #include "tools.h"
 #include "TVicPort.h"
 
-#define TP_ECOFFSET_FAN		 (char)0x2F	// 1 byte (binary xyzz zzz)
-#define TP_ECOFFSET_FANSPEED (char)0x84 // 16 bit word, lo/hi byte
-#define TP_ECOFFSET_TEMP0    (char)0x78	// 8 temp sensor bytes from here
-#define TP_ECOFFSET_TEMP1    (char)0xC0 // 4 temp sensor bytes from here
+#define TP_ECOFFSET_FAN_SWITCH		(char)0x31
+#define TP_ECOFFSET_FAN1			(char)0x0000
+#define TP_ECOFFSET_FAN2			(char)0x0001
+#define TP_ECOFFSET_FAN				(char)0x2F	// 1 byte (binary xyzz zzz)
+#define TP_ECOFFSET_FANSPEED		(char)0x84 // 16 bit word, lo/hi byte
+#define TP_ECOFFSET_TEMP0			(char)0x78	// 8 temp sensor bytes from here
+#define TP_ECOFFSET_TEMP1			(char)0xC0 // 4 temp sensor bytes from here
 
 
 
@@ -147,10 +149,11 @@ FANCONTROL::HandleData(void)
 
 	// display fan speed (experimental, not visible)
 	this->lastfanspeed = this->fanspeed;
-	this->fanspeed = (this->State.FanSpeedHi << 8) | this->State.FanSpeedLo;
+	this->fanspeed = (this->State.FanSpeedHi1 << 8) | this->State.FanSpeedLo1;
 
 	if (this->fanspeed > 0x1fff) fanspeed = lastfanspeed;
-	sprintf_s(obuf2, sizeof(obuf2), "%d RPM", this->fanspeed);
+	sprintf_s(obuf2, sizeof(obuf2), "%d/%d RPM", this->fanspeed,
+		(this->State.FanSpeedHi2 << 8) | this->State.FanSpeedLo2);
 
 	::SetDlgItemText(this->hwndDialog, 8102, obuf2);
 
@@ -385,6 +388,9 @@ int
 FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final)
 {
 	int ok = 0;
+	int fan1_ok = 0;
+	int fan2_ok = 0;
+
 	char obuf[256] = "", obuf2[256], datebuf[128];
 
 	if (this->FanBeepFreq && this->FanBeepDura)
@@ -415,13 +421,30 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final)
 		for (int i = 0; i < 5; i++)
 		{
 			// set new fan level
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
 
-			// verify completion
-			ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
+			::Sleep(100);
 
-			if (this->State.FanCtrl == fanctrl)
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
+
+			::Sleep(100);
+
+			// verify completion of fan2
+			fan2_ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
+
+			::Sleep(100);
+
+			// verify completion of fan1
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
+			fan1_ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
+
+			if (fan1_ok == 1 && fan2_ok == 1) {
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "[i=%d] ", i);
+				
 				break;
+			}
 
 			::Sleep(300);
 		}
@@ -599,18 +622,32 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate)
 
 	ok = ReadByteFromEC(TP_ECOFFSET_FAN, &pfcstate->FanCtrl);
 
+	ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
+
 	if (ok)
-		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo);
-	if (!ok)
-	{
-		this->Trace("failed to read FanSpeedLowByte from EC");
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo2);
+	if (!ok) {
+		this->Trace("failed to read FanSpeedLowByte 2 from EC");
 	}
 
 	if (ok)
-		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->FanSpeedHi);
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->FanSpeedHi2);
+	if (!ok) {
+		this->Trace("failed to read FanSpeedHighByte 2 from EC");
+	}
+
+	if (ok)
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo1);
 	if (!ok)
 	{
-		this->Trace("failed to read FanSpeedHighByte from EC");
+		this->Trace("failed to read FanSpeedLowByte 1 from EC");
+	}
+
+	if (ok)
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->FanSpeedHi1);
+	if (!ok)
+	{
+		this->Trace("failed to read FanSpeedHighByte 1 from EC");
 	}
 	if (!this->UseTWR) {
 		idxtemp = 0;
