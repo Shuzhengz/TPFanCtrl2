@@ -208,9 +208,6 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 		case 0:
 			this->Title3[0] = 32;
 			break;            //blank
-		case 13:
-			this->Title3[13] = 32;
-			break;
 		}
 
 		// code Title4
