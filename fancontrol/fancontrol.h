@@ -27,7 +27,6 @@
 #include "TaskbarTextIcon.h"
 
 
-
 #define FANCONTROLVERSION "2.2.0a Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5

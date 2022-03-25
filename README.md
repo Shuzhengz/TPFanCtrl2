@@ -87,6 +87,14 @@ That's it, there's no residual files.
 
 If you added the program to run at startup, you will have to also delete the shortcut from the start up folder.
 
+## Known Issues
+
+Sometimes the fans will fail to sync, with one ramping up and the other not.
+This will usually fix itself, but to fix it manually, switch to BIOS mode, then switch back to the desired mode
+
+It will also sometimes take a longer time for the speed to update and the fans to spin up.
+This is caused by EC management for the newer ThinkPad BIOS. There is currently no way around it.
+
 ## License
 This program has an Unlicense license
 

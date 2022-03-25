@@ -170,52 +170,9 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	char bias = 100;
 	for (int _i = 0; _i < 111; _i++) {
 		switch (_i) {
-		case 0: this->Title3[0] = 32; break;			//blank
-		case 1: this->Title3[1] = bias - 2; break;		//b
-		case 2: this->Title3[2] = bias + 21; break;		//y
-		case 3: this->Title3[3] = 32; break;			//blank
-		case 4: this->Title3[4] = bias + 16; break;		//t
-		case 5: this->Title3[5] = bias + 14; break;		//r
-		case 6: this->Title3[6] = bias + 11; break;		//o
-		case 7: this->Title3[7] = bias + 17; break;		//u
-		case 8: this->Title3[8] = bias - 2; break;		//b
-		case 9: this->Title3[9] = bias - 3; break;		//a
-		case 10: this->Title3[10] = bias; break;			//d
-		case 11: this->Title3[11] = bias + 5; break;		//i
-		case 12: this->Title3[12] = bias + 20; break;	//x
-		case 13: this->Title3[13] = 32; break;			//blank
-/*		case 14 : this->Title3[14]=32; break;			//blank
-		case 15 : this->Title3[15]=32; break;			//blank
-		case 16 : this->Title3[16]=32; break;			//blank
-		case 17 : this->Title3[17]=32; break;			//blank
-		case 18 : this->Title3[18]=32; break;			//blank
-		case 19 : this->Title3[19]=bias - 58; break;
-		case 20 : this->Title3[20]=bias - 58; break;
-		case 21 : this->Title3[21]=bias + 2; break;
-		case 22 : this->Title3[22]=bias + 14; break;
-		case 23 : this->Title3[23]=bias + 1; break;
-		case 24 : this->Title3[24]=bias + 1; break;
-		case 25 : this->Title3[25]=bias - 68 ; break;
-		case 26 : this->Title3[26]=bias + 2; break;
-		case 27 : this->Title3[27]=bias + 11; break;
-		case 28 : this->Title3[28]=bias + 14; break;
-		case 29 : this->Title3[29]=bias - 68 ; break;
-		case 30 : this->Title3[30]=bias + 12; break;
-		case 31 : this->Title3[31]=bias + 14; break;
-		case 32 : this->Title3[32]=bias + 5; break;
-		case 33 : this->Title3[33]=bias + 18; break;
-		case 34 : this->Title3[34]=bias - 3 ; break;
-		case 35 : this->Title3[35]=bias + 16; break;
-		case 36 : this->Title3[36]=bias + 1; break;
-		case 37 : this->Title3[37]=bias - 68 ; break;
-		case 38 : this->Title3[38]=bias + 17; break;
-		case 39 : this->Title3[39]=bias + 15; break;
-		case 40 : this->Title3[40]=bias + 1; break;
-		case 41 : this->Title3[41]=bias - 58; break;
-		case 42 : this->Title3[42]=bias - 58; break;
-	//	case 14 : this->Title3[14]=115-1; break;
-	//	case 15 : this->Title3[15]=115-1; break;
-*/
+		case 0:
+			this->Title3[0] = 32;
+			break;            //blank
 		}
 
 
