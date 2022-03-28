@@ -21,8 +21,8 @@
 
 
 // Registers of the embedded controller
-#define EC_DATAPORT    0x1600    // EC data io-port 0x62
-#define EC_CTRLPORT    0x1604    // EC control io-port 0x66
+#define EC_DATAPORT    0x62    // EC data io-port 0x62
+#define EC_CTRLPORT    0x66    // EC control io-port 0x66
 
 
 // Embedded controller status register bits
