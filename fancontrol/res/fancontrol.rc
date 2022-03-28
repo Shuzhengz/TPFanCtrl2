@@ -1,22 +1,25 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource."
+#include "resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include "afxres.h"
+#include "windows.h"
+
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Neutral (Default) resources
+// Neutral (Standard) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUD)
+#ifdef _WIN32
 LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
 #pragma code_page(1252)
+#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -29,52 +32,52 @@ EXSTYLE WS_EX_TOPMOST | WS_EX_TOOLWINDOW
 CAPTION "TPFanControl "
 FONT 8, "MS Sans Serif", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "TPFanControl",IDC_STATIC,97,7,157,95
+    GROUPBOX        "TPFanControl",IDC_STATIC,97,7,143,95
     LTEXT           "State",IDC_STATIC,103,24,21,8
-    EDITTEXT        8100,126,22,121,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        8100,126,22,107,13,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Switch",IDC_STATIC,103,40,21,8
     EDITTEXT        8103,126,38,29,13,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Mode",IDC_STATIC,103,54,21,8
     CONTROL         "BIOS (embedded controller)",8300,"Button",BS_AUTORADIOBUTTON,129,55,99,10
     CONTROL         "Smart (TPFanControl.ini)",8301,"Button",BS_AUTORADIOBUTTON,129,68,96,10
     CONTROL         "Manual ",8302,"Button",BS_AUTORADIOBUTTON,129,82,38,10
-    EDITTEXT        8310,171,79,32,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "(0-7)",IDC_STATIC,207,81,15,8
+    EDITTEXT        8310,171,79,25,14,ES_AUTOHSCROLL | ES_NUMBER
+    LTEXT           "(0-7)",IDC_STATIC,199,81,15,8
     LTEXT           "Speed",IDC_STATIC,160,40,21,8
-    EDITTEXT        8102,183,38,64,13,ES_AUTOHSCROLL | ES_READONLY
-    GROUPBOX        "Temperatures",IDC_STATIC,7,7,85,110
-    EDITTEXT        8101,15,18,70,82,ES_MULTILINE | ES_READONLY
+    EDITTEXT        8102,183,38,50,13,ES_AUTOHSCROLL | ES_READONLY
+    GROUPBOX        "Temperatures",IDC_STATIC,7,7,85,126
+    EDITTEXT        8101,15,18,70,102,ES_MULTILINE | ES_READONLY
     GROUPBOX        "Status",9199,97,106,467,27
     EDITTEXT        8112,103,115,218,13,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Last",IDC_STATIC,324,116,15,8
     EDITTEXT        8113,340,115,219,13,ES_AUTOHSCROLL | ES_READONLY
-    GROUPBOX        "Log (see TPFanControl.log)",9201,260,7,303,95
-    EDITTEXT        9200,269,18,287,78,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
-    CONTROL         "all",7001,"Button",BS_AUTORADIOBUTTON | BS_RIGHT,20,103,20,10
-    CONTROL         "active",7002,"Button",BS_AUTORADIOBUTTON | BS_RIGHT,45,103,31,10
+    GROUPBOX        "Log (see TPFanControl.log)",9201,246,7,317,95
+    EDITTEXT        9200,254,18,302,78,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    CONTROL         "all",7001,"Button",BS_AUTORADIOBUTTON | BS_RIGHT,21,121,20,10
+    CONTROL         "active",7002,"Button",BS_AUTORADIOBUTTON | BS_RIGHT,46,121,31,10
 END
 
-9001 DIALOGEX 0, 0, 54, 266
+9001 DIALOGEX 0, 0, 50, 265
 STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 EXSTYLE WS_EX_TOPMOST | WS_EX_TOOLWINDOW
 CAPTION "TPFC"
 FONT 8, "MS Sans Serif", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "Fan Control",IDC_STATIC,0,128,51,135
+    GROUPBOX        "Fan Control",IDC_STATIC,0,128,49,135
     LTEXT           "State",IDC_STATIC,3,137,21,8
-    EDITTEXT        8100,2,146,47,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        8100,2,146,45,13,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Switch",IDC_STATIC,3,160,29,8
-    EDITTEXT        8103,2,169,47,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        8103,2,169,45,13,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Mode",IDC_STATIC,3,207,19,8
     CONTROL         "BIOS",8300,"Button",BS_AUTORADIOBUTTON,3,215,37,10
     CONTROL         "Smart",8301,"Button",BS_AUTORADIOBUTTON,3,224,36,10
     CONTROL         "Manual",8302,"Button",BS_AUTORADIOBUTTON,3,234,36,10
     EDITTEXT        8310,3,244,21,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "(0-7)",IDC_STATIC,25,247,15,8
+    LTEXT           "(255-0)",IDC_STATIC,25,247,15,8
     LTEXT           "Speed",IDC_STATIC,3,182,29,8
-    EDITTEXT        8102,2,190,47,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        8102,2,190,45,13,ES_AUTOHSCROLL | ES_READONLY
     GROUPBOX        "Temps",IDC_STATIC,0,0,49,115
-    EDITTEXT        8101,2,11,49,102,ES_MULTILINE | ES_READONLY
+    EDITTEXT        8101,2,11,46,102,ES_MULTILINE | ES_READONLY
     CONTROL         "all",7001,"Button",BS_AUTORADIOBUTTON | BS_RIGHT,3,116,20,10
     CONTROL         "act",7002,"Button",BS_AUTORADIOBUTTON | BS_RIGHT,25,116,20,10
 END
@@ -84,9 +87,9 @@ STYLE DS_SETFONT | DS_MODALFRAME | WS_CAPTION | WS_SYSMENU
 CAPTION "TPFanControl "
 FONT 8, "MS Sans Serif", 400, 0, 0x0
 BEGIN
-    GROUPBOX        "TPFanControl",IDC_STATIC,97,7,155,95
+    GROUPBOX        "TPFanControl",IDC_STATIC,97,7,143,95
     LTEXT           "State",IDC_STATIC,103,24,21,8
-    EDITTEXT        8100,126,22,121,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        8100,126,22,107,13,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Switch",IDC_STATIC,103,40,21,8
     EDITTEXT        8103,126,38,29,13,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Mode",IDC_STATIC,103,54,21,8
@@ -94,17 +97,17 @@ BEGIN
     CONTROL         "Smart (TPFanControl.ini)",8301,"Button",BS_AUTORADIOBUTTON,129,68,96,10
     CONTROL         "Manual ",8302,"Button",BS_AUTORADIOBUTTON,129,82,36,10
     EDITTEXT        8310,171,79,25,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "(0-7)",IDC_STATIC,199,81,15,8
+    LTEXT           "(255-0)",IDC_STATIC,199,81,15,8
     LTEXT           "Speed",IDC_STATIC,160,40,21,8
-    EDITTEXT        8102,183,38,64,13,ES_AUTOHSCROLL | ES_READONLY
+    EDITTEXT        8102,183,38,50,13,ES_AUTOHSCROLL | ES_READONLY
     GROUPBOX        "Temperatures",IDC_STATIC,7,7,85,126
     EDITTEXT        8101,15,18,70,102,ES_MULTILINE | ES_READONLY
     GROUPBOX        "Status",9199,97,106,467,27
     EDITTEXT        8112,103,115,218,13,ES_AUTOHSCROLL | ES_READONLY
     LTEXT           "Last",IDC_STATIC,324,116,15,8
     EDITTEXT        8113,340,115,219,13,ES_AUTOHSCROLL | ES_READONLY
-    GROUPBOX        "Log (see TPFanControl.log)",9201,256,7,307,95
-    EDITTEXT        9200,266,18,290,78,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    GROUPBOX        "Log (see TPFanControl.log)",9201,246,7,317,95
+    EDITTEXT        9200,254,18,302,78,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_READONLY | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
     CONTROL         "all",7001,"Button",BS_AUTORADIOBUTTON | BS_RIGHT,21,121,20,10
     CONTROL         "active",7002,"Button",BS_AUTORADIOBUTTON | BS_RIGHT,46,121,31,10
 END
@@ -124,7 +127,7 @@ BEGIN
     CONTROL         "Smart",8301,"Button",BS_AUTORADIOBUTTON,3,224,36,10
     CONTROL         "Manual",8302,"Button",BS_AUTORADIOBUTTON,3,234,44,10
     EDITTEXT        8310,3,244,25,14,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "(0-7)",IDC_STATIC,35,247,15,8
+    LTEXT           "(255-0)",IDC_STATIC,35,247,15,8
     LTEXT           "Speed",IDC_STATIC,3,182,29,8
     EDITTEXT        8102,3,190,63,13,ES_AUTOHSCROLL | ES_READONLY
     GROUPBOX        "Temperatures",IDC_STATIC,0,1,70,114
@@ -139,8 +142,9 @@ END
 // Menu
 //
 
-5000 MENU
+5000 MENU 
 BEGIN
+    MENUITEM "Thinklight",                  5060
     MENUITEM "Bluetooth",                   5040
     MENUITEM SEPARATOR
     MENUITEM "Show Window",                 5010
@@ -150,6 +154,8 @@ BEGIN
     MENUITEM SEPARATOR
     MENUITEM "BIOS Mode",                   5001
     MENUITEM "Smart Mode",                  5002
+//    MENUITEM "Smart Mode 1",                5003
+//    MENUITEM "Smart Mode 2",                5004
     MENUITEM "Manual Mode",                 5005
     MENUITEM "End Program",                 5020
     MENUITEM SEPARATOR
@@ -165,27 +171,16 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 1                       ICON                    "app.ico"
-
 21                      ICON                    "ico21.ico"
-
 22                      ICON                    "ico22.ico"
-
 23                      ICON                    "ico23.ico"
-
 24                      ICON                    "ico24.ico"
-
 25                      ICON                    "ico25.ico"
-
 10                      ICON                    "bw.ico"
-
 11                      ICON                    "blue.ico"
-
 12                      ICON                    "yellow.ico"
-
 13                      ICON                    "orange.ico"
-
 14                      ICON                    "red.ico"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -194,15 +189,14 @@ END
 
 1                       RT_MANIFEST             "xp-manifest.txt"
 
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // Version
 //
 
 1 VERSIONINFO
- FILEVERSION 1,0,0,63
- PRODUCTVERSION 1,0,0,63
+ FILEVERSION 1,0,0,62
+ PRODUCTVERSION 1,0,0,62
  FILEFLAGSMASK 0x8L
 #ifdef _DEBUG
  FILEFLAGS 0x9L
@@ -218,14 +212,16 @@ BEGIN
         BLOCK "040704b0"
         BEGIN
             VALUE "Comments", "Usage on own risk!"
+            VALUE "CompanyName", "troubadix"
             VALUE "FileDescription", "Fan Control Software"
-            VALUE "FileVersion", "1, 0, 0, 63"
-            VALUE "InternalName", "TPFanControl 2"
+            VALUE "FileVersion", "1, 0, 0, 62"
+            VALUE "InternalName", "TPFanControl"
+            VALUE "LegalCopyright", "Copyright (C) 2009 by troubadix"
             VALUE "LegalTrademarks", "TPFanControl"
             VALUE "OriginalFilename", "TPFanControl.exe"
             VALUE "PrivateBuild", "Fan Control Software"
             VALUE "ProductName", "TPFanControl"
-            VALUE "ProductVersion", "1, 0, 0, 63"
+            VALUE "ProductVersion", "1, 0, 0, 62"
             VALUE "SpecialBuild", "easy easy setup"
         END
     END
@@ -242,16 +238,11 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
+GUIDELINES DESIGNINFO 
 BEGIN
-    9000, DIALOG
-    BEGIN
-    END
-
     9001, DIALOG
     BEGIN
-        RIGHTMARGIN, 50
-        BOTTOMMARGIN, 265
+        BOTTOMMARGIN, 264
         HORZGUIDE, 126
     END
 
@@ -268,16 +259,18 @@ BEGIN
 END
 #endif    // APSTUDIO_INVOKED
 
-#endif    // Neutral (Default) resources
+#endif    // Neutral (Standard) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// German (Germany) resources
+// Deutsch (Deutschland) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+#ifdef _WIN32
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
 #pragma code_page(1252)
+#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -302,16 +295,18 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // German (Germany) resources
+#endif    // Deutsch (Deutschland) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
+// Englisch (USA) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
+#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -321,18 +316,12 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 1                       ICON                    "app.ico"
-
 10                      ICON                    "bw.ico"
-
 11                      ICON                    "blue.ico"
-
 12                      ICON                    "yellow.ico"
-
 13                      ICON                    "orange.ico"
-
 14                      ICON                    "red.ico"
-
-#endif    // English (United States) resources
+#endif    // Englisch (USA) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -342,7 +331,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-
+
+
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 

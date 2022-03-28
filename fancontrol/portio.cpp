@@ -1,4 +1,5 @@
-﻿// --------------------------------------------------------------
+
+// --------------------------------------------------------------
 //
 //  Thinkpad Fan Control
 //
@@ -21,237 +22,193 @@
 
 
 // Registers of the embedded controller
-#define EC_DATAPORT    0x62    // EC data io-port 0x62
-#define EC_CTRLPORT    0x66    // EC control io-port 0x66
+#define EC_DATAPORT		0x62	// EC data io-port
+#define EC_CTRLPORT		0x66	// EC control io-port
 
 
 // Embedded controller status register bits
-#define EC_STAT_OBF     0x01 // Output buffer full
-#define EC_STAT_IBF     0x02 // Input buffer full
-#define EC_STAT_CMD     0x08 // Last write was a command write (0=data)
+#define EC_STAT_OBF		0x01    // Output buffer full 
+#define EC_STAT_IBF		0x02    // Input buffer full 
+#define EC_STAT_CMD		0x08    // Last write was a command write (0=data) 
 
 
 // Embedded controller commands
 // (write to EC_CTRLPORT to initiate read/write operation)
-#define EC_CTRLPORT_READ     (char)0x80
-#define EC_CTRLPORT_WRITE     (char)0x81
-#define EC_CTRLPORT_QUERY     (char)0x84
+#define EC_CTRLPORT_READ		(char)0x80	
+#define EC_CTRLPORT_WRITE		(char)0x81
+#define EC_CTRLPORT_QUERY		(char)0x84
 
-
-int verbosity = 0;    // verbosity for the logbuf (0= nothing)
-char lasterrorstring[256] = "",
-logbuf[8192] = "";
 
 
 //-------------------------------------------------------------------------
-// read a byte from the embedded controller (EC) via port io 
+//  read control port and wait for set/clear of a status bit
 //-------------------------------------------------------------------------
-int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
-	char data = -1;
-	int numToTrySetup = 50;
-	int iOK = false;
-	int iTimeout = 100;
-	int iTimeoutBuf = 1000;
-	int iTime = 0;
-	int iTick = 10;
+int 
+waitportstatus(int bits, int onoff= false, int timeout= 1000)
+{
+	int ok= false,
+		port= EC_CTRLPORT,
+		time= 0,
+		tick= 10;
 
-	while (numToTrySetup > 0) {
+	//
+	// wait until input on control port has desired state or times out
+	//
+	for (time= 0; time<timeout; time+= tick) {
 
-		for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {    // wait for full buffers to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;            // or timeout iTimeoutBuf = 1000
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) break;
-			::Sleep(iTick);
+		DWORD data=0;
+		data = ReadPort(port);
+
+		// check for desired result
+		int flagstate= (((char)data) & bits)!=0,
+			wantedstate= onoff!=0;
+
+		if (flagstate==wantedstate) {
+			ok= true;
+			break;
 		}
 
-		WritePort(EC_CTRLPORT, EC_CTRLPORT_READ);            // tell 'em we want to "READ"
+		// try again after a moment
+		::Sleep(tick);
+	} 
 
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {    // wait for IBF and OBF to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
-				iOK = true;
-				break;
-			}
+	return ok;
+}
 
-			::Sleep(iTick);
 
-		} // try again after a moment
-
-		if (!iOK) return 0;
-		iOK = false;
-
-		WritePort(EC_DATAPORT, offset);                        // tell 'em where we want to read from
-
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {    // wait for OBF 
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-
-			if ((data & EC_STAT_OBF)) {
-				iOK = true;
-				numToTrySetup = 1;
-				break;
-			}
-			::Sleep(iTick); // check again after a moment
-		}
-
-		// decrement counter. If greater than 0 afterwards,
-		// start the read process over again
-		numToTrySetup -= 1;
-	}
-
-	if (!iOK) return 0;
-
-	*pdata = ReadPort(EC_DATAPORT);
-
-	if (verbosity > 0) sprintf(logbuf + strlen(logbuf), "readec: offset= %x, data= %02x\n", offset, *pdata);
+//-------------------------------------------------------------------------
+//  write a character to an io port through WinIO device
+//-------------------------------------------------------------------------
+int 
+writeport(int port, char data)
+{
+		WritePort(port, data);
 
 	return 1;
 }
 
 
 //-------------------------------------------------------------------------
-// write a byte to the embedded controller (EC) via port io
+//  read a character from an io port through WinIO device
 //-------------------------------------------------------------------------
-int FANCONTROL::WriteByteToEC(int offset, char NewData) {
-	char data = -1;
-	char data2 = -1;
-	int iOK = false;
-	int iTimeout = 100;
-	int iTimeoutBuf = 1000;
-	int iTime = 0;
-	int iTick = 10;
-	int numToTrySetup = 5;
-
-	while (numToTrySetup > 0) {
-
-		for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {            // wait for full buffers to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;                    // or timeout iTimeoutBuf = 1000
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) break;
-			::Sleep(iTick);
-		}
-
-		if (data & EC_STAT_OBF) data2 = (char)ReadPort(EC_DATAPORT);    //clear OBF if full
-
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {             // wait for IOBF to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-			if (!(data & EC_STAT_OBF)) {
-				iOK = true;
-				break;
-			}
-			::Sleep(iTick);
-		}  // try again after a moment
-
-		if (!iOK) return 0;
-		iOK = false;
-
-		WritePort(EC_CTRLPORT, EC_CTRLPORT_WRITE);                      // tell 'em we want to "WRITE"
-
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {             // wait for IBF and OBF to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
-				iOK = true;
-				break;
-			}
-			::Sleep(iTick);
-		}                            // try again after a moment
-
-		if (!iOK) return 0;
-		iOK = false;
-
-		WritePort(EC_DATAPORT, offset);                                    // tell 'em where we want to write to
-
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {             // wait for IBF and OBF to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
-				iOK = true;
-				numToTrySetup = 1;
-				break;
-			}
-			::Sleep(iTick);
-		}                                                                // try again after a moment
-		numToTrySetup -= 1;
-	}
-
-	if (!iOK) return 0;
-
-	WritePort(EC_DATAPORT, NewData);                                    // tell 'em what we want to write there
-
+int 
+readport(int port, char *pdata)
+{
+	DWORD data= -1;
+	data = ReadPort(port);
+	*pdata= (char)data;
 	return 1;
 }
 
 
 //-------------------------------------------------------------------------
-//  experimental code
+//  read a byte from the embedded controller (EC) via port io 
 //-------------------------------------------------------------------------
-void
-FANCONTROL::Test(void) {
+int 
+FANCONTROL::ReadByteFromECint(int offset, char *pdata)
+{
+	int ok;
 
-	/*
-		//
-		// defines from various DDK sources
-		//
+	// wait for IBF and OBF to clear
+	ok= waitportstatus(EC_STAT_IBF | EC_STAT_OBF, false);
+	if (ok) {
 
-		#define IOCTL_ACPI_ASYNC_EVAL_METHOD            CTL_CODE(FILE_DEVICE_ACPI, 0, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
-		#define IOCTL_ACPI_EVAL_METHOD                  CTL_CODE(FILE_DEVICE_ACPI, 1, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
-		#define IOCTL_ACPI_ACQUIRE_GLOBAL_LOCK          CTL_CODE(FILE_DEVICE_ACPI, 4, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
-		#define IOCTL_ACPI_RELEASE_GLOBAL_LOCK          CTL_CODE(FILE_DEVICE_ACPI, 5, METHOD_BUFFERED, FILE_READ_ACCESS | FILE_WRITE_ACCESS)
+		// tell 'em we want to "READ"
+		ok= writeport(EC_CTRLPORT, EC_CTRLPORT_READ);
+		if (ok) {
 
-		#define FILE_DEVICE_ACPI                0x00000032
+			// wait for IBF to clear (command byte removed from EC's input queue)
+			ok= waitportstatus(EC_STAT_IBF, false);
+			if (ok) {
 
-		#define CTL_CODE( DeviceType, Function, Method, Access ) (                 \
-			((DeviceType) << 16) | ((Access) << 14) | ((Function) << 2) | (Method) \
-		)
+				// tell 'em where we want to read from
+				ok= writeport(EC_DATAPORT, offset);
+				if (ok) {
 
-		#define METHOD_BUFFERED                 0
-		#define METHOD_IN_DIRECT                1
-		#define METHOD_OUT_DIRECT               2
-		#define METHOD_NEITHER                  3
+					// wait for IBF to clear (address byte removed from EC's input queue)
+					// Note: Techically we should waitportstatus(OBF,TRUE) here,(a byte being 
+					//       in the EC's output buffer being ready to read).  For some reason
+					//       this never seems to happen
+					ok= waitportstatus(EC_STAT_IBF, false);
+					if (ok) {
+						char data= -1;
 
-
-		#define FILE_ANY_ACCESS             0
-		#define FILE_SPECIAL_ACCESS			(FILE_ANY_ACCESS)
-		#define FILE_READ_ACCESS			( 0x0001 )    // file & pipe
-		#define FILE_WRITE_ACCESS			( 0x0002 )    // file & pipe
-
-
-
-
-		//
-		// try to communicate with the ACPI driver via IOCTL
-		// (doesn't work, driver won't open on CreateFile under
-		// any name)
-		//
-
-		HANDLE hDevice= ::CreateFile( "\\\\.\\DRIVER\\ACPI",
-									   GENERIC_WRITE,
-									   FILE_SHARE_WRITE,
-									   NULL,
-									   OPEN_EXISTING,
-									   0,
-									   NULL );
-
-		if (hDevice!=INVALID_HANDLE_VALUE) {
-
-			USHORT t[2];
-			ULONG howmany= 0;
-			ULONG ret= 0;
-			BOOL ioctlresult= 0;
-
-			t[0] = (USHORT)0;
-			t[1] = (USHORT)0;
-
-			ioctlresult= DeviceIoControl(
-								hDevice,
-								IOCTL_ACPI_ACQUIRE_GLOBAL_LOCK,
-								t,
-								sizeof(ULONG),
-								&ret,
-								sizeof(ULONG),
-								&howmany,
-								NULL );
-
-
-
-			::CloseHandle(hDevice);
+						// read result (EC byte at offset)
+						ok= readport(EC_DATAPORT, &data);
+						if (ok)
+							*pdata= data;
+					}
+				}
+			}
 		}
+	}
 
-	*/
+	return ok;
+}
+
+int 
+FANCONTROL::ReadByteFromEC(int offset, char *pdata)
+{
+	int ok = 1;
+	while (ok)
+	{
+		char b;
+		ok = ReadByteFromECint(offset, &b);
+		if (ok)
+		{
+			Sleep(10);
+			char b2;
+			ok = ReadByteFromECint(offset, &b2);
+			if (ok && b == b2)
+			{
+				*pdata = b;
+				return ok;
+			}
+		}
+		::Sleep(50);
+	}
+	return ok;
+}
+
+
+//-------------------------------------------------------------------------
+//  write a byte to the embedded controller (EC) via port io
+//-------------------------------------------------------------------------
+int 
+FANCONTROL::WriteByteToEC(int offset, char data)
+{
+	int ok;
+
+	// wait for IBF and OBF to clear
+	ok= waitportstatus(EC_STAT_IBF| EC_STAT_OBF, false);
+	if (ok) {
+
+		// tell 'em we want to "WRITE"
+		ok= writeport(EC_CTRLPORT, EC_CTRLPORT_WRITE);
+		if (ok) {
+
+			// wait for IBF to clear (command byte removed from EC's input queue)
+			ok= waitportstatus(EC_STAT_IBF, false);
+			if (ok) {
+
+				// tell 'em where we want to write to
+				ok= writeport(EC_DATAPORT, offset);
+				if (ok) {
+
+					// wait for IBF to clear (address byte removed from EC's input queue)
+					ok= waitportstatus(EC_STAT_IBF, false);
+					if (ok) {
+						// tell 'em what we want to write there
+						ok= writeport(EC_DATAPORT, data);
+						if (ok) {					
+							// wait for IBF to clear (data byte removed from EC's input queue)
+							ok= waitportstatus(EC_STAT_IBF, false);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return ok;
 }

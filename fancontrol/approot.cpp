@@ -1,4 +1,4 @@
-﻿
+
 #include "_prec.h"
 #include "approot.h"
 #include "fancontrol.h"
@@ -242,7 +242,7 @@ void WorkerThread(void *dummy)
 {
 	char curdir[MAX_PATH]= "";
 
-    //Zeit, um den Debugger an den Prozess zu hängen
+    //Zeit, um den Debugger an den Prozess zu h�ngen
 	//   #ifdef _DEBUG   
 	//   Sleep(30000);
 	//   #endif
@@ -295,8 +295,6 @@ void WorkerThread(void *dummy)
 		HardAccess = TestHardAccess();
 
 		FANCONTROL fc(hInstApp);
-
-		fc.Test();
 
         g_dialogWnd = fc.GetDialogWnd();
 
