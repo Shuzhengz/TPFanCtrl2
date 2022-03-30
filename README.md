@@ -66,6 +66,8 @@ The project should have the correct configuration upon opening the project file 
 
 The project currently builds with the configuration: `Debug` `Win32` (You will need admin permission to run the built program)
 
+Do not build the project without TPFCIcon and TPFCIcon_noballons, they are necessary parts of the application and the main fan control software will not function without them
+
 
 ## Running at startup (Not Recommended)
 
