@@ -1,4 +1,3 @@
-
 // --------------------------------------------------------------
 //
 //  Thinkpad Fan Control
@@ -44,8 +43,7 @@
 //  read control port and wait for set/clear of a status bit
 //-------------------------------------------------------------------------
 int 
-waitportstatus(int bits, int onoff= false, int timeout= 1000)
-{
+waitportstatus(int bits, int onoff= false, int timeout= 1000) {
 	int ok= false,
 		port= EC_CTRLPORT,
 		time= 0,
@@ -80,10 +78,8 @@ waitportstatus(int bits, int onoff= false, int timeout= 1000)
 //  write a character to an io port through WinIO device
 //-------------------------------------------------------------------------
 int 
-writeport(int port, char data)
-{
-		WritePort(port, data);
-
+writeport(int port, char data) {
+	WritePort(port, data);
 	return 1;
 }
 
@@ -92,8 +88,7 @@ writeport(int port, char data)
 //  read a character from an io port through WinIO device
 //-------------------------------------------------------------------------
 int 
-readport(int port, char *pdata)
-{
+readport(int port, char *pdata) {
 	DWORD data= -1;
 	data = ReadPort(port);
 	*pdata= (char)data;
@@ -105,8 +100,7 @@ readport(int port, char *pdata)
 //  read a byte from the embedded controller (EC) via port io 
 //-------------------------------------------------------------------------
 int 
-FANCONTROL::ReadByteFromECint(int offset, char *pdata)
-{
+FANCONTROL::ReadByteFromECint(int offset, char *pdata) {
 	int ok;
 
 	// wait for IBF and OBF to clear
@@ -147,20 +141,18 @@ FANCONTROL::ReadByteFromECint(int offset, char *pdata)
 }
 
 int 
-FANCONTROL::ReadByteFromEC(int offset, char *pdata)
-{
+FANCONTROL::ReadByteFromEC(int offset, char *pdata){
 	int ok = 1;
-	while (ok)
-	{
+	while (ok) {
 		char b;
 		ok = ReadByteFromECint(offset, &b);
-		if (ok)
-		{
+		
+		if (ok) {
 			Sleep(10);
 			char b2;
 			ok = ReadByteFromECint(offset, &b2);
-			if (ok && b == b2)
-			{
+			
+			if (ok && b == b2) {
 				*pdata = b;
 				return ok;
 			}
