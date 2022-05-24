@@ -1,0 +1,104 @@
+                            TVicPort version 4.0
+
+                   Copyright (C) 1997-2005, EnTech Taiwan
+                     http://www.entechtaiwan.com/tools.htm
+
+                          All Rights Reserved
+
+                              LICENSE.TXT
+                              ===========
+
+                           License Agreement
+                           =================
+
+You should carefully read the following terms and conditions before using this
+software. Your use of this software indicates your acceptance of this license
+agreement and warranty.
+
+1. TVicPort Unregistered Version
+
+2. TVicPort Registered Version
+
+3. Deployment (TVicPort Registered Version Only)
+
+4. Legal Disclamier
+
+
+1. TVicPort Evaluation Version
+==============================
+
+You may use an Evaluation Copy of this Software for an evaluation period of 
+up  to 30 days, in order to determine whether the Software meets your needs
+before purchasing it.  Once the evaluation period ends, you agree to either 
+purchase a Registered Copy of the Software, or to stop using it and remove it 
+from your computer system.
+
+You must not (a) defeat, or try to defeat, messages in the Software which 
+encourage users to register; (b) modify or prepare derivative works of the 
+Software; (c) or reverse engineer, decompile or disassemble the Software.
+
+You are hereby granted the right
+
+- to make as many copies of this software and its documentation as you wish;
+- give exact copies (including all files) of the original version to anyone;
+- and distribute the software and documentation in its unmodified form via
+  electronic means.
+
+There is no charge for any of the above.
+
+You are specifically prohibited from charging, or requesting donations, for
+any such copies (a small handling fee is acceptable). You are further
+prohibited from distributing the software and/or documentation with other
+products (commercial or otherwise) without prior written permission.
+
+2. TVicPort Registered Version
+==============================
+
+Once registered, you are granted a non-exclusive license to use TVicPort
+software on one computer at a time, for any legal purpose. The registration 
+fee is $24.95 U.S. To register TVicPort visit:
+
+https://www.regsoft.net/regsoft/vieworderpage.php3?productid=3138
+
+The source code for the following files are *not* available in
+TVicPort Registered Version:
+
+- tvicport.sys
+- tvicport.vxd
+- tvicport.dll (*)
+- tvicport.ocx (*)
+
+(*) The TVicPort.dll and TVicPort.ocx source code may be purchased separately.
+
+3. Deployment (TVicPort Registered Version Only).
+=================================================
+
+The license allows you, royalty free, to distribute the following files:
+
+	- tvicport.sys
+	- tvicport.vxd
+	- tvicport.dll
+	- tvicport.ocx
+	
+These files may be distributed only as part of the binaries you are 
+distributing (exe, dll, OCX). You may not distribute any of the headers 
+or source files which are included in the TVicPort package.
+
+
+3. Legal Disclaimer
+===================
+
+THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER 
+EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES 
+OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE ENTIRE RISK AS 
+TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU. SHOULD THE
+SOFTWARE PROVE DEFECTIVE, YOU ASSUME THE COST OF ALL NECESSARY SERVICING, 
+REPAIR OR CORRECTION. 
+
+IN NO EVENT WILL THE AUTHOR OR ANY OTHER PARTY WHO MAY HAVE DISTRIBUTED THE
+SOFTWARE AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY 
+GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE USE OR
+INABILITY TO USE THE SOFTWARE (INCLUDING BUT NOT LIMITED TO LOSS OF DATA OR 
+DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD PARTIES OR A
+FAILURE OF THE SOFTWARE TO OPERATE WITH ANY OTHER PROGRAMS), EVEN IF SUCH 
+HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
