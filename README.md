@@ -51,7 +51,9 @@ Example of configurable parameters:
 | 6 - 65% |
 | 7 - 65% |
 
-<h5>Advanced level value is converted into hex (i.e. 70 is 0x46), the value above is a rough estimate of what to expect</h5>
+<h5>Advanced level value is converted into hex, the value above is a rough estimate of what to expect</h5>
+
+<h5>The 0-7 range is intended to be used as the fan levels intended by the manufacture (7 being the highest that the laptop BIOS can go), and to take full advantage of the fan you'll need to enter 0-128 in hex (for example, 128 in hex is 0x80, which is entered as 80).</h5>
 
 ### Additional Information
 
