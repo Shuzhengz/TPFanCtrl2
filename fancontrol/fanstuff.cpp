@@ -30,16 +30,6 @@
 
 
 
-
-// Thanks for the following to "Thinker" on 
-// http://www.thinkwiki.org/wiki/Talk:ACPI_fan_control_script
-
-
-
-
-
-
-
 //-------------------------------------------------------------------------
 //  switch fan according to settings
 //-------------------------------------------------------------------------
@@ -362,9 +352,6 @@ FANCONTROL::SmartControl(void) {
 		fanctrl = 0;
 	}
 
-	//	check for fan-up, end marker for smart levels array:
-	//	this->SmartLevels[lcnt].temp= -1;
-	//	this->SmartLevels[lcnt].fan= 0x80;
 
 	for (i = 0; this->SmartLevels[i].temp != -1; i++) {
 		if (this->MaxTemp >= this->SmartLevels[i].temp && this->SmartLevels[i].fan >= fanctrl)
@@ -385,7 +372,6 @@ FANCONTROL::SmartControl(void) {
 	// fan speed needs change?
 
 	if (newfanctrl != -1 && newfanctrl != this->State.FanCtrl) {
-		//TODO: Daten für Graph sammeln
 		//if (newfanctrl==0x80) { // switch to BIOS-auto mode
 		//	//this->ModeToDialog(1); // bios
 		//}

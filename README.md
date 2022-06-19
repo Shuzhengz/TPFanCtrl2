@@ -51,7 +51,9 @@ Example of configurable parameters:
 | 6 - 65% |
 | 7 - 65% |
 
-<h5>Advanced level value is converted into hex (i.e. 70 is 0x46), the value above is a rough estimate of what to expect</h5>
+<h5>Advanced level value is converted into hex, the value above is a rough estimate of what to expect</h5>
+
+<h5>The 0-7 range is intended to be used as the fan levels intended by the manufacture (7 being the highest that the laptop BIOS can go), and to take full advantage of the fan you'll need to enter 0-128 in hex (for example, 128 in hex is 0x80, which is entered as 80).</h5>
 
 ### Additional Information
 
@@ -65,6 +67,8 @@ Building this program requires Microsoft Visual Studio 2022 Community
 The project should have the correct configuration upon opening the project file `fancontrol.sln`, though you might have to manually copy and paste the `.ini` file into the Debug folder to test the built program
 
 The project currently builds with the configuration: `Debug` `Win32` (You will need admin permission to run the built program)
+
+Do not build the project without TPFCIcon and TPFCIcon_noballons, they are necessary parts of the application and the main fan control software will not function without them
 
 
 ## Running at startup (Not Recommended)
