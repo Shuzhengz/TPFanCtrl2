@@ -1,4 +1,4 @@
-// --------------------------------------------------------------
+﻿// --------------------------------------------------------------
 //
 //  Thinkpad Fan Control
 //
@@ -19,7 +19,6 @@
 #include "tools.h"
 #include "taskbartexticon.h"
 #include "WinUser.h"
-
 
 
 //-------------------------------------------------------------------------
@@ -92,15 +91,13 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	m_needClose(false),
 	m_hinstapp(hinstapp),
 	ppTbTextIcon(NULL),
-	pTextIconMutex(new MUTEXSEM(0, "Global\\TPFanControl_ppTbTextIcon"))
-
-{
+	pTextIconMutex(new MUTEXSEM(0, "Global\\TPFanControl_ppTbTextIcon")) {
 	int i = 0;
 	char buf[256] = "";
 
 
 	// SensorNames
-			// 78-7F (state index 0-7)
+		// 78-7F (state index 0-7)
 	strcpy_s(this->gSensorNames[0], sizeof(this->gSensorNames[0]), "cpu"); // main processor
 	strcpy_s(this->gSensorNames[1], sizeof(this->gSensorNames[1]), "aps"); // harddisk protection gyroscope
 	strcpy_s(this->gSensorNames[2], sizeof(this->gSensorNames[2]), "crd"); // under PCMCIA slot (front left)
@@ -112,9 +109,10 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 //  	// C0-C4 (state index 8-11)
 	strcpy_s(this->gSensorNames[8], sizeof(this->gSensorNames[8]), "bus"); // unknown
 	strcpy_s(this->gSensorNames[9], sizeof(this->gSensorNames[9]), "pci"); // mini-pci, WLAN, southbridge area
-	strcpy_s(this->gSensorNames[10], sizeof(this->gSensorNames[10]), "pwr"); // power supply (get's hot while charging battery)
+	strcpy_s(this->gSensorNames[10], sizeof(this->gSensorNames[10]),
+		"pwr"); // power supply (get's hot while charging battery)
 	strcpy_s(this->gSensorNames[11], sizeof(this->gSensorNames[11]), "xc3"); // usually n/a
-// future
+	// future
 	strcpy_s(this->gSensorNames[12], sizeof(this->gSensorNames[12]), "");
 	strcpy_s(this->gSensorNames[13], sizeof(this->gSensorNames[13]), "");
 	strcpy_s(this->gSensorNames[14], sizeof(this->gSensorNames[14]), "");
@@ -133,40 +131,77 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	setzero(this->CurrentStatuscsv, sizeof(this->CurrentStatuscsv));
 	setzero(this->IgnoreSensors, sizeof(this->IgnoreSensors));
 
-	this->IconLevels[0] = 50;	// yellow icon level
-	this->IconLevels[1] = 55;	// orange icon level
-	this->IconLevels[2] = 60;	// red icon level
+	this->IconLevels[0] = 50;    // yellow icon level
+	this->IconLevels[1] = 55;    // orange icon level
+	this->IconLevels[2] = 60;    // red icon level
 
 
 	// initial default "smart" table
 	setzero(this->SmartLevels, sizeof(this->SmartLevels));
-	this->SmartLevels[i].temp = 50;  this->SmartLevels[i].fan = 0; i++;
-	this->SmartLevels[i].temp = 55;  this->SmartLevels[i].fan = 3; i++;
-	this->SmartLevels[i].temp = 60;  this->SmartLevels[i].fan = 5; i++;
-	this->SmartLevels[i].temp = 65;  this->SmartLevels[i].fan = 7; i++;
-	this->SmartLevels[i].temp = 70;  this->SmartLevels[i].fan = 128; i++;
-	this->SmartLevels[i].temp = -1;  this->SmartLevels[i].fan = 0; i++;
+	this->SmartLevels[i].temp = 50;
+	this->SmartLevels[i].fan = 0;
+	i++;
+	this->SmartLevels[i].temp = 55;
+	this->SmartLevels[i].fan = 3;
+	i++;
+	this->SmartLevels[i].temp = 60;
+	this->SmartLevels[i].fan = 5;
+	i++;
+	this->SmartLevels[i].temp = 65;
+	this->SmartLevels[i].fan = 7;
+	i++;
+	this->SmartLevels[i].temp = 70;
+	this->SmartLevels[i].fan = 128;
+	i++;
+	this->SmartLevels[i].temp = -1;
+	this->SmartLevels[i].fan = 0;
+	i++;
 
 	setzero(this->SmartLevels1, sizeof(this->SmartLevels1));
 	i = 0;
-	this->SmartLevels1[i].temp1 = 50;  this->SmartLevels1[i].fan1 = 0; i++;
-	this->SmartLevels1[i].temp1 = 55;  this->SmartLevels1[i].fan1 = 3; i++;
-	this->SmartLevels1[i].temp1 = 60;  this->SmartLevels1[i].fan1 = 5; i++;
-	this->SmartLevels1[i].temp1 = 65;  this->SmartLevels1[i].fan1 = 7; i++;
-	this->SmartLevels1[i].temp1 = 70;  this->SmartLevels1[i].fan1 = 128; i++;
-	this->SmartLevels1[i].temp1 = -1;  this->SmartLevels1[i].fan1 = 0; i++;
+	this->SmartLevels1[i].temp1 = 50;
+	this->SmartLevels1[i].fan1 = 0;
+	i++;
+	this->SmartLevels1[i].temp1 = 55;
+	this->SmartLevels1[i].fan1 = 3;
+	i++;
+	this->SmartLevels1[i].temp1 = 60;
+	this->SmartLevels1[i].fan1 = 5;
+	i++;
+	this->SmartLevels1[i].temp1 = 65;
+	this->SmartLevels1[i].fan1 = 7;
+	i++;
+	this->SmartLevels1[i].temp1 = 70;
+	this->SmartLevels1[i].fan1 = 128;
+	i++;
+	this->SmartLevels1[i].temp1 = -1;
+	this->SmartLevels1[i].fan1 = 0;
+	i++;
 
 	setzero(this->SmartLevels2, sizeof(this->SmartLevels2));
 	i = 0;
-	this->SmartLevels2[i].temp2 = 0;  this->SmartLevels2[i].fan2 = 0; i++;
+	this->SmartLevels2[i].temp2 = 0;
+	this->SmartLevels2[i].fan2 = 0;
+	i++;
 	// später if ( this->SmartLevels2[i].temp2 != 0 ) dann smart2
-	this->SmartLevels2[i].temp2 = 55;  this->SmartLevels2[i].fan2 = 3; i++;
-	this->SmartLevels2[i].temp2 = 60;  this->SmartLevels2[i].fan2 = 5; i++;
-	this->SmartLevels2[i].temp2 = 65;  this->SmartLevels2[i].fan2 = 7; i++;
-	this->SmartLevels2[i].temp2 = 70;  this->SmartLevels2[i].fan2 = 128; i++;
-	this->SmartLevels2[i].temp2 = -1;  this->SmartLevels2[i].fan2 = 0; i++;
+	this->SmartLevels2[i].temp2 = 55;
+	this->SmartLevels2[i].fan2 = 3;
+	i++;
+	this->SmartLevels2[i].temp2 = 60;
+	this->SmartLevels2[i].fan2 = 5;
+	i++;
+	this->SmartLevels2[i].temp2 = 65;
+	this->SmartLevels2[i].fan2 = 7;
+	i++;
+	this->SmartLevels2[i].temp2 = 70;
+	this->SmartLevels2[i].fan2 = 128;
+	i++;
+	this->SmartLevels2[i].temp2 = -1;
+	this->SmartLevels2[i].fan2 = 0;
+	i++;
 
 
+	// code title3
 	char bias = 100;
 	for (int _i = 0; _i < 111; _i++) {
 		switch (_i) {
@@ -175,91 +210,245 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 			break;            //blank
 		}
 
+		// code Title4
 
 		for (int __i = 0; __i < 111; __i++) {
 			switch (__i) {
-			case 0: this->Title4[0] = bias + 4; break;		//h
-			case 1: this->Title4[1] = bias + 16; break;		//t
-			case 2: this->Title4[2] = bias + 16; break;		//t
-			case 3: this->Title4[3] = bias + 12; break;		//p
-			case 4: this->Title4[4] = bias - 42; break;		//:
-			case 5: this->Title4[5] = bias - 8; break;		///
-			case 6: this->Title4[6] = bias - 8; break;		///
-			case 7: this->Title4[7] = bias + 19; break;		//w
-			case 8: this->Title4[8] = bias + 19; break;		//w
-			case 9: this->Title4[9] = bias + 19; break;		//w
-			case 10: this->Title4[10] = bias - 54; break;	//.
-			case 11: this->Title4[11] = bias + 15; break;	//s
-			case 12: this->Title4[12] = bias + 16; break;	//t
-			case 13: this->Title4[13] = bias - 3; break;	//a
-			case 14: this->Title4[14] = bias + 2; break;		//f
-			case 15: this->Title4[15] = bias + 2; break;		//f
-			case 16: this->Title4[16] = bias - 54; break;	//.
-			case 17: this->Title4[17] = bias + 17; break;	//u
-			case 18: this->Title4[18] = bias + 10; break;	//n
-			case 19: this->Title4[19] = bias + 5; break;		//i
-			case 20: this->Title4[20] = bias - 55; break;	//-
-			case 21: this->Title4[21] = bias + 9; break;		//m
-			case 22: this->Title4[22] = bias - 3; break;	//a
-			case 23: this->Title4[23] = bias + 14; break;	//r
-			case 24: this->Title4[24] = bias - 2; break;		//b
-			case 25: this->Title4[25] = bias + 17; break;	//u
-			case 26: this->Title4[26] = bias + 14; break;	//r	
-			case 27: this->Title4[27] = bias + 3; break;		//g
-			case 28: this->Title4[28] = bias - 54; break;	//.
-			case 29: this->Title4[29] = bias; break;		//d
-			case 30: this->Title4[30] = bias + 1; break;		//e
-			case 31: this->Title4[31] = bias - 8; break;		///
-			case 32: this->Title4[32] = bias + 26; break;	//~
-			case 33: this->Title4[33] = bias + 15; break;	//s
-			case 34: this->Title4[34] = bias - 1; break;	//c
-			case 35: this->Title4[35] = bias + 4; break;		//h
-			case 36: this->Title4[36] = bias + 9; break;		//m
-			case 37: this->Title4[37] = bias + 5; break;		//i
-			case 38: this->Title4[38] = bias + 16; break;	//t
-			case 39: this->Title4[39] = bias + 22; break;	//z
-			case 40: this->Title4[40] = bias + 14; break;	//r
-			case 41: this->Title4[41] = bias - 8; break;		///
-			case 42: this->Title4[42] = bias; break;		//d
-			case 43: this->Title4[43] = bias + 11; break;	//o
-			case 44: this->Title4[44] = bias + 10; break;	//n
-			case 45: this->Title4[45] = bias - 3; break;		//a
-			case 46: this->Title4[46] = bias + 16; break;	//t
-			case 47: this->Title4[47] = bias + 1; break;		//e
-			case 48: this->Title4[48] = bias - 54; break;	//.
-			case 49: this->Title4[49] = bias + 4; break;		//h
-			case 50: this->Title4[50] = bias + 16; break;	//t
-			case 51: this->Title4[51] = bias + 9; break;		//m
-			case 52: this->Title4[52] = bias + 8; break;		//l
+			case 0:
+				this->Title4[0] = bias + 4;
+				break;
+			case 1:
+				this->Title4[1] = bias + 16;
+				break;
+			case 2:
+				this->Title4[2] = bias + 16;
+				break;
+			case 3:
+				this->Title4[3] = bias + 12;
+				break;
+			case 4:
+				this->Title4[4] = bias - 42;
+				break;
+			case 5:
+				this->Title4[5] = bias - 8;
+				break;
+			case 6:
+				this->Title4[6] = bias - 8;
+				break;
+			case 7:
+				this->Title4[7] = bias + 19;
+				break;
+			case 8:
+				this->Title4[8] = bias + 19;
+				break;
+			case 9:
+				this->Title4[9] = bias + 19;
+				break;
+			case 10:
+				this->Title4[10] = bias - 54;
+				break;
+			case 11:
+				this->Title4[11] = bias + 15;
+				break;
+			case 12:
+				this->Title4[12] = bias + 16;
+				break;
+			case 13:
+				this->Title4[13] = bias - 3;
+				break;
+			case 14:
+				this->Title4[14] = bias + 2;
+				break;
+			case 15:
+				this->Title4[15] = bias + 2;
+				break;
+			case 16:
+				this->Title4[16] = bias - 54;
+				break;
+			case 17:
+				this->Title4[17] = bias + 17;
+				break;
+			case 18:
+				this->Title4[18] = bias + 10;
+				break;
+			case 19:
+				this->Title4[19] = bias + 5;
+				break;
+			case 20:
+				this->Title4[20] = bias - 55;
+				break;
+			case 21:
+				this->Title4[21] = bias + 9;
+				break;
+			case 22:
+				this->Title4[22] = bias - 3;
+				break;
+			case 23:
+				this->Title4[23] = bias + 14;
+				break;
+			case 24:
+				this->Title4[24] = bias - 2;
+				break;
+			case 25:
+				this->Title4[25] = bias + 17;
+				break;
+			case 26:
+				this->Title4[26] = bias + 14;
+				break;
+			case 27:
+				this->Title4[27] = bias + 3;
+				break;
+			case 28:
+				this->Title4[28] = bias - 54;
+				break;
+			case 29:
+				this->Title4[29] = bias;
+				break;
+			case 30:
+				this->Title4[30] = bias + 1;
+				break;
+			case 31:
+				this->Title4[31] = bias - 8;
+				break;
+			case 32:
+				this->Title4[32] = bias + 26;
+				break;
+			case 33:
+				this->Title4[33] = bias + 15;
+				break;
+			case 34:
+				this->Title4[34] = bias - 1;
+				break;
+			case 35:
+				this->Title4[35] = bias + 4;
+				break;
+			case 36:
+				this->Title4[36] = bias + 9;
+				break;
+			case 37:
+				this->Title4[37] = bias + 5;
+				break;
+			case 38:
+				this->Title4[38] = bias + 16;
+				break;
+			case 39:
+				this->Title4[39] = bias + 22;
+				break;
+			case 40:
+				this->Title4[40] = bias + 14;
+				break;
+			case 41:
+				this->Title4[41] = bias - 8;
+				break;
+			case 42:
+				this->Title4[42] = bias;
+				break;
+			case 43:
+				this->Title4[43] = bias + 11;
+				break;
+			case 44:
+				this->Title4[44] = bias + 10;
+				break;
+			case 45:
+				this->Title4[45] = bias - 3;
+				break;
+			case 46:
+				this->Title4[46] = bias + 16;
+				break;
+			case 47:
+				this->Title4[47] = bias + 1;
+				break;
+			case 48:
+				this->Title4[48] = bias - 54;
+				break;
+			case 49:
+				this->Title4[49] = bias + 4;
+				break;
+			case 50:
+				this->Title4[50] = bias + 16;
+				break;
+			case 51:
+				this->Title4[51] = bias + 9;
+				break;
+			case 52:
+				this->Title4[52] = bias + 8;
+				break;
 			}
 		}
 
+		// code Title5 http://tpfancontrol.com
 
 		for (int __i = 0; __i < 23; __i++) {
 			switch (__i) {
-			case 0: this->Title5[0] = bias + 4; break;		//h
-			case 1: this->Title5[1] = bias + 16; break;		//t
-			case 2: this->Title5[2] = bias + 16; break;		//t
-			case 3: this->Title5[3] = bias + 12; break;		//p
-			case 4: this->Title5[4] = bias - 42; break;		//:
-			case 5: this->Title5[5] = bias - 8; break;		///
-			case 6: this->Title5[6] = bias - 8; break;		///
-			case 7: this->Title5[7] = bias + 16; break;		//t
-			case 8: this->Title5[8] = bias + 12; break;		//p
-			case 9: this->Title5[9] = bias + 2; break;		//f
-			case 10: this->Title5[10] = bias - 3; break;	//a
-			case 11: this->Title5[11] = bias + 10; break;	//n
-			case 12: this->Title5[12] = bias - 1; break;	//c
-			case 13: this->Title5[13] = bias + 11; break;	//o
-			case 14: this->Title5[14] = bias + 10; break;	//n
-			case 15: this->Title5[15] = bias + 16; break;	//t
-			case 16: this->Title5[16] = bias + 14; break;	//r	
-			case 17: this->Title5[17] = bias + 11; break;	//o
-			case 18: this->Title5[18] = bias + 8; break;		//l
-			case 19: this->Title5[19] = bias - 54; break;	//.
-			case 20: this->Title5[20] = bias - 1; break;	//c
-			case 21: this->Title5[21] = bias + 11; break;	//o
-			case 22: this->Title5[22] = bias + 9; break;		//m
+			case 0:
+				this->Title5[0] = bias + 4;
+				break;        //h
+			case 1:
+				this->Title5[1] = bias + 16;
+				break;        //t
+			case 2:
+				this->Title5[2] = bias + 16;
+				break;        //t
+			case 3:
+				this->Title5[3] = bias + 12;
+				break;        //p
+			case 4:
+				this->Title5[4] = bias - 42;
+				break;        //:
+			case 5:
+				this->Title5[5] = bias - 8;
+				break;        ///
+			case 6:
+				this->Title5[6] = bias - 8;
+				break;        ///
+			case 7:
+				this->Title5[7] = bias + 16;
+				break;        //t
+			case 8:
+				this->Title5[8] = bias + 12;
+				break;        //p
+			case 9:
+				this->Title5[9] = bias + 2;
+				break;        //f
+			case 10:
+				this->Title5[10] = bias - 3;
+				break;    //a
+			case 11:
+				this->Title5[11] = bias + 10;
+				break;    //n
+			case 12:
+				this->Title5[12] = bias - 1;
+				break;    //c
+			case 13:
+				this->Title5[13] = bias + 11;
+				break;    //o
+			case 14:
+				this->Title5[14] = bias + 10;
+				break;    //n
+			case 15:
+				this->Title5[15] = bias + 16;
+				break;    //t
+			case 16:
+				this->Title5[16] = bias + 14;
+				break;    //r
+			case 17:
+				this->Title5[17] = bias + 11;
+				break;    //o
+			case 18:
+				this->Title5[18] = bias + 8;
+				break;        //l
+			case 19:
+				this->Title5[19] = bias - 54;
+				break;    //.
+			case 20:
+				this->Title5[20] = bias - 1;
+				break;    //c
+			case 21:
+				this->Title5[21] = bias + 11;
+				break;    //o
+			case 22:
+				this->Title5[22] = bias + 9;
+				break;        //m
 			}
 		}
 
@@ -278,16 +467,15 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 		strcat_s(this->Title, sizeof(this->Title), this->Title3);
 		::SetWindowText(this->hwndDialog, this->Title);
 
-		::SetWindowLong(this->hwndDialog, GWL_USERDATA, (ULONG)this);
+		::SetWindowLong(this->hwndDialog, GWL_USERDATA, (ULONG)
+			this);
 		::SendDlgItemMessage(this->hwndDialog, 8112, EM_LIMITTEXT, 256, 0);
 		::SendDlgItemMessage(this->hwndDialog, 9200, EM_LIMITTEXT, 4096, 0);
 		::SetDlgItemText(this->hwndDialog, 8310, _itoa(this->ManFanSpeed, buf, 10));
 	}
 
 
-
 	if (SlimDialog == 1) {
-
 
 
 		if (this->StayOnTop)
@@ -296,14 +484,16 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 				MAKEINTRESOURCE(9001),
 				HWND_DESKTOP,
 				(DLGPROC)BaseDlgProc,
-				(LPARAM)this);
+				(LPARAM)
+				this);
 
 		else
 			this->hwndDialog = ::CreateDialogParam(hinstapp,
 				MAKEINTRESOURCE(9003),
 				HWND_DESKTOP,
 				(DLGPROC)BaseDlgProc,
-				(LPARAM)this);
+				(LPARAM)
+				this);
 
 		if (this->hwndDialog) {
 			::GetWindowText(this->hwndDialog, this->Title, sizeof(this->Title));
@@ -311,7 +501,8 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 			if (SlimDialog == 0) strcat_s(this->Title, sizeof(this->Title), this->Title3);
 			::SetWindowText(this->hwndDialog, this->Title);
 
-			::SetWindowLong(this->hwndDialog, GWL_USERDATA, (ULONG)this);
+			::SetWindowLong(this->hwndDialog, GWL_USERDATA, (ULONG)
+				this);
 			::SendDlgItemMessage(this->hwndDialog, 8112, EM_LIMITTEXT, 256, 0);
 			::SendDlgItemMessage(this->hwndDialog, 9200, EM_LIMITTEXT, 4096, 0);
 			::SetDlgItemText(this->hwndDialog, 8310, _itoa(this->ManFanSpeed, buf, 10));
@@ -326,19 +517,21 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	char bufsec[1024] = "";
 	int tickCount = GetTickCount(); // +262144;
 
-	sprintf_s(bufsec, sizeof(bufsec), "Windows uptime since boot %d sec., SecWinUptime= %d sec.", tickCount / 1000, SecWinUptime);
+	sprintf_s(bufsec, sizeof(bufsec), "Windows uptime since boot %d sec., SecWinUptime= %d sec.", tickCount / 1000,
+		SecWinUptime);
 	this->Trace(bufsec);
 
 	if ((tickCount / 1000) <= SecWinUptime) {
-		sprintf_s(bufsec, sizeof(bufsec), "Save the icon by a start delay of %d seconds (SecStartDelay)", SecStartDelay);
+		sprintf_s(bufsec, sizeof(bufsec), "Save the icon by a start delay of %d seconds (SecStartDelay)",
+			SecStartDelay);
 		this->Trace(bufsec);
 		if (!NoWaitMessage) {
 			sprintf_s(bufsec, sizeof(bufsec),
-				"TPFanControl is started %d sec. after\nboot time (SecWinUptime=%d sec.)\n\nTo prevent missing systray icons\nand communication errors between\nTPFanControl and embedded controller\nit will sleep for %d sec. (SecStartDelay)\n\nTo void this message box please set\nNoWaitMessage=1 in TPFanControl.ini"
-				, tickCount / 1000, SecWinUptime, SecStartDelay);
+				"TPFanControl is started %d sec. after\nboot time (SecWinUptime=%d sec.)\n\nTo prevent missing systray icons\nand communication errors between\nTPFanControl and embedded controller\nit will sleep for %d sec. (SecStartDelay)\n\nTo void this message box please set\nNoWaitMessage=1 in TPFanControl.ini",
+				tickCount / 1000, SecWinUptime, SecStartDelay);
 			// Don't show message box when as service in Vista
-			OSVERSIONINFO os = { sizeof(os) };
-			GetVersionEx(&os);
+			OSVERSIONINFOEX os = { sizeof(os) };
+			VerifyVersionInfoA(&os, VER_MAJORVERSION, 1);
 			if (os.dwMajorVersion >= 6 && Runs_as_service == TRUE);
 			else
 				MessageBox(NULL, bufsec, "TPFanControl is sleeping", MB_ICONEXCLAMATION);
@@ -359,7 +552,7 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 		// da liegt der ICON-Hund begraben
 
 		if (!this->ShowTempIcon) {
-			this->pTaskbarIcon = new	TASKBARICON(this->hwndDialog, 10, "TPFanControl");
+			this->pTaskbarIcon = new TASKBARICON(this->hwndDialog, 10, "TPFanControl");
 		}
 		else {
 			this->pTaskbarIcon = NULL;
@@ -367,7 +560,7 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 
 	}
 
-	// read current fan control status and set mode buttons accordingly 
+	// read current fan control status and set mode buttons accordingly
 
 	this->CurrentMode = this->ActiveMode;
 
@@ -396,10 +589,12 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 
 
-	m_fanTimer = ::SetTimer(this->hwndDialog, 1, this->Cycle * 1000, NULL);	// fan update
-	m_titleTimer = ::SetTimer(this->hwndDialog, 2, 500, NULL);				// title update
-	m_iconTimer = ::SetTimer(this->hwndDialog, 3, this->IconCycle * 1000, NULL);				// Vista icon update
-	if (this->ReIcCycle) m_renewTimer = ::SetTimer(this->hwndDialog, 4, this->ReIcCycle * 1000, NULL);				// Vista icon update
+	m_fanTimer = ::SetTimer(this->hwndDialog, 1, this->Cycle * 1000, NULL);    // fan update
+	m_titleTimer = ::SetTimer(this->hwndDialog, 2, 500, NULL);                // title update
+	m_iconTimer = ::SetTimer(this->hwndDialog, 3, this->IconCycle * 1000, NULL);                // Vista icon update
+	if (this->ReIcCycle)
+		m_renewTimer = ::SetTimer(this->hwndDialog, 4, this->ReIcCycle * 1000,
+			NULL);                // Vista icon update
 
 	if (!this->StartMinimized)
 		::ShowWindow(this->hwndDialog, TRUE);
@@ -409,13 +604,10 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 }
 
 
-
-
 //-------------------------------------------------------------------------
 //  destructor
 //-------------------------------------------------------------------------
-FANCONTROL::~FANCONTROL()
-{
+FANCONTROL::~FANCONTROL() {
 	if (this->hThread) {
 		::WaitForSingleObject(this->hThread, 2000);
 		this->hThread = NULL;
@@ -444,40 +636,35 @@ FANCONTROL::~FANCONTROL()
 //  mode integer from mode radio buttons
 //-------------------------------------------------------------------------
 int
-FANCONTROL::CurrentModeFromDialog()
-{
+FANCONTROL::CurrentModeFromDialog() {
 	BOOL modetpauto = ::SendDlgItemMessage(this->hwndDialog, 8300, BM_GETCHECK, 0L, 0L),
 		modefcauto = ::SendDlgItemMessage(this->hwndDialog, 8301, BM_GETCHECK, 0L, 0L),
 		modemanual = ::SendDlgItemMessage(this->hwndDialog, 8302, BM_GETCHECK, 0L, 0L);
 
 	if (modetpauto)
 		this->CurrentMode = 1;
+	else if (modefcauto)
+		this->CurrentMode = 2;
+	else if (modemanual)
+		this->CurrentMode = 3;
 	else
-		if (modefcauto)
-			this->CurrentMode = 2;
-		else
-			if (modemanual)
-				this->CurrentMode = 3;
-			else
-				this->CurrentMode = -1;
+		this->CurrentMode = -1;
 
 
 	return this->CurrentMode;
 }
 
 int
-FANCONTROL::ShowAllFromDialog()
-{
+FANCONTROL::ShowAllFromDialog() {
 	BOOL modefcauto = ::SendDlgItemMessage(this->hwndDialog, 7001, BM_GETCHECK, 0L, 0L),
 		modemanual = ::SendDlgItemMessage(this->hwndDialog, 7002, BM_GETCHECK, 0L, 0L);
 
 	if (modefcauto)
 		this->ShowAll = 1;
+	else if (modemanual)
+		this->ShowAll = 0;
 	else
-		if (modemanual)
-			this->ShowAll = 0;
-		else
-			this->ShowAll = -1;
+		this->ShowAll = -1;
 
 
 	return this->ShowAll;
@@ -485,8 +672,7 @@ FANCONTROL::ShowAllFromDialog()
 
 
 void
-FANCONTROL::ModeToDialog(int mode)
-{
+FANCONTROL::ModeToDialog(int mode) {
 	::SendDlgItemMessage(this->hwndDialog, 8300, BM_SETCHECK, mode == 1, 0L);
 	::SendDlgItemMessage(this->hwndDialog, 8301, BM_SETCHECK, mode == 2, 0L);
 	::SendDlgItemMessage(this->hwndDialog, 8302, BM_SETCHECK, mode == 3, 0L);
@@ -494,8 +680,7 @@ FANCONTROL::ModeToDialog(int mode)
 
 
 void
-FANCONTROL::ShowAllToDialog(int show)
-{
+FANCONTROL::ShowAllToDialog(int show) {
 	::SendDlgItemMessage(this->hwndDialog, 7001, BM_SETCHECK, show == 1, 0L);
 	::SendDlgItemMessage(this->hwndDialog, 7002, BM_SETCHECK, show == 0, 0L);
 }
@@ -504,8 +689,7 @@ FANCONTROL::ShowAllToDialog(int show)
 //-------------------------------------------------------------------------
 //  process main dialog
 //-------------------------------------------------------------------------
-int FANCONTROL::ProcessDialog()
-{
+int FANCONTROL::ProcessDialog() {
 
 	MSG qmsg, qmsg2;
 	int dlgrc = -1;
@@ -536,12 +720,16 @@ int FANCONTROL::ProcessDialog()
 }
 
 
-
 //-------------------------------------------------------------------------
 //  dialog window procedure (map to class method)
 //-------------------------------------------------------------------------
 ULONG CALLBACK
-FANCONTROL::BaseDlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
+FANCONTROL::BaseDlgProc(HWND
+	hwnd,
+	ULONG msg, WPARAM
+	mp1,
+	LPARAM mp2
+)
 {
 	ULONG rc = FALSE;
 
@@ -557,21 +745,30 @@ FANCONTROL::BaseDlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 	{
 		if (msg == s_TaskbarCreated)
 		{
-			This->TaskbarNew = 1;
+			This->
+				TaskbarNew = 1;
 
 			if (This->pTaskbarIcon)
 			{
-				This->pTaskbarIcon->RebuildIfNecessary(TRUE);
+				This->pTaskbarIcon->
+					RebuildIfNecessary(TRUE);
 			}
 			else {
-				This->RemoveTextIcons();
-				This->ProcessTextIcons();
+				This->
+
+					RemoveTextIcons();
+
+				This->
+
+					ProcessTextIcons();
+
 			}
 		}
 		rc = This->DlgProc(hwnd, msg, mp1, mp2);
 	}
 
-	return rc;
+	return
+		rc;
 }
 
 
@@ -593,7 +790,12 @@ BOOL _piscreated(FALSE);
 char obuftd[256] = "", obuftd2[128] = "", templisttd[512];
 char obuf[256] = "", obuf2[128] = "", templist2[512];
 ULONG
-FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
+FANCONTROL::DlgProc(HWND
+	hwnd,
+	ULONG msg, WPARAM
+	mp1,
+	LPARAM mp2
+)
 {
 	ULONG rc = 0, ok, res;
 	char buf[1024];
@@ -623,14 +825,21 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 		case 4:
 			this->ModeToDialog(2);
 			if (this->IndSmartLevel == 1) {
-				sprintf_s(obuf, sizeof(obuf), "Activation of Fan Control Profile 'Smart Mode 1'");
-				this->Trace(obuf);
+				sprintf_s(obuf,
+					sizeof(obuf), "Activation of Fan Control Profile 'Smart Mode 1'");
+				this->
+					Trace(obuf);
 			}
-			this->IndSmartLevel = 0;
+			this->
+				IndSmartLevel = 0;
 
-			for (int i = 0; i < 32; i++) {
-				this->SmartLevels[i].temp = this->SmartLevels1[i].temp1;
-				this->SmartLevels[i].fan = this->SmartLevels1[i].fan1;
+			for (
+				int i = 0;
+				i < 32; i++) {
+				this->SmartLevels[i].
+					temp = this->SmartLevels1[i].temp1;
+				this->SmartLevels[i].
+					fan = this->SmartLevels1[i].fan1;
 			}
 			::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 			break;
@@ -638,14 +847,21 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 		case 5:
 			this->ModeToDialog(2);
 			if (this->IndSmartLevel == 0) {
-				sprintf_s(obuf, sizeof(obuf), "Activation of Fan Control Profile 'Smart Mode 2'");
-				this->Trace(obuf);
+				sprintf_s(obuf,
+					sizeof(obuf), "Activation of Fan Control Profile 'Smart Mode 2'");
+				this->
+					Trace(obuf);
 			}
-			this->IndSmartLevel = 1;
+			this->
+				IndSmartLevel = 1;
 
-			for (int i = 0; i < 32; i++) {
-				this->SmartLevels[i].temp = this->SmartLevels2[i].temp2;
-				this->SmartLevels[i].fan = this->SmartLevels2[i].fan2;
+			for (
+				int i = 0;
+				i < 32; i++) {
+				this->SmartLevels[i].
+					temp = this->SmartLevels2[i].temp2;
+				this->SmartLevels[i].
+					fan = this->SmartLevels2[i].fan2;
 			}
 			::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 			break;
@@ -688,22 +904,36 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 			this->ModeToDialog(2);
 			switch (IndSmartLevel) {
 			case 0:
-				sprintf_s(obuf, sizeof(obuf), "Activation of Fan Control Profile 'Smart Mode 2'");
-				this->Trace(obuf);
-				this->IndSmartLevel = 1;
-				for (int i = 0; i < 32; i++) {
-					this->SmartLevels[i].temp = this->SmartLevels2[i].temp2;
-					this->SmartLevels[i].fan = this->SmartLevels2[i].fan2;
+				sprintf_s(obuf,
+					sizeof(obuf), "Activation of Fan Control Profile 'Smart Mode 2'");
+				this->
+					Trace(obuf);
+				this->
+					IndSmartLevel = 1;
+				for (
+					int i = 0;
+					i < 32; i++) {
+					this->SmartLevels[i].
+						temp = this->SmartLevels2[i].temp2;
+					this->SmartLevels[i].
+						fan = this->SmartLevels2[i].fan2;
 				}
 				::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 				break;
 			case 1:
-				sprintf_s(obuf, sizeof(obuf), "Activation of Fan Control Profile 'Smart Mode 1'");
-				this->Trace(obuf);
-				this->IndSmartLevel = 0;
-				for (int i = 0; i < 32; i++) {
-					this->SmartLevels[i].temp = this->SmartLevels1[i].temp1;
-					this->SmartLevels[i].fan = this->SmartLevels1[i].fan1;
+				sprintf_s(obuf,
+					sizeof(obuf), "Activation of Fan Control Profile 'Smart Mode 1'");
+				this->
+					Trace(obuf);
+				this->
+					IndSmartLevel = 0;
+				for (
+					int i = 0;
+					i < 32; i++) {
+					this->SmartLevels[i].
+						temp = this->SmartLevels1[i].temp1;
+					this->SmartLevels[i].
+						fan = this->SmartLevels1[i].fan1;
 				}
 				::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 				break;
@@ -721,7 +951,7 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 		switch (mp1)
 		{
 
-		case 1:		// update fan state	
+		case 1:        // update fan state
 			::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 			if (this->Log2csv == 1)
 			{
@@ -730,21 +960,25 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 			break;
 
 
-		case 2:		// update window title
+		case 2:        // update window title
 
-		// skip ManMode?	
+		// skip ManMode?
 			if (this->CurrentMode == 3 && this->MaxTemp > this->ManModeExit2) {
 				this->ModeToDialog(2);
 				::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 			}
 
 			res = this->IsMinimized();
-			if (res && strcmp(this->LastTitle, this->Title2) != 0)
+			if (
+				res && strcmp(this->LastTitle, this->Title2)
+				!= 0)
 			{
 				strcpy_s(this->LastTitle, sizeof(this->LastTitle), this->Title2);
 			}
 			else
-				if (!res && strcmp(this->LastTitle, this->Title) != 0)
+				if (!
+					res && strcmp(this->LastTitle, this->Title)
+					!= 0)
 				{
 					::SetWindowText(this->hwndDialog, this->Title);
 					strcpy_s(this->LastTitle, sizeof(this->LastTitle), this->Title);
@@ -756,27 +990,37 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 				strcpy_s(this->LastTooltip, sizeof(this->LastTooltip), this->Title2);
 				int icon = -1;
 
-				if (this->CurrentModeFromDialog() == 1)
+				if (this->
+
+					CurrentModeFromDialog()
+
+					== 1)
 				{
-					icon = 10;	// gray
+					icon = 10;    // gray
 				}
 				else
 				{
-					icon = 11;	// blue
-					for (int i = 0; i < ARRAYMAX(this->IconLevels); i++)
+					icon = 11;    // blue
+					for (
+						int i = 0;
+						i < ARRAYMAX(this->IconLevels); i++)
 					{
 						if (this->MaxTemp >= this->IconLevels[i])
 						{
-							icon = 12 + i;	// yellow, orange, red
+							icon = 12 + i;    // yellow, orange, red
 						}
 					}
 				}
 
 
-				if (icon != this->CurrentIcon && icon != -1)
+				if (icon != this->
+					CurrentIcon && icon
+					!= -1)
 				{
-					this->pTaskbarIcon->SetIcon(icon);
-					this->CurrentIcon = icon;
+					this->pTaskbarIcon->
+						SetIcon(icon);
+					this->
+						CurrentIcon = icon;
 					if (dioicon && !this->NoBallons) {
 						this->pTaskbarIcon->SetBalloon(NIIF_INFO, "TPFanControl old symbol icon",
 							"shows temperature level by color and state in tooltip, left click on icon shows or hides control window, right click shows menue",
@@ -785,15 +1029,18 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 					}
 
 				}
-				this->iFarbeIconB = icon;
+				this->
+					iFarbeIconB = icon;
 			}
 			break;
-		case 3:		// update vista icon
+		case 3:        // update vista icon
 
-//*************************************************************************************
-//begin named pipe client session
-//
-			if (bResult == FALSE && lbResult == TRUE)
+		//*************************************************************************************
+		//begin named pipe client session
+		//
+			if (bResult ==
+				FALSE && lbResult
+				== TRUE)
 			{
 				_piscreated = FALSE;
 				lbResult = FALSE;
@@ -812,100 +1059,100 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 			{
 				hPipe0 = CreateNamedPipe
 				(
-					g_szPipeName,             // pipe name 
-					PIPE_ACCESS_OUTBOUND,     // write access 
-					PIPE_TYPE_MESSAGE |       // message type pipe 
-					PIPE_READMODE_MESSAGE |   // message-read mode 
-					PIPE_NOWAIT,              // blocking mode 
+					g_szPipeName,             // pipe name
+					PIPE_ACCESS_OUTBOUND,     // write access
+					PIPE_TYPE_MESSAGE |       // message type pipe
+					PIPE_READMODE_MESSAGE |   // message-read mode
+					PIPE_NOWAIT,              // blocking mode
 					PIPE_UNLIMITED_INSTANCES, // max. instances
-					BUFFER_SIZE,              // output buffer size 
-					BUFFER_SIZE,              // input buffer size 
-					NMPWAIT_USE_DEFAULT_WAIT, // client time-out 
-					NULL);                    // default security attribute 
+					BUFFER_SIZE,              // output buffer size
+					BUFFER_SIZE,              // input buffer size
+					NMPWAIT_USE_DEFAULT_WAIT, // client time-out
+					NULL);                    // default security attribute
 				hPipe1 = CreateNamedPipe
 				(
-					g_szPipeName,             // pipe name 
-					PIPE_ACCESS_OUTBOUND,     // write access 
-					PIPE_TYPE_MESSAGE |       // message type pipe 
-					PIPE_READMODE_MESSAGE |   // message-read mode 
-					PIPE_NOWAIT,              // blocking mode 
+					g_szPipeName,             // pipe name
+					PIPE_ACCESS_OUTBOUND,     // write access
+					PIPE_TYPE_MESSAGE |       // message type pipe
+					PIPE_READMODE_MESSAGE |   // message-read mode
+					PIPE_NOWAIT,              // blocking mode
 					PIPE_UNLIMITED_INSTANCES, // max. instances
-					BUFFER_SIZE,              // output buffer size 
-					BUFFER_SIZE,              // input buffer size 
-					NMPWAIT_USE_DEFAULT_WAIT, // client time-out 
-					NULL);                    // default security attribute 
+					BUFFER_SIZE,              // output buffer size
+					BUFFER_SIZE,              // input buffer size
+					NMPWAIT_USE_DEFAULT_WAIT, // client time-out
+					NULL);                    // default security attribute
 				hPipe2 = CreateNamedPipe
 				(
-					g_szPipeName,             // pipe name 
-					PIPE_ACCESS_OUTBOUND,     // write access 
-					PIPE_TYPE_MESSAGE |       // message type pipe 
-					PIPE_READMODE_MESSAGE |   // message-read mode 
-					PIPE_NOWAIT,              // blocking mode 
+					g_szPipeName,             // pipe name
+					PIPE_ACCESS_OUTBOUND,     // write access
+					PIPE_TYPE_MESSAGE |       // message type pipe
+					PIPE_READMODE_MESSAGE |   // message-read mode
+					PIPE_NOWAIT,              // blocking mode
 					PIPE_UNLIMITED_INSTANCES, // max. instances
-					BUFFER_SIZE,              // output buffer size 
-					BUFFER_SIZE,              // input buffer size 
-					NMPWAIT_USE_DEFAULT_WAIT, // client time-out 
-					NULL);                    // default security attribute 
+					BUFFER_SIZE,              // output buffer size
+					BUFFER_SIZE,              // input buffer size
+					NMPWAIT_USE_DEFAULT_WAIT, // client time-out
+					NULL);                    // default security attribute
 				hPipe3 = CreateNamedPipe
 				(
-					g_szPipeName,             // pipe name 
-					PIPE_ACCESS_OUTBOUND,     // write access 
-					PIPE_TYPE_MESSAGE |       // message type pipe 
-					PIPE_READMODE_MESSAGE |   // message-read mode 
-					PIPE_NOWAIT,              // blocking mode 
+					g_szPipeName,             // pipe name
+					PIPE_ACCESS_OUTBOUND,     // write access
+					PIPE_TYPE_MESSAGE |       // message type pipe
+					PIPE_READMODE_MESSAGE |   // message-read mode
+					PIPE_NOWAIT,              // blocking mode
 					PIPE_UNLIMITED_INSTANCES, // max. instances
-					BUFFER_SIZE,              // output buffer size 
-					BUFFER_SIZE,              // input buffer size 
-					NMPWAIT_USE_DEFAULT_WAIT, // client time-out 
-					NULL);                    // default security attribute 
+					BUFFER_SIZE,              // output buffer size
+					BUFFER_SIZE,              // input buffer size
+					NMPWAIT_USE_DEFAULT_WAIT, // client time-out
+					NULL);                    // default security attribute
 				hPipe4 = CreateNamedPipe
 				(
-					g_szPipeName,             // pipe name 
-					PIPE_ACCESS_OUTBOUND,     // write access 
-					PIPE_TYPE_MESSAGE |       // message type pipe 
-					PIPE_READMODE_MESSAGE |   // message-read mode 
-					PIPE_NOWAIT,              // blocking mode 
+					g_szPipeName,             // pipe name
+					PIPE_ACCESS_OUTBOUND,     // write access
+					PIPE_TYPE_MESSAGE |       // message type pipe
+					PIPE_READMODE_MESSAGE |   // message-read mode
+					PIPE_NOWAIT,              // blocking mode
 					PIPE_UNLIMITED_INSTANCES, // max. instances
-					BUFFER_SIZE,              // output buffer size 
-					BUFFER_SIZE,              // input buffer size 
-					NMPWAIT_USE_DEFAULT_WAIT, // client time-out 
-					NULL);                    // default security attribute 
+					BUFFER_SIZE,              // output buffer size
+					BUFFER_SIZE,              // input buffer size
+					NMPWAIT_USE_DEFAULT_WAIT, // client time-out
+					NULL);                    // default security attribute
 				hPipe5 = CreateNamedPipe
 				(
-					g_szPipeName,             // pipe name 
-					PIPE_ACCESS_OUTBOUND,     // write access 
-					PIPE_TYPE_MESSAGE |       // message type pipe 
-					PIPE_READMODE_MESSAGE |   // message-read mode 
-					PIPE_NOWAIT,              // blocking mode 
+					g_szPipeName,             // pipe name
+					PIPE_ACCESS_OUTBOUND,     // write access
+					PIPE_TYPE_MESSAGE |       // message type pipe
+					PIPE_READMODE_MESSAGE |   // message-read mode
+					PIPE_NOWAIT,              // blocking mode
 					PIPE_UNLIMITED_INSTANCES, // max. instances
-					BUFFER_SIZE,              // output buffer size 
-					BUFFER_SIZE,              // input buffer size 
-					NMPWAIT_USE_DEFAULT_WAIT, // client time-out 
-					NULL);                    // default security attribute 
+					BUFFER_SIZE,              // output buffer size
+					BUFFER_SIZE,              // input buffer size
+					NMPWAIT_USE_DEFAULT_WAIT, // client time-out
+					NULL);                    // default security attribute
 				hPipe6 = CreateNamedPipe
 				(
-					g_szPipeName,             // pipe name 
-					PIPE_ACCESS_OUTBOUND,     // write access 
-					PIPE_TYPE_MESSAGE |       // message type pipe 
-					PIPE_READMODE_MESSAGE |   // message-read mode 
-					PIPE_NOWAIT,              // blocking mode 
+					g_szPipeName,             // pipe name
+					PIPE_ACCESS_OUTBOUND,     // write access
+					PIPE_TYPE_MESSAGE |       // message type pipe
+					PIPE_READMODE_MESSAGE |   // message-read mode
+					PIPE_NOWAIT,              // blocking mode
 					PIPE_UNLIMITED_INSTANCES, // max. instances
-					BUFFER_SIZE,              // output buffer size 
-					BUFFER_SIZE,              // input buffer size 
-					NMPWAIT_USE_DEFAULT_WAIT, // client time-out 
-					NULL);                    // default security attribute 
+					BUFFER_SIZE,              // output buffer size
+					BUFFER_SIZE,              // input buffer size
+					NMPWAIT_USE_DEFAULT_WAIT, // client time-out
+					NULL);                    // default security attribute
 				hPipe7 = CreateNamedPipe
 				(
-					g_szPipeName,             // pipe name 
-					PIPE_ACCESS_OUTBOUND,     // write access 
-					PIPE_TYPE_MESSAGE |       // message type pipe 
-					PIPE_READMODE_MESSAGE |   // message-read mode 
-					PIPE_NOWAIT,              // blocking mode 
+					g_szPipeName,             // pipe name
+					PIPE_ACCESS_OUTBOUND,     // write access
+					PIPE_TYPE_MESSAGE |       // message type pipe
+					PIPE_READMODE_MESSAGE |   // message-read mode
+					PIPE_NOWAIT,              // blocking mode
 					PIPE_UNLIMITED_INSTANCES, // max. instances
-					BUFFER_SIZE,              // output buffer size 
-					BUFFER_SIZE,              // input buffer size 
-					NMPWAIT_USE_DEFAULT_WAIT, // client time-out 
-					NULL);                    // default security attribute 
+					BUFFER_SIZE,              // output buffer size
+					BUFFER_SIZE,              // input buffer size
+					NMPWAIT_USE_DEFAULT_WAIT, // client time-out
+					NULL);                    // default security attribute
 
 				if (INVALID_HANDLE_VALUE == hPipe0) {
 					this->Trace("Creating Named Pipe client GUI was NOT successful.");
@@ -945,78 +1192,84 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 
 			// fan speed
 			if (Fahrenheit) {
-				if (fanspeed > 0x1fff) fanspeed = lastfanspeed;
-				sprintf_s(str_value, sizeof(str_value), "%d %d %s %d %d %d ",
+				if (fanspeed > 0x1fff)
+					fanspeed = lastfanspeed;
+				sprintf_s(str_value,
+					sizeof(str_value), "%d %d %s %d %d %d ",
 					this->CurrentMode, (this->MaxTemp * 9 / 5 + 32), this->gSensorNames[iMaxTemp],
 					iFarbeIconB, fanspeed, fanctrl2);
 			}
 			else {
-				if (fanspeed > 0x1fff) fanspeed = lastfanspeed;
-				sprintf_s(str_value, sizeof(str_value), "%d %d %s %d %d %d ",
+				if (fanspeed > 0x1fff)
+					fanspeed = lastfanspeed;
+				sprintf_s(str_value,
+					sizeof(str_value), "%d %d %s %d %d %d ",
 					this->CurrentMode, (this->MaxTemp), this->gSensorNames[iMaxTemp],
 					iFarbeIconB, fanspeed, fanctrl2);
 			}
-			strcpy_s(szBuffer, str_value); //write buffer
+			strcpy_s(szBuffer, str_value
+			); //write buffer
 
 
-	//send to client
+
+			//send to client
 			lbResult = bResult;
 			bResult = WriteFile
 			(
-				hPipe0,                // handle to pipe 
-				szBuffer,             // buffer to write from 
-				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL 
-				&cbBytes,             // number of bytes written 
-				NULL);                // not overlapped I/O 
+				hPipe0,                // handle to pipe
+				szBuffer,             // buffer to write from
+				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL
+				&cbBytes,             // number of bytes written
+				NULL);                // not overlapped I/O
 			bResult = WriteFile
 			(
-				hPipe1,                // handle to pipe 
-				szBuffer,             // buffer to write from 
-				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL 
-				&cbBytes,             // number of bytes written 
-				NULL);                // not overlapped I/O 
+				hPipe1,                // handle to pipe
+				szBuffer,             // buffer to write from
+				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL
+				&cbBytes,             // number of bytes written
+				NULL);                // not overlapped I/O
 			bResult = WriteFile
 			(
-				hPipe2,                // handle to pipe 
-				szBuffer,             // buffer to write from 
-				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL 
-				&cbBytes,             // number of bytes written 
-				NULL);                // not overlapped I/O 
+				hPipe2,                // handle to pipe
+				szBuffer,             // buffer to write from
+				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL
+				&cbBytes,             // number of bytes written
+				NULL);                // not overlapped I/O
 			bResult = WriteFile
 			(
-				hPipe3,                // handle to pipe 
-				szBuffer,             // buffer to write from 
-				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL 
-				&cbBytes,             // number of bytes written 
-				NULL);                // not overlapped I/O 
+				hPipe3,                // handle to pipe
+				szBuffer,             // buffer to write from
+				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL
+				&cbBytes,             // number of bytes written
+				NULL);                // not overlapped I/O
 			bResult = WriteFile
 			(
-				hPipe4,                // handle to pipe 
-				szBuffer,             // buffer to write from 
-				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL 
-				&cbBytes,             // number of bytes written 
-				NULL);                // not overlapped I/O 
+				hPipe4,                // handle to pipe
+				szBuffer,             // buffer to write from
+				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL
+				&cbBytes,             // number of bytes written
+				NULL);                // not overlapped I/O
 			bResult = WriteFile
 			(
-				hPipe5,                // handle to pipe 
-				szBuffer,             // buffer to write from 
-				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL 
-				&cbBytes,             // number of bytes written 
-				NULL);                // not overlapped I/O 
+				hPipe5,                // handle to pipe
+				szBuffer,             // buffer to write from
+				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL
+				&cbBytes,             // number of bytes written
+				NULL);                // not overlapped I/O
 			bResult = WriteFile
 			(
-				hPipe6,                // handle to pipe 
-				szBuffer,             // buffer to write from 
-				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL 
-				&cbBytes,             // number of bytes written 
-				NULL);                // not overlapped I/O 
+				hPipe6,                // handle to pipe
+				szBuffer,             // buffer to write from
+				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL
+				&cbBytes,             // number of bytes written
+				NULL);                // not overlapped I/O
 			bResult = WriteFile
 			(
-				hPipe7,                // handle to pipe 
-				szBuffer,             // buffer to write from 
-				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL 
-				&cbBytes,             // number of bytes written 
-				NULL);                // not overlapped I/O 
+				hPipe7,                // handle to pipe
+				szBuffer,             // buffer to write from
+				strlen(szBuffer) + 1,   // number of bytes to write, include the NULL
+				&cbBytes,             // number of bytes written
+				NULL);                // not overlapped I/O
 
 //end named pipe client session
 //
@@ -1025,10 +1278,18 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 
 			break;
 
-		case 4:		// renew tempicon
-			if (ShowTempIcon && ReIcCycle) {
-				this->RemoveTextIcons();
-				this->ProcessTextIcons();
+		case 4:        // renew tempicon
+			if (
+				ShowTempIcon && ReIcCycle
+				) {
+				this->
+
+					RemoveTextIcons();
+
+				this->
+
+					ProcessTextIcons();
+
 			}
 			break;
 
@@ -1038,9 +1299,16 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 
 		if (this->ShowTempIcon == 1)
 		{
-			this->ProcessTextIcons();  //icon Einstieg
+			this->
+
+				ProcessTextIcons();  //icon Einstieg
 		}
-		else { this->RemoveTextIcons(); }
+		else {
+			this->
+
+				RemoveTextIcons();
+
+		}
 
 		//	say windows not to hold much more memspace
 		//	SetProcessWorkingSetSize(GetCurrentProcess(),65536,WANTED_MEM_SIZE);
@@ -1048,7 +1316,11 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 
 
 	case WM_COMMAND:
-		if (HIWORD(mp1) == BN_CLICKED || HIWORD(mp1) == EN_CHANGE)
+		if (
+			HIWORD(mp1)
+			== BN_CLICKED ||
+			HIWORD(mp1)
+			== EN_CHANGE)
 		{
 			int cmd = LOWORD(mp1);
 
@@ -1056,60 +1328,79 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 
 			char obuf[256] = "", obuf2[128] = "", templist2[512];
 
-			strcpy_s(templist2, sizeof(templist2), "");
+			strcpy_s(templist2,
+				sizeof(templist2), "");
 
 			if (cmd == 7001 || cmd == 7002)
 			{
-				this->ShowAllFromDialog();
+				this->
+
+					ShowAllFromDialog();
+
 				int i;
-				for (i = 0; i < 12; i++)
+				for (
+					i = 0;
+					i < 12; i++)
 				{
 					int temp = this->State.Sensors[i];
 
 					if (temp < 128 && temp != 0)
 					{
 						if (Fahrenheit)
-							sprintf_s(obuf2, sizeof(obuf2), "%d°F", temp * 9 / 5 + 32);
+							sprintf_s(obuf2,
+								sizeof(obuf2), "%d° F", temp * 9 / 5 + 32);
 						else
-							sprintf_s(obuf2, sizeof(obuf2), "%d°C", temp);
+							sprintf_s(obuf2,
+								sizeof(obuf2), "%d° C", temp);
 
 						size_t strlen_templist2 = strlen_s(templist2, sizeof(templist2));
 
-						if (SlimDialog && StayOnTop)
-							sprintf_s(templist2 + strlen_templist2, sizeof(templist2) - strlen_templist2,
+						if (
+							SlimDialog && StayOnTop
+							)
+							sprintf_s(templist2
+								+ strlen_templist2, sizeof(templist2) - strlen_templist2,
 								"%d %s %s (0x%02x)", i + 1, this->State.SensorName[i],
 								obuf2, this->State.SensorAddr[i]);
 						else
-							sprintf_s(templist2 + strlen_templist2, sizeof(templist2) - strlen_templist2,
+							sprintf_s(templist2
+								+ strlen_templist2, sizeof(templist2) - strlen_templist2,
 								"%d %s %s", i + 1, this->State.SensorName[i],
 								obuf2);
 
 
-
-						strcat_s(templist2, sizeof(templist2), "\r\n");
+						strcat_s(templist2,
+							sizeof(templist2), "\r\n");
 					}
 					else
 					{
 						if (this->ShowAll == 1)
 						{
-							sprintf_s(obuf2, sizeof(obuf2), "n/a");
+							sprintf_s(obuf2,
+								sizeof(obuf2), "n/a");
 							size_t strlen_templist2 = strlen_s(templist2, sizeof(templist2));
 
-							if (SlimDialog && StayOnTop)
-								sprintf_s(templist2 + strlen_templist2, sizeof(templist2) - strlen_templist2,
+							if (
+								SlimDialog && StayOnTop
+								)
+								sprintf_s(templist2
+									+ strlen_templist2, sizeof(templist2) - strlen_templist2,
 									"%d %s %s (0x%02x)", i + 1, this->State.SensorName[i],
 									obuf2, this->State.SensorAddr[i]);
 							else
-								sprintf_s(templist2 + strlen_templist2, sizeof(templist2) - strlen_templist2,
+								sprintf_s(templist2
+									+ strlen_templist2, sizeof(templist2) - strlen_templist2,
 									"%d %s %s", i + 1, this->State.SensorName[i],
 									obuf2);
 
-							strcat_s(templist2, sizeof(templist2), "\r\n");
+							strcat_s(templist2,
+								sizeof(templist2), "\r\n");
 						}
 					}
 				}
 				::SetDlgItemText(this->hwndDialog, 8101, templist2);
-				this->icontemp = this->State.Sensors[iMaxTemp];
+				this->
+					icontemp = this->State.Sensors[iMaxTemp];
 			};
 			//end temp display
 
@@ -1132,14 +1423,25 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 				case 5003: // smart1
 					this->ModeToDialog(2);
 					if (this->IndSmartLevel == 1) {
-						sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Activation of Fan Control Profile 'Smart Mode 1'");
-						this->Trace(obuf);
+						sprintf_s(obuf
+							+
+							strlen(obuf),
+							sizeof(obuf) -
+							strlen(obuf),
+							"Activation of Fan Control Profile 'Smart Mode 1'");
+						this->
+							Trace(obuf);
 					}
-					this->IndSmartLevel = 0;
+					this->
+						IndSmartLevel = 0;
 					// rüberkopieren
-					for (int i = 0; i < 32; i++) {
-						this->SmartLevels[i].temp = this->SmartLevels1[i].temp1;
-						this->SmartLevels[i].fan = this->SmartLevels1[i].fan1;
+					for (
+						int i = 0;
+						i < 32; i++) {
+						this->SmartLevels[i].
+							temp = this->SmartLevels1[i].temp1;
+						this->SmartLevels[i].
+							fan = this->SmartLevels1[i].fan1;
 					}
 					::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 					break;
@@ -1147,14 +1449,25 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 				case 5004: // smart2
 					this->ModeToDialog(2);
 					if (this->IndSmartLevel == 0) {
-						sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Activation of Fan Control Profile 'Smart Mode 2'");
-						this->Trace(obuf);
+						sprintf_s(obuf
+							+
+							strlen(obuf),
+							sizeof(obuf) -
+							strlen(obuf),
+							"Activation of Fan Control Profile 'Smart Mode 2'");
+						this->
+							Trace(obuf);
 					}
-					this->IndSmartLevel = 1;
+					this->
+						IndSmartLevel = 1;
 
-					for (int i = 0; i < 32; i++) {
-						this->SmartLevels[i].temp = this->SmartLevels2[i].temp2;
-						this->SmartLevels[i].fan = this->SmartLevels2[i].fan2;
+					for (
+						int i = 0;
+						i < 32; i++) {
+						this->SmartLevels[i].
+							temp = this->SmartLevels2[i].temp2;
+						this->SmartLevels[i].
+							fan = this->SmartLevels2[i].fan2;
 					}
 					::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 					break;
@@ -1176,20 +1489,26 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 					break;
 
 				case 5050: // donate
-					::ShellExecute(NULL, "open", Title5,
+					::ShellExecute(NULL,
+						"open", Title5,
 						NULL, NULL, SW_SHOW);
 					break;
 
 				case 5070: // show temp icon
-					this->ShowTempIcon = 0;
-					this->pTaskbarIcon = new	TASKBARICON(this->hwndDialog, 10, "TPFanControl");
+					this->
+						ShowTempIcon = 0;
+					this->
+						pTaskbarIcon = new TASKBARICON(this->hwndDialog, 10, "TPFanControl");
 					this->pTaskbarIcon->SetIcon(this->CurrentIcon);
 					break;
 
 				case 5080: // show temp icon
-					delete this->pTaskbarIcon;
-					this->pTaskbarIcon = NULL;
-					this->ShowTempIcon = 1;
+					delete this->
+						pTaskbarIcon;
+					this->
+						pTaskbarIcon = NULL;
+					this->
+						ShowTempIcon = 1;
 					break;
 
 				case 5030: // hide window
@@ -1197,7 +1516,7 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 					break;
 
 				case 5020: // end program
-							// Wait for the work thread to terminate
+				// Wait for the work thread to terminate
 					if (this->hThread) {
 						::WaitForSingleObject(this->hThread, INFINITE);
 					}
@@ -1220,13 +1539,16 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 						//										BOOL CloHM=CloseHandle(this->hLock);
 						//										BOOL CloHS=CloseHandle(this->hLockS);
 						this->Trace("Exiting ProcessDialog");
-						::PostMessage(hwnd, WM__DISMISSDLG, IDCANCEL, 0); // exit from ProcessDialog() 
+						::PostMessage(hwnd, WM__DISMISSDLG, IDCANCEL, 0); // exit from ProcessDialog()
 					}
 					else
 					{
 						m_needClose = true;
 					}
-					this->EcAccess.Unlock();
+					this->EcAccess.
+
+						Unlock();
+
 					break;
 
 				}
@@ -1235,7 +1557,7 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 
 
 	case WM_CLOSE:
-		//if (this->MinimizeOnClose && (this->MinimizeToSysTray || this->Runs_as_service))   // 0.24 new:  || this->Runs_as_service) 
+		//if (this->MinimizeOnClose && (this->MinimizeToSysTray || this->Runs_as_service))   // 0.24 new:  || this->Runs_as_service)
 		//{MessageBox(NULL, "will Fenster schließen", "TPFanControl", MB_ICONEXCLAMATION);
 		::ShowWindow(this->hwndDialog, SW_MINIMIZE);   //}
 		rc = TRUE;
@@ -1243,11 +1565,11 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 
 
 	case WM_ENDSESSION:  //WM_QUERYENDSESSION?
-//if running as service do not end
+	//if running as service do not end
 		if (!this->Runs_as_service) {
 
 			// end program
-								// Wait for the work thread to terminate
+			// Wait for the work thread to terminate
 			if (this->hThread) {
 				::WaitForSingleObject(this->hThread, INFINITE);
 			}
@@ -1270,13 +1592,16 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 				//										BOOL CloHM=CloseHandle(this->hLock);
 				//										BOOL CloHS=CloseHandle(this->hLockS);
 				this->Trace("Exiting ProcessDialog");
-				::PostMessage(hwnd, WM__DISMISSDLG, IDCANCEL, 0); // exit from ProcessDialog() 
+				::PostMessage(hwnd, WM__DISMISSDLG, IDCANCEL, 0); // exit from ProcessDialog()
 			}
 			else
 			{
 				m_needClose = true;
 			}
-			this->EcAccess.Unlock();
+			this->EcAccess.
+
+				Unlock();
+
 		}
 		break;
 
@@ -1302,7 +1627,9 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 	case WM__GETDATA:
 		if (!this->hThread && !this->FinalSeen)
 		{
-			this->hThread = this->CreateThread(FANCONTROL_Thread, (ULONG)this);
+			this->
+				hThread = this->CreateThread(FANCONTROL_Thread, (ULONG)
+					this);
 		}
 		break;
 
@@ -1329,8 +1656,12 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 		}
 
 		if (ok) {
-			this->ReadErrorCount = 0;
-			this->HandleData();
+			this->
+				ReadErrorCount = 0;
+			this->
+
+				HandleData();
+
 			if (m_needClose)
 			{
 				this->Trace("Program needs to be closed, changing to BIOS mode");
@@ -1341,10 +1672,14 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 			}
 		}
 		else {
-			sprintf_s(buf, sizeof(buf), "Warning: can't read Status, read error count = %d", this->ReadErrorCount);
-			this->Trace(buf);
-			sprintf_s(buf, sizeof(buf), "We will close to BIOS-Mode after %d consecutive read errors", this->MaxReadErrors);
-			this->Trace(buf);
+			sprintf_s(buf,
+				sizeof(buf), "Warning: can't read Status, read error count = %d", this->ReadErrorCount);
+			this->
+				Trace(buf);
+			sprintf_s(buf,
+				sizeof(buf), "We will close to BIOS-Mode after %d consecutive read errors", this->MaxReadErrors);
+			this->
+				Trace(buf);
 			this->ReadErrorCount++;
 
 			// after so many consecutive read errors, try to switch back to bios mode
@@ -1371,7 +1706,7 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 				::ShowWindow(this->hwndDialog, TRUE);
 				::SetForegroundWindow(this->hwndDialog);
 			}
-			else	::ShowWindow(this->hwndDialog, SW_MINIMIZE);
+			else    ::ShowWindow(this->hwndDialog, SW_MINIMIZE);
 			break;
 
 		case WM_LBUTTONUP:
@@ -1394,7 +1729,7 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 				::ShowWindow(this->hwndDialog, TRUE);
 				::SetForegroundWindow(this->hwndDialog);
 			}
-			else	::ShowWindow(this->hwndDialog, SW_MINIMIZE);
+			else    ::ShowWindow(this->hwndDialog, SW_MINIMIZE);
 			break;
 
 			char testpara;
@@ -1403,8 +1738,12 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 			MENU m(5000);
 
 			int ok_ecaccess = false;
-			for (int i = 0; i < 10; i++) {
-				if (ok_ecaccess = this->EcAccess.Lock(100))break;
+			for (
+				int i = 0;
+				i < 10; i++) {
+				if (
+					ok_ecaccess = this->EcAccess.Lock(100)
+					)break;
 				else ::Sleep(100);
 			}
 
@@ -1479,7 +1818,9 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 			if (this->ShowTempIcon == 1)
 				m.DeleteMenuItem(5080);
 
-			this->EcAccess.Unlock();
+			this->EcAccess.
+
+				Unlock();
 
 			m.Popup(this->hwndDialog);
 		}
@@ -1494,38 +1835,39 @@ FANCONTROL::DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2)
 
 	}
 
-	return rc;
+	return
+		rc;
 }
-
 
 
 //-------------------------------------------------------------------------
 //  reading the EC status may take a while, hence do it in a thread
 //-------------------------------------------------------------------------
 int
-FANCONTROL::WorkThread()
-{
+FANCONTROL::WorkThread() {
 	int ok = this->ReadEcStatus(&this->State);
 
 	::PostMessage(this->hwndDialog, WM__NEWDATA, ok, 0);
 
 	return 0;
 }
+
 // The texticons will be shown depending on variables
 static const int MAX_TEXT_ICONS = 16;
 int icon, oldicon;
 BOOL dishow(TRUE);
 TCHAR myszTip[64];
+
 void FANCONTROL::ProcessTextIcons(void) {
 	oldicon = icon;
 	if (this->CurrentModeFromDialog() == 1) {
-		icon = 10;	// gray
+		icon = 10;    // gray
 	}
 	else {
-		icon = 11;	// blue
+		icon = 11;    // blue
 		for (int i = 0; i < ARRAYMAX(this->IconLevels); i++) {
 			if (this->MaxTemp >= this->IconLevels[i]) {
-				icon = 12 + i;	// yellow, orange, red
+				icon = 12 + i;    // yellow, orange, red
 			}
 		}
 	}
@@ -1569,15 +1911,12 @@ void FANCONTROL::ProcessTextIcons(void) {
 
 	lstrcpyn(myszTip, this->Title2, sizeof(myszTip) - 1);
 
-	if (pTextIconMutex->Lock(100))
-	{
+	if (pTextIconMutex->Lock(100)) {
 		//INIT ppTbTextIcon
-		if (!ppTbTextIcon || this->TaskbarNew)
-		{
+		if (!ppTbTextIcon || this->TaskbarNew) {
 			this->TaskbarNew = 0;
 			ppTbTextIcon = new CTaskbarTextIcon * [MAX_TEXT_ICONS];
-			for (int i = 0; i < MAX_TEXT_ICONS; ++i)
-			{
+			for (int i = 0; i < MAX_TEXT_ICONS; ++i) {
 				ppTbTextIcon[i] = NULL;
 			}
 
@@ -1585,16 +1924,19 @@ void FANCONTROL::ProcessTextIcons(void) {
 			//erstmal nur eins
 
 			ppTbTextIcon[0] = new CTaskbarTextIcon(this->m_hinstapp,
-				this->hwndDialog, WM__TASKBAR, 0, "", "",  //WM_APP+5000 -> WM__TASKBAR
+				this->hwndDialog, WM__TASKBAR, 0, "",
+				"",  //WM_APP+5000 -> WM__TASKBAR
 				this->iFarbeIconB, this->iFontIconB, myszTip);
 
 			if (dishow && !this->NoBallons) {
 				if (Fahrenheit) {
-					ppTbTextIcon[0]->DiShowballon(_T("shows max. temperature in °F and sensor name, left click on icon shows or hides control window, right click shows menue"),
+					ppTbTextIcon[0]->DiShowballon(
+						_T("shows max. temperature in ° F and sensor name, left click on icon shows or hides control window, right click shows menue"),
 						_T("TPFanControl new text icon"), NIIF_INFO, 11);
 				}
 				else {
-					ppTbTextIcon[0]->DiShowballon(_T("shows max. temperature in °C and sensor name, left click on icon shows or hides control window, right click shows menue"),
+					ppTbTextIcon[0]->DiShowballon(
+						_T("shows max. temperature in ° C and sensor name, left click on icon shows or hides control window, right click shows menue"),
 						_T("TPFanControl new text icon"), NIIF_INFO, 11);
 				}
 

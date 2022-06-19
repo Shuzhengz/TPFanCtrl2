@@ -1,4 +1,4 @@
-// --------------------------------------------------------------
+﻿// --------------------------------------------------------------
 //
 //  Thinkpad Fan Control
 //
@@ -21,24 +21,24 @@
 
 
 // Registers of the embedded controller
-#define EC_DATAPORT	0x1600	// EC data io-port 0x62
-#define EC_CTRLPORT	0x1604	// EC control io-port 0x66
+#define EC_DATAPORT    0x1600    // EC data io-port 0x62
+#define EC_CTRLPORT    0x1604    // EC control io-port 0x66
 
 
 // Embedded controller status register bits
-#define EC_STAT_OBF	 0x01 // Output buffer full 
-#define EC_STAT_IBF	 0x02 // Input buffer full 
-#define EC_STAT_CMD	 0x08 // Last write was a command write (0=data) 
+#define EC_STAT_OBF     0x01 // Output buffer full
+#define EC_STAT_IBF     0x02 // Input buffer full
+#define EC_STAT_CMD     0x08 // Last write was a command write (0=data)
 
 
 // Embedded controller commands
 // (write to EC_CTRLPORT to initiate read/write operation)
-#define EC_CTRLPORT_READ	 (char)0x80	
-#define EC_CTRLPORT_WRITE	 (char)0x81
-#define EC_CTRLPORT_QUERY	 (char)0x84
+#define EC_CTRLPORT_READ     (char)0x80
+#define EC_CTRLPORT_WRITE     (char)0x81
+#define EC_CTRLPORT_QUERY     (char)0x84
 
 
-int verbosity = 0;	// verbosity for the logbuf (0= nothing)
+int verbosity = 0;    // verbosity for the logbuf (0= nothing)
 char lasterrorstring[256] = "",
 logbuf[8192] = "";
 
@@ -46,16 +46,13 @@ logbuf[8192] = "";
 //-------------------------------------------------------------------------
 // read a byte from the embedded controller (EC) via port io 
 //-------------------------------------------------------------------------
-int FANCONTROL::ReadByteFromEC(int offset, char* pdata)
-{
-	int numToTrySetup = 50;
-
+int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 	char data = -1;
-	char data2 = -1;
+	int numToTrySetup = 50;
 	int iOK = false;
 	int iTimeout = 100;
 	int iTimeoutBuf = 1000;
-	int	iTime = 0;
+	int iTime = 0;
 	int iTick = 10;
 
 	while (numToTrySetup > 0) {
@@ -76,17 +73,17 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata)
 			}
 
 			::Sleep(iTick);
-		} // try again after a moment
 
-		// if (data & EC_STAT_OBF) data2 = (char)ReadPort(EC_DATAPORT); //clear OBF if full
+		} // try again after a moment
 
 		if (!iOK) return 0;
 		iOK = false;
 
-		WritePort(EC_DATAPORT, offset);						// tell 'em where we want to read from
+		WritePort(EC_DATAPORT, offset);                        // tell 'em where we want to read from
 
 		for (iTime = 0; iTime < iTimeout; iTime += iTick) {    // wait for OBF 
 			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+
 			if ((data & EC_STAT_OBF)) {
 				iOK = true;
 				numToTrySetup = 1;
@@ -113,56 +110,53 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata)
 //-------------------------------------------------------------------------
 // write a byte to the embedded controller (EC) via port io
 //-------------------------------------------------------------------------
-int FANCONTROL::WriteByteToEC(int offset, char NewData)
-{
+int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	char data = -1;
 	char data2 = -1;
 	int iOK = false;
 	int iTimeout = 100;
 	int iTimeoutBuf = 1000;
-	int	iTime = 0;
+	int iTime = 0;
 	int iTick = 10;
 	int numToTrySetup = 5;
 
 	while (numToTrySetup > 0) {
 
-		for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {	// wait for full buffers to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;			// or timeout iTimeoutBuf = 1000
+		for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {            // wait for full buffers to clear
+			data = (char)ReadPort(EC_CTRLPORT) & 0xff;                    // or timeout iTimeoutBuf = 1000
 			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) break;
 			::Sleep(iTick);
 		}
 
-		if (data & EC_STAT_OBF) data2 = (char)ReadPort(EC_DATAPORT); //clear OBF if full
+		if (data & EC_STAT_OBF) data2 = (char)ReadPort(EC_DATAPORT);    //clear OBF if full
 
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) { // wait for IOBF to clear
+		for (iTime = 0; iTime < iTimeout; iTime += iTick) {             // wait for IOBF to clear
 			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
 			if (!(data & EC_STAT_OBF)) {
 				iOK = true;
 				break;
 			}
-
 			::Sleep(iTick);
-
 		}  // try again after a moment
 
 		if (!iOK) return 0;
 		iOK = false;
 
-		WritePort(EC_CTRLPORT, EC_CTRLPORT_WRITE);		// tell 'em we want to "WRITE"
+		WritePort(EC_CTRLPORT, EC_CTRLPORT_WRITE);                      // tell 'em we want to "WRITE"
 
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) { // wait for IBF and OBF to clear
+		for (iTime = 0; iTime < iTimeout; iTime += iTick) {             // wait for IBF and OBF to clear
 			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
 			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
 				iOK = true;
 				break;
 			}
 			::Sleep(iTick);
-		}							// try again after a moment
+		}                            // try again after a moment
 
 		if (!iOK) return 0;
 		iOK = false;
 
-		WritePort(EC_DATAPORT, offset);					// tell 'em where we want to write to
+		WritePort(EC_DATAPORT, offset);                                    // tell 'em where we want to write to
 
 		for (iTime = 0; iTime < iTimeout; iTime += iTick) {             // wait for IBF and OBF to clear
 			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
@@ -177,9 +171,8 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData)
 	}
 
 	if (!iOK) return 0;
-	iOK = false;
 
-	WritePort(EC_DATAPORT, NewData);				// tell 'em what we want to write there
+	WritePort(EC_DATAPORT, NewData);                                    // tell 'em what we want to write there
 
 	return 1;
 }
@@ -189,8 +182,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData)
 //  experimental code
 //-------------------------------------------------------------------------
 void
-FANCONTROL::Test(void)
-{
+FANCONTROL::Test(void) {
 
 	/*
 		//

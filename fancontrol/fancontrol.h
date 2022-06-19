@@ -27,7 +27,7 @@
 #include "TaskbarTextIcon.h"
 
 
-#define FANCONTROLVERSION "2.2.0a Dual Fan"
+#define FANCONTROLVERSION "2.1.3 Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6
@@ -36,7 +36,7 @@
 
 #define setzero(adr, size) memset((void*)(adr), (char)0x00, (size))
 #define ARRAYMAX(tab) (sizeof(tab)/sizeof((tab)[0]))
-#define NULLSTRUCT	{ 0, }
+#define NULLSTRUCT    { 0, }
 
 //begin named pipe TPFanControl01
 #define g_szPipeName "\\\\.\\Pipe\\TPFanControl01"  //Name given to the pipe
@@ -46,8 +46,7 @@
 #define ACK_MESG_RECV "Message received successfully"
 //end named pipe TPFanControl01
 
-class FANCONTROL
-{
+class FANCONTROL {
 protected:
 	HINSTANCE hinstapp;
 	HINSTANCE m_hinstapp;
@@ -67,7 +66,7 @@ protected:
 			FanSpeedHi2;
 
 		char Sensors[12];
-		int  SensorAddr[12];
+		int SensorAddr[12];
 		const char* SensorName[12];
 
 
@@ -85,13 +84,13 @@ protected:
 		int temp2, fan2;
 	} SmartLevels2[32];
 
-	struct FSMARTENTRY {		//fahrenheit values
+	struct FSMARTENTRY {        //fahrenheit values
 		int ftemp, ffan;
 	} FSmartLevels[32];
 
 
-	int IconLevels[3];	// temp levels for coloring the icon
-	int FIconLevels[3];	// fahrenheit temp levels for coloring the icon
+	int IconLevels[3];    // temp levels for coloring the icon
+	int FIconLevels[3];    // fahrenheit temp levels for coloring the icon
 	int CurrentIcon;
 	int IndSmartLevel;
 	int SensorOffset[16];
@@ -187,11 +186,22 @@ protected:
 
 	// dialog.cpp
 	int CurrentModeFromDialog();
+
 	int ShowAllFromDialog();
+
 	void ModeToDialog(int mode);
+
 	void ShowAllToDialog(int mode);
+
 	ULONG DlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2);
-	static ULONG CALLBACK BaseDlgProc(HWND hwnd, ULONG msg, WPARAM mp1, LPARAM mp2);
+
+	static ULONG CALLBACK
+		BaseDlgProc(HWND
+			hwnd,
+			ULONG msg, WPARAM
+			mp1,
+			LPARAM mp2
+		);
 
 	//The default app-icon with changing colors
 	TASKBARICON* pTaskbarIcon;
@@ -200,8 +210,9 @@ protected:
 	MUTEXSEM* pTextIconMutex;
 
 
-
-	static int _stdcall FANCONTROL_Thread(ULONG parm) \
+	static int _stdcall
+		FANCONTROL_Thread(ULONG
+			parm) \
 	{ return ((FANCONTROL*)parm)->WorkThread(); }
 
 	int WorkThread();
@@ -209,10 +220,15 @@ protected:
 
 	// fancontrol.cpp
 	int ReadEcStatus(FCSTATE* pfcstate);
+
 	int ReadEcRaw(FCSTATE* pfcstate);
+
 	int HandleData();
+
 	int SmartControl();
+
 	int SetFan(const char* source, int level, BOOL final = false);
+
 	int SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit);
 
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
@@ -220,23 +236,37 @@ protected:
 
 	// misc.cpp
 	int ReadConfig(const char* filename);
+
 	void Trace(const char* text);
+
 	void Tracecsv(const char* textcsv);
+
 	void Tracecsvod(const char* textcsv);
+
 	BOOL IsMinimized(void);
+
 	void CurrentDateTimeLocalized(char* result, size_t sizeof_result);
+
 	void CurrentTimeLocalized(char* result, size_t sizeof_result);
-	HANDLE CreateThread(int(_stdcall* fnct)(ULONG), ULONG p);
+
+	HANDLE CreateThread(int(_stdcall
+
+		* fnct)(ULONG),
+		ULONG p
+	);
 
 
 	// portio.cpp
 	int ReadByteFromECint(int offset, char* pdata);
+
 	int ReadByteFromEC(int offset, char* pdata);
+
 	int WriteByteToEC(int offset, char data);
 
 public:
 
 	FANCONTROL(HINSTANCE hinstapp);
+
 	~FANCONTROL();
 
 	void Test(void);
@@ -244,9 +274,12 @@ public:
 	int ProcessDialog();
 
 	HWND GetDialogWnd() { return hwndDialog; }
+
 	HANDLE GetWorkThread() { return hThread; }
+
 	// The texticons will be shown depending on variables
 	void ProcessTextIcons(void);
+
 	void RemoveTextIcons(void);
 };
 

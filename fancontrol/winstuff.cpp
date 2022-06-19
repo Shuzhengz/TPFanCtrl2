@@ -1,5 +1,4 @@
-
-// --------------------------------------------------------------
+﻿// --------------------------------------------------------------
 //
 //  Thinkpad Fan Control
 //
@@ -37,13 +36,11 @@ extern HINSTANCE hInstApp, hInstRes;
 //  Create/Delete/Lock/Unlock mutually exclusive semaphores
 //-------------------------------------------------------------------------
 
-MUTEXSEM::MUTEXSEM(int state, const char* name)
-{
+MUTEXSEM::MUTEXSEM(int state, const char* name) {
 	this->hmux = ::CreateMutex(NULL, (state ? TRUE : FALSE), name);
 }
 
-MUTEXSEM::~MUTEXSEM()
-{
+MUTEXSEM::~MUTEXSEM() {
 	int ok = FALSE;
 
 	HANDLE h = this->hmux;
@@ -52,8 +49,7 @@ MUTEXSEM::~MUTEXSEM()
 }
 
 int
-MUTEXSEM::Lock(int millies)
-{
+MUTEXSEM::Lock(int millies) {
 	int ok = FALSE;
 
 	int rc = this->hmux ? ::WaitForSingleObject(this->hmux, millies) : WAIT_FAILED;
@@ -63,8 +59,7 @@ MUTEXSEM::Lock(int millies)
 }
 
 void
-MUTEXSEM::Unlock()
-{
+MUTEXSEM::Unlock() {
 	int ok = ::ReleaseMutex(this->hmux);
 }
 
@@ -81,16 +76,16 @@ MUTEXSEM::Unlock()
 
 struct NOTIFYICONDATAV5 {
 	NOTIFYICONDATA nof;
-	TCHAR szTipExtra[64];	//Version 5.0
-	DWORD dwState;			//Version 5.0
-	DWORD dwStateMask;		//Version 5.0
-	TCHAR szInfo[256];		//Version 5.0
+	TCHAR szTipExtra[64];    //Version 5.0
+	DWORD dwState;            //Version 5.0
+	DWORD dwStateMask;        //Version 5.0
+	TCHAR szInfo[256];        //Version 5.0
 	union {
-		UINT  uTimeout;		//Version 5.0
-		UINT  uVersion;		//Version 5.0
+		UINT uTimeout;        //Version 5.0
+		UINT uVersion;        //Version 5.0
 	} DUMMYUNIONNAME;
-	TCHAR szInfoTitle[64];	//Version 5.0
-	DWORD dwInfoFlags;		//Version 5.0
+	TCHAR szInfoTitle[64];    //Version 5.0
+	DWORD dwInfoFlags;        //Version 5.0
 };
 
 struct NOTIFYICONDATAV6 {
@@ -130,23 +125,20 @@ TASKBARICON::TASKBARICON(HWND hwndowner, int idicon, const char* tooltip)
 	: Owner(hwndowner),
 	Id(idicon),
 	IconId(idicon),
-	osVersion(0)
-{
+	osVersion(0) {
 	// ampersand must be escaped
 	strcpy_s(this->Tooltip, sizeof(Tooltip), tooltip ? tooltip : "");
 
 	this->Construct();
 }
 
-TASKBARICON::~TASKBARICON()
-{
+TASKBARICON::~TASKBARICON() {
 	this->Destroy();
 }
 
 
 BOOL
-TASKBARICON::Construct()
-{
+TASKBARICON::Construct() {
 	NOTIFYICONDATAV5 nofv5 = NULLSTRUCT;
 	NOTIFYICONDATA& nof = nofv5.nof;
 
@@ -159,7 +151,8 @@ TASKBARICON::Construct()
 	nof.uCallbackMessage = WM__TASKBAR;
 
 	if (this->IconId) {
-		nof.hIcon = (HICON)::LoadImage(hInstRes, MAKEINTRESOURCE(this->IconId), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
+		nof.hIcon = (HICON)
+			::LoadImage(hInstRes, MAKEINTRESOURCE(this->IconId), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
 		nof.uFlags |= NIF_ICON;
 	}
 
@@ -170,7 +163,7 @@ TASKBARICON::Construct()
 
 	//
 	// try a version 5 init (Shell_NotifyIcon has different behaviour from up win2000=version 5)
-	// 
+	//
 	nof.cbSize = sizeof(nofv5);
 	this->UpAndRunning = ::Shell_NotifyIcon(NIM_ADD, &nof);
 
@@ -188,8 +181,7 @@ TASKBARICON::Construct()
 }
 
 void
-TASKBARICON::Destroy(BOOL keep)
-{
+TASKBARICON::Destroy(BOOL keep) {
 	NOTIFYICONDATA nof = NULLSTRUCT;
 
 	nof.cbSize = sizeof(nof);
@@ -206,21 +198,18 @@ TASKBARICON::Destroy(BOOL keep)
 }
 
 BOOL
-TASKBARICON::IsUpAndRunning()
-{
+TASKBARICON::IsUpAndRunning() {
 	return this->UpAndRunning;
 }
 
 BOOL
-TASKBARICON::HasExtendedFeatures(void)
-{
+TASKBARICON::HasExtendedFeatures(void) {
 	return this->osVersion >= 5;  //maybee we want to implement version 6 from up vista
 }
 
 
 BOOL
-TASKBARICON::RebuildIfNecessary(BOOL force)
-{
+TASKBARICON::RebuildIfNecessary(BOOL force) {
 	char tt[256];
 
 	strcpy_s(tt, sizeof(tt), this->Tooltip); // avoid selfassignment
@@ -235,8 +224,7 @@ TASKBARICON::RebuildIfNecessary(BOOL force)
 
 
 int
-TASKBARICON::SetIcon(int iconid)
-{
+TASKBARICON::SetIcon(int iconid) {
 	BOOL ok;
 	NOTIFYICONDATA nof = NULLSTRUCT;
 
@@ -246,7 +234,8 @@ TASKBARICON::SetIcon(int iconid)
 	nof.hWnd = this->Owner;
 	nof.uID = this->Id;
 	nof.uFlags = NIF_ICON;
-	nof.hIcon = (HICON)::LoadImage(hInstRes, MAKEINTRESOURCE(this->IconId), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
+	nof.hIcon = (HICON)
+		::LoadImage(hInstRes, MAKEINTRESOURCE(this->IconId), IMAGE_ICON, 16, 16, LR_DEFAULTCOLOR);
 
 	ok = ::Shell_NotifyIcon(NIM_MODIFY, &nof);
 
@@ -263,14 +252,12 @@ TASKBARICON::SetIcon(int iconid)
 }
 
 int
-TASKBARICON::GetIcon(void)
-{
+TASKBARICON::GetIcon(void) {
 	return this->IconId;
 }
 
 int
-TASKBARICON::SetTooltip(const char* tooltip)
-{
+TASKBARICON::SetTooltip(const char* tooltip) {
 	BOOL ok = 0;
 
 
@@ -301,8 +288,7 @@ TASKBARICON::SetTooltip(const char* tooltip)
 
 
 int
-TASKBARICON::SetBalloon(ULONG flags, const char* title, const char* text, int timeout)
-{
+TASKBARICON::SetBalloon(ULONG flags, const char* title, const char* text, int timeout) {
 	BOOL ok;
 
 	NOTIFYICONDATA nof = NULLSTRUCT;
@@ -345,44 +331,38 @@ TASKBARICON::SetBalloon(ULONG flags, const char* title, const char* text, int ti
 MENU::MENU(HWND w)
 	: hMenu(::GetMenu(w)),
 	hWndOwner(w),
-	IsLoaded(FALSE)
-{
+	IsLoaded(FALSE) {
 
 }
 
 MENU::MENU(HMENU hmenu)
 	: hMenu(hmenu),
 	hWndOwner(NULL),
-	IsLoaded(FALSE)
-{
+	IsLoaded(FALSE) {
 
 }
 
 MENU::MENU(int id, HINSTANCE hdll)
 	: hMenu(::LoadMenu(((ULONG)hdll == (ULONG)-1) ? hInstRes : hdll, MAKEINTRESOURCE(id))),
 	hWndOwner(NULL),
-	IsLoaded(TRUE)
-{
+	IsLoaded(TRUE) {
 
 }
 
 
 void
-MENU::EnableMenuItem(int id, int status)
-{
+MENU::EnableMenuItem(int id, int status) {
 	::EnableMenuItem(*this, id,
 		MF_BYCOMMAND | (status ? MF_ENABLED : MF_GRAYED));
 }
 
 void
-MENU::DisableMenuItem(int id)
-{
+MENU::DisableMenuItem(int id) {
 	this->EnableMenuItem(id, FALSE);
 }
 
 int
-MENU::DeleteMenuItem(int id, BOOL idispos)
-{
+MENU::DeleteMenuItem(int id, BOOL idispos) {
 	int rc = ::DeleteMenu(*this, id, idispos ? MF_BYPOSITION : MF_BYCOMMAND);
 	if (this->hWndOwner)
 		::DrawMenuBar(this->hWndOwner);
@@ -391,53 +371,45 @@ MENU::DeleteMenuItem(int id, BOOL idispos)
 }
 
 void
-MENU::CheckMenuItem(int id, int status)
-{
+MENU::CheckMenuItem(int id, int status) {
 	::CheckMenuItem(*this, id,
 		MF_BYCOMMAND | (status ? MF_CHECKED : MF_UNCHECKED));
 }
 
 void
-MENU::UncheckMenuItem(int id)
-{
+MENU::UncheckMenuItem(int id) {
 	this->CheckMenuItem(id, FALSE);
 }
 
 BOOL
-MENU::IsFlags(int id, int flags)
-{
+MENU::IsFlags(int id, int flags) {
 	return ((::GetMenuState(*this, id, MF_BYCOMMAND) & flags) != 0);
 }
 
 BOOL
-MENU::IsMenuItemSeparator(int pos)
-{
+MENU::IsMenuItemSeparator(int pos) {
 	MENUITEMINFO mii = { sizeof(mii), MIIM_TYPE, };
 	::GetMenuItemInfo(*this, pos, TRUE, &mii);
 	return mii.fType == MFT_SEPARATOR;
 }
 
 BOOL
-MENU::IsMenuItemEnabled(int id)
-{
+MENU::IsMenuItemEnabled(int id) {
 	return !this->IsFlags(id, MF_DISABLED | MF_GRAYED);
 }
 
 BOOL
-MENU::IsMenuItemDisabled(int id)
-{
+MENU::IsMenuItemDisabled(int id) {
 	return this->IsFlags(id, MF_DISABLED | MF_GRAYED);
 }
 
 BOOL
-MENU::IsMenuItemChecked(int id)
-{
+MENU::IsMenuItemChecked(int id) {
 	return this->IsFlags(id, MF_CHECKED);
 }
 
 int
-MENU::GetNumMenuItems()
-{
+MENU::GetNumMenuItems() {
 	return ::GetMenuItemCount(*this);
 }
 
@@ -446,8 +418,7 @@ MENU::GetNumMenuItems()
 //  return the sub-menu handle of a menu item at a given position
 //--------------------------------------------------------------------
 HMENU
-MENU::GetSubmenuFromPos(int pos)
-{
+MENU::GetSubmenuFromPos(int pos) {
 	HMENU rc = NULL;
 
 	rc = (HMENU)GetSubMenu(*this, pos);
@@ -460,8 +431,7 @@ MENU::GetSubmenuFromPos(int pos)
 //  return the item pos of a menu entry (search by id)
 //--------------------------------------------------------------------
 int
-MENU::GetMenuPosFromID(int id)
-{
+MENU::GetMenuPosFromID(int id) {
 	int rc = -1;
 
 	int i, mid, numof = ::GetMenuItemCount(*this);
@@ -482,8 +452,7 @@ MENU::GetMenuPosFromID(int id)
 //  
 //-------------------------------------------------------------------------
 BOOL
-MENU::InsertItem(const char* text, int id, int pos)
-{
+MENU::InsertItem(const char* text, int id, int pos) {
 	MENUITEMINFO mi = NULLSTRUCT;
 	mi.cbSize = sizeof(mi);
 	mi.fMask = MIIM_TYPE | MIIM_ID;
@@ -506,8 +475,7 @@ MENU::InsertItem(const char* text, int id, int pos)
 //  
 //-------------------------------------------------------------------------
 int
-MENU::Popup(HWND hwndowner, POINT* ppoint, BOOL synchtrack)
-{
+MENU::Popup(HWND hwndowner, POINT* ppoint, BOOL synchtrack) {
 	POINT point;
 	HMENU hmenu, hmenuShow;
 
@@ -517,7 +485,8 @@ MENU::Popup(HWND hwndowner, POINT* ppoint, BOOL synchtrack)
 		::GetCursorPos(&point);
 
 	hmenu = CreateMenu();
-	::AppendMenu(hmenu, MF_POPUP | MF_STRING, (UINT)this->hMenu, "BLUB");
+	::AppendMenu(hmenu, MF_POPUP | MF_STRING, (UINT)
+		this->hMenu, "BLUB");
 	hmenuShow = ::GetSubMenu(hmenu, 0);
 	RECT r = { 0, 0, 10, 10 };
 

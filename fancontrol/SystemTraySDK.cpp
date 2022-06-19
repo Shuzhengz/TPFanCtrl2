@@ -1,4 +1,4 @@
-// TrayIcon.cpp: implementation of the CSystemTray class.
+﻿// TrayIcon.cpp: implementation of the CSystemTray class.
 //
 // NON-MFC VERSION
 //
@@ -32,7 +32,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #ifndef ASSERT
+
 #include <assert.h>
+
 #define ASSERT assert
 #endif
 
@@ -60,26 +62,24 @@ HWND  CSystemTray::m_hWndInvisible;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-CSystemTray::CSystemTray()
-{
+CSystemTray::CSystemTray() {
 	Initialise();
 }
 
 CSystemTray::CSystemTray
 (
-	HINSTANCE hInst,		// Handle to application instance
-	HWND hParent,			// The window that will recieve tray notifications
-	UINT uCallbackMessage,	// the callback message to send to parent
-	LPCTSTR szToolTip,		// tray icon tooltip
-	HICON icon,				// Handle to icon
-	UINT uID,				// Identifier of tray icon
-	BOOL bHidden,			// Hidden on creation?
-	LPCTSTR szBalloonTip,	// Ballon tip (w2k only)
-	LPCTSTR szBalloonTitle,	// Balloon tip title (w2k)
-	DWORD dwBalloonIcon,	// Ballon tip icon (w2k)
-	UINT uBalloonTimeout	// Balloon timeout (w2k)
-)
-{
+	HINSTANCE hInst,        // Handle to application instance
+	HWND hParent,            // The window that will recieve tray notifications
+	UINT uCallbackMessage,    // the callback message to send to parent
+	LPCTSTR szToolTip,        // tray icon tooltip
+	HICON icon,                // Handle to icon
+	UINT uID,                // Identifier of tray icon
+	BOOL bHidden,            // Hidden on creation?
+	LPCTSTR szBalloonTip,    // Ballon tip (w2k only)
+	LPCTSTR szBalloonTitle,    // Balloon tip title (w2k)
+	DWORD dwBalloonIcon,    // Ballon tip icon (w2k)
+	UINT uBalloonTimeout    // Balloon timeout (w2k)
+) {
 	Initialise();
 	Create
 	(
@@ -97,8 +97,7 @@ CSystemTray::CSystemTray
 	);
 }
 
-void CSystemTray::Initialise()
-{
+void CSystemTray::Initialise() {
 	// If maintaining a list of all TrayIcon windows (instead of
 	// only allowing a single TrayIcon per application) then add
 	// this TrayIcon to the list
@@ -122,16 +121,15 @@ void CSystemTray::Initialise()
 	m_uCreationFlags = 0;
 
 #ifdef SYSTEMTRAY_USEW2K
-	OSVERSIONINFO os = { sizeof(os) };
-	GetVersionEx(&os);
+	OSVERSIONINFOEX os = { sizeof(os) };
+	VerifyVersionInfoA(&os, VER_MAJORVERSION, 1);
 	m_bWin2K = (VER_PLATFORM_WIN32_NT == os.dwPlatformId && os.dwMajorVersion >= 5);
 #else
 	m_bWin2K = FALSE;
 #endif
 }
 
-ATOM CSystemTray::RegisterClass(HINSTANCE hInstance)
-{
+ATOM CSystemTray::RegisterClass(HINSTANCE hInstance) {
 	WNDCLASSEX wcex;
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -163,17 +161,13 @@ BOOL CSystemTray::Create(
 	LPCTSTR szBalloonTitle /*=NULL*/,
 	DWORD dwBalloonIcon /*=NIIF_NONE*/,
 	UINT uBalloonTimeout /*=10*/
-)
-
-
-{
+) {
 #ifdef _WIN32_WCE
 	m_bEnabled = TRUE;
 #else
 	// this is only for Windows 95 (or higher)
 	m_bEnabled = (GetVersion() & 0xff) >= 4;
-	if (!m_bEnabled)
-	{
+	if (!m_bEnabled) {
 		ASSERT(FALSE);
 		return FALSE;
 	}
@@ -244,7 +238,7 @@ BOOL CSystemTray::Create(
 	m_bHidden = bHidden;
 	m_hTargetWnd = m_tnd.hWnd;
 
-#ifdef SYSTEMTRAY_USEW2K    
+#ifdef SYSTEMTRAY_USEW2K
 	if (m_bWin2K && m_bHidden)
 	{
 		m_tnd.uFlags = NIF_STATE;
@@ -253,7 +247,7 @@ BOOL CSystemTray::Create(
 	}
 #endif
 
-	m_uCreationFlags = m_tnd.uFlags;	// Store in case we need to recreate in OnTaskBarCreate
+	m_uCreationFlags = m_tnd.uFlags;    // Store in case we need to recreate in OnTaskBarCreate
 
 	BOOL bResult = FALSE;
 
@@ -267,7 +261,7 @@ BOOL CSystemTray::Create(
 		m_bShowIconPending = m_bHidden = m_bRemoved = !bResult;
 	}
 
-#ifdef SYSTEMTRAY_USEW2K    
+#ifdef SYSTEMTRAY_USEW2K
 	if (m_bWin2K && szBalloonTip)
 	{
 		// Zero out the balloon text string so that later operations won't redisplay
@@ -280,8 +274,7 @@ BOOL CSystemTray::Create(
 	return bResult;
 }
 
-CSystemTray::~CSystemTray()
-{
+CSystemTray::~CSystemTray() {
 	RemoveIcon();
 	m_IconList.clear();
 	if (m_hWnd)
@@ -291,26 +284,22 @@ CSystemTray::~CSystemTray()
 /////////////////////////////////////////////////////////////////////////////
 // CSystemTray icon manipulation
 
-void CSystemTray::SetFocus()
-{
+void CSystemTray::SetFocus() {
 #ifdef SYSTEMTRAY_USEW2K
 	Shell_NotifyIcon(NIM_SETFOCUS, &m_tnd);
 #endif
 }
 
-BOOL CSystemTray::MoveToRight()
-{
+BOOL CSystemTray::MoveToRight() {
 	RemoveIcon();
 	return AddIcon();
 }
 
-BOOL CSystemTray::AddIcon()
-{
+BOOL CSystemTray::AddIcon() {
 	if (!m_bRemoved)
 		RemoveIcon();
 
-	if (m_bEnabled)
-	{
+	if (m_bEnabled) {
 		m_tnd.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
 		if (!Shell_NotifyIcon(NIM_ADD, &m_tnd))
 			m_bShowIconPending = TRUE;
@@ -320,8 +309,7 @@ BOOL CSystemTray::AddIcon()
 	return (m_bRemoved == FALSE);
 }
 
-BOOL CSystemTray::RemoveIcon()
-{
+BOOL CSystemTray::RemoveIcon() {
 	m_bShowIconPending = FALSE;
 
 	if (!m_bEnabled || m_bRemoved)
@@ -334,8 +322,7 @@ BOOL CSystemTray::RemoveIcon()
 	return (m_bRemoved == TRUE);
 }
 
-BOOL CSystemTray::HideIcon()
-{
+BOOL CSystemTray::HideIcon() {
 	if (!m_bEnabled || m_bRemoved || m_bHidden)
 		return TRUE;
 
@@ -355,8 +342,7 @@ BOOL CSystemTray::HideIcon()
 	return (m_bHidden == TRUE);
 }
 
-BOOL CSystemTray::ShowIcon()
-{
+BOOL CSystemTray::ShowIcon() {
 	if (m_bRemoved)
 		return AddIcon();
 
@@ -378,8 +364,7 @@ BOOL CSystemTray::ShowIcon()
 	return (m_bHidden == FALSE);
 }
 
-BOOL CSystemTray::SetIcon(HICON hIcon)
-{
+BOOL CSystemTray::SetIcon(HICON hIcon) {
 	if (!m_bEnabled)
 		return FALSE;
 
@@ -392,14 +377,15 @@ BOOL CSystemTray::SetIcon(HICON hIcon)
 		return Shell_NotifyIcon(NIM_MODIFY, &m_tnd);
 }
 
-BOOL CSystemTray::SetIcon(LPCTSTR lpszIconName)
-{
-	HICON hIcon = (HICON) ::LoadImage(
-		m_hInstance,
-		lpszIconName,
-		IMAGE_ICON,
-		0, 0,
-		LR_LOADFROMFILE);
+BOOL CSystemTray::SetIcon(LPCTSTR lpszIconName) {
+	HICON
+		hIcon = (HICON)
+		::LoadImage(
+			m_hInstance,
+			lpszIconName,
+			IMAGE_ICON,
+			0, 0,
+			LR_LOADFROMFILE);
 
 	if (!hIcon)
 		return FALSE;
@@ -408,53 +394,48 @@ BOOL CSystemTray::SetIcon(LPCTSTR lpszIconName)
 	return returnCode;
 }
 
-BOOL CSystemTray::SetIcon(UINT nIDResource)
-{
-	HICON hIcon = (HICON) ::LoadImage(m_hInstance,
-		MAKEINTRESOURCE(nIDResource),
-		IMAGE_ICON,
-		0, 0,
-		LR_DEFAULTCOLOR);
+BOOL CSystemTray::SetIcon(UINT nIDResource) {
+	HICON
+		hIcon = (HICON)
+		::LoadImage(m_hInstance,
+			MAKEINTRESOURCE(nIDResource),
+			IMAGE_ICON,
+			0, 0,
+			LR_DEFAULTCOLOR);
 
 	BOOL returnCode = SetIcon(hIcon);
 	::DestroyIcon(hIcon);
 	return returnCode;
 }
 
-BOOL CSystemTray::SetStandardIcon(LPCTSTR lpIconName)
-{
+BOOL CSystemTray::SetStandardIcon(LPCTSTR lpIconName) {
 	HICON hIcon = ::LoadIcon(NULL, lpIconName);
 
 	return SetIcon(hIcon);
 }
 
-BOOL CSystemTray::SetStandardIcon(UINT nIDResource)
-{
+BOOL CSystemTray::SetStandardIcon(UINT nIDResource) {
 	HICON hIcon = ::LoadIcon(NULL, MAKEINTRESOURCE(nIDResource));
 
 	return SetIcon(hIcon);
 }
 
-HICON CSystemTray::GetIcon() const
-{
+HICON CSystemTray::GetIcon() const {
 	return (m_bEnabled) ? m_tnd.hIcon : NULL;
 }
 
-BOOL CSystemTray::SetIconList(UINT uFirstIconID, UINT uLastIconID)
-{
+BOOL CSystemTray::SetIconList(UINT uFirstIconID, UINT uLastIconID) {
 	if (uFirstIconID > uLastIconID)
 		return FALSE;
 
 	UINT uIconArraySize = uLastIconID - uFirstIconID + 1;
 
 	m_IconList.clear();
-	try
-	{
+	try {
 		for (UINT i = uFirstIconID; i <= uLastIconID; i++)
 			m_IconList.push_back(::LoadIcon(m_hInstance, MAKEINTRESOURCE(i)));
 	}
-	catch (...)
-	{
+	catch (...) {
 		m_IconList.clear();
 		return FALSE;
 	}
@@ -462,16 +443,14 @@ BOOL CSystemTray::SetIconList(UINT uFirstIconID, UINT uLastIconID)
 	return TRUE;
 }
 
-BOOL CSystemTray::SetIconList(HICON* pHIconList, UINT nNumIcons)
-{
+BOOL CSystemTray::SetIconList(HICON* pHIconList, UINT nNumIcons) {
 	m_IconList.clear();
 
 	try {
 		for (UINT i = 0; i <= nNumIcons; i++)
 			m_IconList.push_back(pHIconList[i]);
 	}
-	catch (...)
-	{
+	catch (...) {
 		m_IconList.clear();
 		return FALSE;
 	}
@@ -479,8 +458,7 @@ BOOL CSystemTray::SetIconList(HICON* pHIconList, UINT nNumIcons)
 	return TRUE;
 }
 
-BOOL CSystemTray::Animate(UINT nDelayMilliSeconds, int nNumSeconds /*=-1*/)
-{
+BOOL CSystemTray::Animate(UINT nDelayMilliSeconds, int nNumSeconds /*=-1*/) {
 	if (m_IconList.empty())
 		return FALSE;
 
@@ -496,8 +474,7 @@ BOOL CSystemTray::Animate(UINT nDelayMilliSeconds, int nNumSeconds /*=-1*/)
 	return (m_uIDTimer != 0);
 }
 
-BOOL CSystemTray::StepAnimation()
-{
+BOOL CSystemTray::StepAnimation() {
 	if (!m_IconList.size())
 		return FALSE;
 
@@ -508,8 +485,7 @@ BOOL CSystemTray::StepAnimation()
 	return SetIcon(m_IconList[m_nCurrentIcon]);
 }
 
-BOOL CSystemTray::StopAnimation()
-{
+BOOL CSystemTray::StopAnimation() {
 	BOOL bResult = FALSE;
 
 	if (m_uIDTimer)
@@ -526,8 +502,7 @@ BOOL CSystemTray::StopAnimation()
 /////////////////////////////////////////////////////////////////////////////
 // CSystemTray tooltip text manipulation
 
-BOOL CSystemTray::SetTooltipText(LPCTSTR pszTip)
-{
+BOOL CSystemTray::SetTooltipText(LPCTSTR pszTip) {
 	ASSERT(_tcslen(pszTip) < m_nMaxTooltipLength);
 
 	if (!m_bEnabled)
@@ -542,8 +517,7 @@ BOOL CSystemTray::SetTooltipText(LPCTSTR pszTip)
 		return Shell_NotifyIcon(NIM_MODIFY, &m_tnd);
 }
 
-BOOL CSystemTray::SetTooltipText(UINT nID)
-{
+BOOL CSystemTray::SetTooltipText(UINT nID) {
 	TCHAR strBuffer[1024];
 	ASSERT(1024 >= m_nMaxTooltipLength);
 
@@ -553,8 +527,7 @@ BOOL CSystemTray::SetTooltipText(UINT nID)
 	return SetTooltipText(strBuffer);
 }
 
-LPTSTR CSystemTray::GetTooltipText() const
-{
+LPTSTR CSystemTray::GetTooltipText() const {
 	if (!m_bEnabled)
 		return FALSE;
 
@@ -599,9 +572,8 @@ LPTSTR CSystemTray::GetTooltipText() const
 
 BOOL CSystemTray::ShowBalloon(LPCTSTR szText,
 	LPCTSTR szTitle  /*=NULL*/,
-	DWORD   dwIcon   /*=NIIF_NONE*/,
-	UINT    uTimeout /*=10*/)
-{
+	DWORD dwIcon   /*=NIIF_NONE*/,
+	UINT uTimeout /*=10*/) {
 #ifndef SYSTEMTRAY_USEW2K
 	return FALSE;
 #else
@@ -652,14 +624,12 @@ BOOL CSystemTray::ShowBalloon(LPCTSTR szText,
 /////////////////////////////////////////////////////////////////////////////
 // CSystemTray notification window stuff
 
-BOOL CSystemTray::SetNotificationWnd(HWND hNotifyWnd)
-{
+BOOL CSystemTray::SetNotificationWnd(HWND hNotifyWnd) {
 	if (!m_bEnabled)
 		return FALSE;
 
 	// Make sure Notification window is valid
-	if (!hNotifyWnd || !::IsWindow(hNotifyWnd))
-	{
+	if (!hNotifyWnd || !::IsWindow(hNotifyWnd)) {
 		ASSERT(FALSE);
 		return FALSE;
 	}
@@ -673,22 +643,19 @@ BOOL CSystemTray::SetNotificationWnd(HWND hNotifyWnd)
 		return Shell_NotifyIcon(NIM_MODIFY, &m_tnd);
 }
 
-HWND CSystemTray::GetNotificationWnd() const
-{
+HWND CSystemTray::GetNotificationWnd() const {
 	return m_tnd.hWnd;
 }
 
 // Hatr added
 
 // Change or retrive the window to send menu commands to
-BOOL CSystemTray::SetTargetWnd(HWND hTargetWnd)
-{
+BOOL CSystemTray::SetTargetWnd(HWND hTargetWnd) {
 	m_hTargetWnd = hTargetWnd;
 	return TRUE;
 } // CSystemTray::SetTargetWnd()
 
-HWND CSystemTray::GetTargetWnd() const
-{
+HWND CSystemTray::GetTargetWnd() const {
 	if (m_hTargetWnd)
 		return m_hTargetWnd;
 	else
@@ -698,8 +665,7 @@ HWND CSystemTray::GetTargetWnd() const
 /////////////////////////////////////////////////////////////////////////////
 // CSystemTray notification message stuff
 
-BOOL CSystemTray::SetCallbackMessage(UINT uCallbackMessage)
-{
+BOOL CSystemTray::SetCallbackMessage(UINT uCallbackMessage) {
 	if (!m_bEnabled)
 		return FALSE;
 
@@ -715,16 +681,14 @@ BOOL CSystemTray::SetCallbackMessage(UINT uCallbackMessage)
 		return Shell_NotifyIcon(NIM_MODIFY, &m_tnd);
 }
 
-UINT CSystemTray::GetCallbackMessage() const
-{
+UINT CSystemTray::GetCallbackMessage() const {
 	return m_tnd.uCallbackMessage;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // CSystemTray menu manipulation
 
-BOOL CSystemTray::SetMenuDefaultItem(UINT uItem, BOOL bByPos)
-{
+BOOL CSystemTray::SetMenuDefaultItem(UINT uItem, BOOL bByPos) {
 #ifdef _WIN32_WCE
 	return FALSE;
 #else
@@ -739,8 +703,7 @@ BOOL CSystemTray::SetMenuDefaultItem(UINT uItem, BOOL bByPos)
 		return FALSE;
 
 	HMENU hSubMenu = ::GetSubMenu(hMenu, 0);
-	if (!hSubMenu)
-	{
+	if (!hSubMenu) {
 		::DestroyMenu(hMenu);
 		return FALSE;
 	}
@@ -754,8 +717,7 @@ BOOL CSystemTray::SetMenuDefaultItem(UINT uItem, BOOL bByPos)
 #endif
 }
 
-void CSystemTray::GetMenuDefaultItem(UINT& uItem, BOOL& bByPos)
-{
+void CSystemTray::GetMenuDefaultItem(UINT& uItem, BOOL& bByPos) {
 	uItem = m_DefaultMenuItemID;
 	bByPos = m_DefaultMenuItemByPos;
 }
@@ -775,10 +737,8 @@ BEGIN_MESSAGE_MAP(CSystemTray, CWnd)
 END_MESSAGE_MAP()
 */
 
-LRESULT CSystemTray::OnTimer(UINT nIDEvent)
-{
-	if (nIDEvent != m_uIDTimer)
-	{
+LRESULT CSystemTray::OnTimer(UINT nIDEvent) {
+	if (nIDEvent != m_uIDTimer) {
 		ASSERT(FALSE);
 		return 0L;
 	}
@@ -787,8 +747,7 @@ LRESULT CSystemTray::OnTimer(UINT nIDEvent)
 	time(&CurrentTime);
 
 	time_t period = CurrentTime - m_StartTime;
-	if (m_nAnimationPeriod > 0 && m_nAnimationPeriod < period)
-	{
+	if (m_nAnimationPeriod > 0 && m_nAnimationPeriod < period) {
 		StopAnimation();
 		return 0L;
 	}
@@ -801,23 +760,22 @@ LRESULT CSystemTray::OnTimer(UINT nIDEvent)
 // This is called whenever the taskbar is created (eg after explorer crashes
 // and restarts. Please note that the WM_TASKBARCREATED message is only passed
 // to TOP LEVEL windows (like WM_QUERYNEWPALETTE)
-LRESULT CSystemTray::OnTaskbarCreated(WPARAM wParam, LPARAM lParam)
-{
+LRESULT CSystemTray::OnTaskbarCreated(WPARAM wParam, LPARAM lParam) {
 	InstallIconPending();
 	return 0L;
 }
 
 #ifndef _WIN32_WCE
-LRESULT CSystemTray::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
-{
+
+LRESULT CSystemTray::OnSettingChange(UINT uFlags, LPCTSTR lpszSection) {
 	if (uFlags == SPI_SETWORKAREA)
 		InstallIconPending();
 	return 0L;
 }
+
 #endif
 
-LRESULT CSystemTray::OnTrayNotification(UINT wParam, LONG lParam)
-{
+LRESULT CSystemTray::OnTrayNotification(UINT wParam, LONG lParam) {
 	//Return quickly if its not for this tray icon
 	if (wParam != m_tnd.uID)
 		return 0L;
@@ -839,8 +797,7 @@ LRESULT CSystemTray::OnTrayNotification(UINT wParam, LONG lParam)
 			return 0;
 
 		HMENU hSubMenu = ::GetSubMenu(hMenu, 0);
-		if (!hSubMenu)
-		{
+		if (!hSubMenu) {
 			::DestroyMenu(hMenu);        //Be sure to Destroy Menu Before Returning
 			return 0;
 		}
@@ -880,8 +837,7 @@ LRESULT CSystemTray::OnTrayNotification(UINT wParam, LONG lParam)
 		::SetForegroundWindow(m_tnd.hWnd);
 
 		UINT uItem;
-		if (m_DefaultMenuItemByPos)
-		{
+		if (m_DefaultMenuItemByPos) {
 			HMENU hMenu = ::LoadMenu(m_hInstance, MAKEINTRESOURCE(m_tnd.uID));
 			if (!hMenu)
 				return 0;
@@ -903,13 +859,25 @@ LRESULT CSystemTray::OnTrayNotification(UINT wParam, LONG lParam)
 }
 
 // This is the global (static) callback function for all TrayIcon windows
-LRESULT PASCAL CSystemTray::WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT PASCAL
+CSystemTray::WindowProc(HWND
+	hWnd,
+	UINT message, WPARAM
+	wParam,
+	LPARAM lParam
+)
 {
 	// The option here is to maintain a list of all TrayIcon windows,
 	// and iterate through them. If you do this, remove these 3 lines.
 	CSystemTray* pTrayIcon = m_pThis;
-	if (pTrayIcon->GetSafeHwnd() != hWnd)
-		return ::DefWindowProc(hWnd, message, wParam, lParam);
+	if (pTrayIcon->
+
+		GetSafeHwnd()
+
+		!= hWnd)
+		return
+		::DefWindowProc(hWnd, message, wParam, lParam
+		);
 
 	// If maintaining a list of TrayIcon windows, then the following...
 	// pTrayIcon = GetFirstTrayIcon()
@@ -917,31 +885,55 @@ LRESULT PASCAL CSystemTray::WindowProc(HWND hWnd, UINT message, WPARAM wParam, L
 	// {
 	//    if (pTrayIcon->GetSafeHwnd() != hWnd) continue;
 
-		  // Taskbar has been recreated - all TrayIcons must process this.
+	// Taskbar has been recreated - all TrayIcons must process this.
 	if (message == CSystemTray::m_nTaskbarCreatedMsg)
-		return pTrayIcon->OnTaskbarCreated(wParam, lParam);
+		return pTrayIcon->
+		OnTaskbarCreated(wParam, lParam
+		);
 
 	// Animation timer
-	if (message == WM_TIMER && wParam == pTrayIcon->GetTimerID())
-		return pTrayIcon->OnTimer(wParam);
+	if (message ==
+		WM_TIMER && wParam
+		== pTrayIcon->
+
+		GetTimerID()
+
+		)
+		return pTrayIcon->
+		OnTimer(wParam);
 
 	// Settings changed
-	if (message == WM_SETTINGCHANGE && wParam == pTrayIcon->GetTimerID())
-		return pTrayIcon->OnSettingChange(wParam, (LPCTSTR)lParam);
+	if (message ==
+		WM_SETTINGCHANGE && wParam
+		== pTrayIcon->
+
+		GetTimerID()
+
+		)
+		return pTrayIcon->
+		OnSettingChange(wParam, (LPCTSTR)
+			lParam);
 
 	// Is the message from the icon for this TrayIcon?
-	if (message == pTrayIcon->GetCallbackMessage())
-		return pTrayIcon->OnTrayNotification(wParam, lParam);
+	if (message == pTrayIcon->
+
+		GetCallbackMessage()
+
+		)
+		return pTrayIcon->
+		OnTrayNotification(wParam, lParam
+		);
 
 	//    pTrayIcon = GetNextTrayIcon();
 	// }
 
 	// Message has not been processed, so default.
-	return ::DefWindowProc(hWnd, message, wParam, lParam);
+	return
+		::DefWindowProc(hWnd, message, wParam, lParam
+		);
 }
 
-void CSystemTray::InstallIconPending()
-{
+void CSystemTray::InstallIconPending() {
 	// Is the icon display pending, and it's not been set as "hidden"?
 	if (!m_bShowIconPending || m_bHidden)
 		return;
@@ -961,46 +953,61 @@ void CSystemTray::InstallIconPending()
 /////////////////////////////////////////////////////////////////////////////
 // For minimising/maximising from system tray
 
-BOOL CALLBACK FindTrayWnd(HWND hwnd, LPARAM lParam)
+BOOL CALLBACK
+FindTrayWnd(HWND
+	hwnd,
+	LPARAM lParam
+)
 {
 	TCHAR szClassName[256];
-	GetClassName(hwnd, szClassName, 255);
+	GetClassName(hwnd, szClassName,
+		255);
 
 	// Did we find the Main System Tray? If so, then get its size and keep going
-	if (_tcscmp(szClassName, _T("TrayNotifyWnd")) == 0)
+	if (
+		_tcscmp(szClassName, _T("TrayNotifyWnd")
+		) == 0)
 	{
 		LPRECT lpRect = (LPRECT)lParam;
-		::GetWindowRect(hwnd, lpRect);
-		return TRUE;
+		::GetWindowRect(hwnd, lpRect
+		);
+		return
+			TRUE;
 	}
 
 	// Did we find the System Clock? If so, then adjust the size of the rectangle
 	// we have and quit (clock will be found after the system tray)
-	if (_tcscmp(szClassName, _T("TrayClockWClass")) == 0)
+	if (
+		_tcscmp(szClassName, _T("TrayClockWClass")
+		) == 0)
 	{
 		LPRECT lpRect = (LPRECT)lParam;
 		RECT rectClock;
-		::GetWindowRect(hwnd, &rectClock);
+		::GetWindowRect(hwnd, &rectClock
+		);
 		// if clock is above system tray adjust accordingly
 		if (rectClock.bottom < lpRect->bottom - 5) // 10 = random fudge factor.
-			lpRect->top = rectClock.bottom;
+			lpRect->
+			top = rectClock.bottom;
 		else
-			lpRect->right = rectClock.left;
-		return FALSE;
+			lpRect->
+			right = rectClock.left;
+		return
+			FALSE;
 	}
 
-	return TRUE;
+	return
+		TRUE;
 }
 
 #ifndef _WIN32_WCE
-void CSystemTray::GetTrayWndRect(LPRECT lprect)
-{
+
+void CSystemTray::GetTrayWndRect(LPRECT lprect) {
 #define DEFAULT_RECT_WIDTH 150
 #define DEFAULT_RECT_HEIGHT 30
 
 	HWND hShellTrayWnd = FindWindow(_T("Shell_TrayWnd"), NULL);
-	if (hShellTrayWnd)
-	{
+	if (hShellTrayWnd) {
 		GetWindowRect(hShellTrayWnd, lprect);
 		EnumChildWindows(hShellTrayWnd, FindTrayWnd, (LPARAM)lprect);
 		return;
@@ -1013,12 +1020,10 @@ void CSystemTray::GetTrayWndRect(LPRECT lprect)
 	// taskbar, so we can make a good guess at where to minimize to
 	APPBARDATA appBarData;
 	appBarData.cbSize = sizeof(appBarData);
-	if (SHAppBarMessage(ABM_GETTASKBARPOS, &appBarData))
-	{
+	if (SHAppBarMessage(ABM_GETTASKBARPOS, &appBarData)) {
 		// We know the edge the taskbar is connected to, so guess the rect of the
 		// system tray. Use various fudge factor to make it look good
-		switch (appBarData.uEdge)
-		{
+		switch (appBarData.uEdge) {
 		case ABE_LEFT:
 		case ABE_RIGHT:
 			// We want to minimize to the bottom of the taskbar
@@ -1052,8 +1057,7 @@ void CSystemTray::GetTrayWndRect(LPRECT lprect)
 	// Note that if the 3rd party shell supports the same configuraion as
 	// explorer (the icons hosted in NotifyTrayWnd, which is a child window of
 	// Shell_TrayWnd), we would already have caught it above
-	if (hShellTrayWnd)
-	{
+	if (hShellTrayWnd) {
 		::GetWindowRect(hShellTrayWnd, lprect);
 		if (lprect->right - lprect->left > DEFAULT_RECT_WIDTH)
 			lprect->left = lprect->right - DEFAULT_RECT_WIDTH;
@@ -1071,8 +1075,7 @@ void CSystemTray::GetTrayWndRect(LPRECT lprect)
 }
 
 // Check to see if the animation has been disabled (Matthew Ellis <m.t.ellis@bigfoot.com>)
-BOOL CSystemTray::GetDoWndAnimation()
-{
+BOOL CSystemTray::GetDoWndAnimation() {
 	ANIMATIONINFO ai;
 
 	ai.cbSize = sizeof(ai);
@@ -1080,67 +1083,95 @@ BOOL CSystemTray::GetDoWndAnimation()
 
 	return ai.iMinAnimate ? TRUE : FALSE;
 }
+
 #endif
 
-BOOL CSystemTray::RemoveTaskbarIcon(HWND hWnd)
+BOOL CSystemTray::RemoveTaskbarIcon(HWND
+	hWnd)
 {
 	// Create static invisible window
-	if (!::IsWindow(m_hWndInvisible))
+	if (!
+		::IsWindow(m_hWndInvisible)
+		)
 	{
 		m_hWndInvisible = CreateWindowEx(0, "Static", _T(""), WS_POPUP,
 			CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 			NULL, 0, NULL, 0);
 
 		if (!m_hWndInvisible)
-			return FALSE;
+			return
+			FALSE;
 	}
 
-	SetParent(hWnd, m_hWndInvisible);
+	SetParent(hWnd, m_hWndInvisible
+	);
 
-	return TRUE;
+	return
+		TRUE;
 }
 
-void CSystemTray::MinimiseToTray(HWND hWnd)
+void CSystemTray::MinimiseToTray(HWND
+	hWnd)
 {
 #ifndef _WIN32_WCE
-	if (GetDoWndAnimation())
+	if (
+
+		GetDoWndAnimation()
+
+		)
 	{
 		RECT rectFrom, rectTo;
 
-		GetWindowRect(hWnd, &rectFrom);
+		GetWindowRect(hWnd, &rectFrom
+		);
 		GetTrayWndRect(&rectTo);
 
-		DrawAnimatedRects(hWnd, IDANI_CAPTION, &rectFrom, &rectTo);
+		DrawAnimatedRects(hWnd, IDANI_CAPTION, &rectFrom, &rectTo
+		);
 	}
 
 	RemoveTaskbarIcon(hWnd);
-	SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) & ~WS_VISIBLE);
+	SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE)
+		& ~WS_VISIBLE);
 #endif
 }
 
-void CSystemTray::MaximiseFromTray(HWND hWnd)
+void CSystemTray::MaximiseFromTray(HWND
+	hWnd)
 {
 #ifndef _WIN32_WCE
-	if (GetDoWndAnimation())
+	if (
+
+		GetDoWndAnimation()
+
+		)
 	{
 		RECT rectTo;
-		::GetWindowRect(hWnd, &rectTo);
+		::GetWindowRect(hWnd, &rectTo
+		);
 
 		RECT rectFrom;
 		GetTrayWndRect(&rectFrom);
 
-		::SetParent(hWnd, NULL);
-		DrawAnimatedRects(hWnd, IDANI_CAPTION, &rectFrom, &rectTo);
+		::SetParent(hWnd, NULL
+		);
+		DrawAnimatedRects(hWnd, IDANI_CAPTION, &rectFrom, &rectTo
+		);
 	}
 	else
-		::SetParent(hWnd, NULL);
+		::SetParent(hWnd, NULL
+		);
 
-	SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) | WS_VISIBLE);
-	RedrawWindow(hWnd, NULL, NULL, RDW_UPDATENOW | RDW_ALLCHILDREN | RDW_FRAME |
+	SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE)
+		| WS_VISIBLE);
+	RedrawWindow(hWnd, NULL, NULL, RDW_UPDATENOW
+		| RDW_ALLCHILDREN | RDW_FRAME |
 		RDW_INVALIDATE | RDW_ERASE);
 
 	// Move focus away and back again to ensure taskbar icon is recreated
-	if (::IsWindow(m_hWndInvisible))
+	if (
+		::IsWindow(m_hWndInvisible)
+		)
 		SetActiveWindow(m_hWndInvisible);
 	SetActiveWindow(hWnd);
 	SetForegroundWindow(hWnd);
