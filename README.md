@@ -70,6 +70,12 @@ The project currently builds with the configuration: `Debug` `Win32` (You will n
 
 Do not build the project without TPFCIcon and TPFCIcon_noballons, they are necessary parts of the application and the main fan control software will not function without them
 
+### Note
+
+If you get Linker Tools Error LNK2026: module unsafe for SAFESEH image when building:
+
+- Go to Project properties -> Configuration Properties -> Linker -> Advanced
+- Disable option `Image has Safe Exception Handlers` (No (/SAFESEH:NO)
 
 ## Running at startup (Not Recommended)
 
