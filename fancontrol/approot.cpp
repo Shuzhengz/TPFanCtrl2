@@ -240,7 +240,6 @@ void StopWorkerThread()
 void WorkerThread(void *dummy)
 {
 	char curdir[MAX_PATH]= "";
-	
 	//   #ifdef _DEBUG   
 	//   Sleep(30000);
 	//   #endif
@@ -288,8 +287,6 @@ void WorkerThread(void *dummy)
 		HardAccess = TestHardAccess();
 
 		FANCONTROL fc(hInstApp);
-
-		fc.Test();
 
         g_dialogWnd = fc.GetDialogWnd();
 
