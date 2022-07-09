@@ -2,15 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{8eddb2ad-d57e-49b1-a3da-d144fef2c67b}</UniqueIdentifier>
+      <UniqueIdentifier>{71434af0-9845-4ee6-b87c-f0b028baedb5}</UniqueIdentifier>
       <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{f064ca17-6fe7-43a9-afa4-c059278d60b1}</UniqueIdentifier>
+      <UniqueIdentifier>{d24f2537-2547-4331-81a0-3677762c41cd}</UniqueIdentifier>
       <Extensions>h;hpp;hxx;hm;inl</Extensions>
     </Filter>
     <Filter Include="Resource Files">
-      <UniqueIdentifier>{f958db6b-0d46-4fe2-a3ae-8b8f97ea681c}</UniqueIdentifier>
+      <UniqueIdentifier>{841163f9-1944-48e9-b5f4-e464e1d5e403}</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
     </Filter>
   </ItemGroup>
@@ -72,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="winstuff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="afxres.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
