@@ -20,6 +20,10 @@
 #include "tools.h"
 #include "TVicPort.h"
 
+#using <OpenHardwareMonitorLib.dll>
+
+using namespace OpenHardwareMonitor;
+
 #define TP_ECOFFSET_FAN_SWITCH		(char)0x31
 #define TP_ECOFFSET_FAN1			(char)0x40
 #define TP_ECOFFSET_FAN2			(char)0x41
