@@ -25,12 +25,12 @@
 using namespace OpenHardwareMonitor;
 
 #define TP_ECOFFSET_FAN_SWITCH		(char)0x31
-#define TP_ECOFFSET_FAN1			(char)0x40
-#define TP_ECOFFSET_FAN2			(char)0x41
-#define TP_ECOFFSET_FAN				(char)0x2F		// 1 byte (binary xyzz zzz)
+#define TP_ECOFFSET_FAN1		(char)0x40
+#define TP_ECOFFSET_FAN2		(char)0x41
+#define TP_ECOFFSET_FAN			(char)0x2F		// 1 byte (binary xyzz zzz)
 #define TP_ECOFFSET_FANSPEED		(char)0x84		// 16 bit word, lo/hi byte
-#define TP_ECOFFSET_TEMP0			(char)0x78		// 8 temp sensor bytes from here
-#define TP_ECOFFSET_TEMP1			(char)0xC0		// 4 temp sensor bytes from here
+#define TP_ECOFFSET_TEMP0		(char)0x78		// 8 temp sensor bytes from here
+#define TP_ECOFFSET_TEMP1		(char)0xC0		// 4 temp sensor bytes from here
 
 
 
