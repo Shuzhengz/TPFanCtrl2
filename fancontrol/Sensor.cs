@@ -6,6 +6,10 @@
  
   Copyright (C) 2009-2012 Michael Möller <mmoeller@openhardwaremonitor.org>
 	
+    This code is from Open Hardware Monitor
+    https://github.com/openhardwaremonitor/openhardwaremonitor
+
+    It is used as a refrence, and will not be merged into main
 */
 
 using System;
