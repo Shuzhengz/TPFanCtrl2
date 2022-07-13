@@ -115,7 +115,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalOptions> /J</AdditionalOptions>
+      <AdditionalOptions> /J /source-charset:utf-8</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>_prec.h</PrecompiledHeaderFile>
       <AssemblerListingLocation>.\Debug/</AssemblerListingLocation>
