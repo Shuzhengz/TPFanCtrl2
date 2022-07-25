@@ -19,10 +19,8 @@
 #include "fancontrol.h"
 #include "tools.h"
 #include "TVicPort.h"
+#include "lhwm-cpp-wrapper.h"
 
-#using <OpenHardwareMonitorLib.dll>
-
-using namespace OpenHardwareMonitor;
 
 #define TP_ECOFFSET_FAN_SWITCH		(char)0x31
 #define TP_ECOFFSET_FAN1		(char)0x40
@@ -650,7 +648,8 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 		idxtemp = 0;
 
 		for (i = 0; i < 8 && ok; i++) {    // temp sensors 0x78 - 0x7f
-			ok = ReadByteFromEC(TP_ECOFFSET_TEMP0 + i, &pfcstate->Sensors[idxtemp]);
+			ok = LHWM::GetSensorValue("0x1B1");
+			//ok = ReadByteFromEC(TP_ECOFFSET_TEMP0 + i, &pfcstate->Sensors[idxtemp]);
 			if (this->ShowBiasedTemps)
 				pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp];
 			if (!ok) {
@@ -666,7 +665,8 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 			pfcstate->SensorName[idxtemp] = "n/a";
 			if (!this->NoExtSensor) {
 				pfcstate->SensorName[idxtemp] = this->gSensorNames[idxtemp];
-				ok = ReadByteFromEC(TP_ECOFFSET_TEMP1 + i, &pfcstate->Sensors[idxtemp]);
+				ok = LHWM::GetSensorValue("0x1B1");
+				//ok = ReadByteFromEC(TP_ECOFFSET_TEMP1 + i, &pfcstate->Sensors[idxtemp]);
 				if (this->ShowBiasedTemps)
 					pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp];
 				if (!ok) {
