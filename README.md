@@ -70,6 +70,8 @@ The project currently builds with the configuration: `Debug` `Win32` (You will n
 
 Do not build the project without TPFCIcon and TPFCIcon_noballons, they are necessary parts of the application and the main fan control software will not function without them
 
+The source code of spinoff releases of the program (i.e. 2.1.5 B) for different machines are stored within the archive direcotry, you can build them by subsituting the main fancontrol directory with the fancontrol directory of the desiered version. Note that TPFCIcon and TPFCIcon_noballons should stay the same for every release.
+
 ### Note
 
 If you get Linker Tools Error LNK2026: module unsafe for SAFESEH image when building:
