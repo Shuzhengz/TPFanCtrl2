@@ -27,7 +27,7 @@
 #include "TaskbarTextIcon.h"
 
 
-#define FANCONTROLVERSION "2.1.5 B Dual Fan"
+#define FANCONTROLVERSION "2.1.4 Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6

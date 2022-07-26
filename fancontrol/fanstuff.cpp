@@ -19,16 +19,14 @@
 #include "fancontrol.h"
 #include "tools.h"
 #include "TVicPort.h"
-#include "lhwm-cpp-wrapper.h"
 
-
-#define TP_ECOFFSET_FAN_SWITCH		(char)0x31
-#define TP_ECOFFSET_FAN1		(char)0x40
-#define TP_ECOFFSET_FAN2		(char)0x41
-#define TP_ECOFFSET_FAN			(char)0x2F		// 1 byte (binary xyzz zzz)
-#define TP_ECOFFSET_FANSPEED		(char)0x84		// 16 bit word, lo/hi byte
-#define TP_ECOFFSET_TEMP0		(char)0x78		// 8 temp sensor bytes from here
-#define TP_ECOFFSET_TEMP1		(char)0xC0		// 4 temp sensor bytes from here
+#define TP_ECOFFSET_FAN_SWITCH    (char)0x31
+#define TP_ECOFFSET_FAN1        (char)0x0000
+#define TP_ECOFFSET_FAN2        (char)0x0001
+#define TP_ECOFFSET_FAN            (char)0x2F    // 1 byte (binary xyzz zzz)
+#define TP_ECOFFSET_FANSPEED    (char)0x84  // 16 bit word, lo/hi byte
+#define TP_ECOFFSET_TEMP0       (char)0x78    // 8 temp sensor bytes from here
+#define TP_ECOFFSET_TEMP1       (char)0xC0  // 4 temp sensor bytes from here
 
 
 
@@ -648,7 +646,6 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 		idxtemp = 0;
 
 		for (i = 0; i < 8 && ok; i++) {    // temp sensors 0x78 - 0x7f
-			//ok = LHWM::GetSensorValue("0x1B1");
 			ok = ReadByteFromEC(TP_ECOFFSET_TEMP0 + i, &pfcstate->Sensors[idxtemp]);
 			if (this->ShowBiasedTemps)
 				pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp];
@@ -665,7 +662,6 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 			pfcstate->SensorName[idxtemp] = "n/a";
 			if (!this->NoExtSensor) {
 				pfcstate->SensorName[idxtemp] = this->gSensorNames[idxtemp];
-				//ok = LHWM::GetSensorValue("0x1B1");
 				ok = ReadByteFromEC(TP_ECOFFSET_TEMP1 + i, &pfcstate->Sensors[idxtemp]);
 				if (this->ShowBiasedTemps)
 					pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp];

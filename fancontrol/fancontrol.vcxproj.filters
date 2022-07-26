@@ -74,9 +74,6 @@
     <ClInclude Include="winstuff.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="lhwm-cpp-wrapper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="afxres.h">
       <Filter>Header Files</Filter>
     </ClInclude>
