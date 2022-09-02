@@ -1,6 +1,6 @@
 # TPFanCtrl2 <img src="https://raw.githubusercontent.com/Shuzhengz/TPFanCtrl2/main/fancontrol/res/app.ico" alt = "App Icon" width = "30"/>
 
-ThinkPad Fan Control 2, a fan control utility software for ThinkPad users running Windows 10/11
+ThinkPad Fan Control 2, a fan control utility for ThinkPad users running Windows 10/11
 
 ## About
 
@@ -106,6 +106,10 @@ This will usually fix itself, but to fix it manually, switch to BIOS mode, then 
 
 It will also sometimes take a longer time for the speed to update and the fans to spin up.
 This is caused by EC management for the newer ThinkPad BIOS. There is currently no way around it.
+
+### P50
+
+P50 Laptop users should use the 2.1.5B release as the fan control parameters are different, but the temperature is currently broken in the build, so it is recommended to use it in manual mode only
 
 ## License
 This program has an Unlicense license
