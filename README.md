@@ -115,6 +115,10 @@ P50 Laptop users should use the 2.1.5B release as the fan control parameters are
 
 Some thinkbook models have different EC address, so the program might not work
 
+### Contributing
+
+Please open a pull request and have at lease one review to merge it into main
+
 ## License
 This program has an Unlicense license
 
