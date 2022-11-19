@@ -101,6 +101,8 @@ If you added the program to run at startup, you will have to also delete the sho
 
 ## Known Issues
 
+On single-fan devices, the fan speed will sometimes fail to show up. The problem is in the process of being fixed
+
 Sometimes the fans will fail to sync, with one ramping up and the other not.
 This will usually fix itself, but to fix it manually, switch to BIOS mode, then switch back to the desired mode
 
