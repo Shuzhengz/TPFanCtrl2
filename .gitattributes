@@ -1,2 +1,7 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Ignores the webpage in lanuage stats
+*.css linguist-documentation
+*.html linguist-documentation
+*.htm linguist-documentation
