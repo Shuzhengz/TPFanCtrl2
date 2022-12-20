@@ -139,8 +139,14 @@ FANCONTROL::HandleData(void) {
 	this->fanspeed = (this->State.FanSpeedHi1 << 8) | this->State.FanSpeedLo1;
 
 	if (this->fanspeed > 0x1fff) fanspeed = lastfanspeed;
-	sprintf_s(obuf2, sizeof(obuf2), "%d/%d RPM", this->fanspeed,
-		(this->State.FanSpeedHi2 << 8) | this->State.FanSpeedLo2);
+
+	if (this->fanspeed == 0x0000) {
+		sprintf_s(obuf2, sizeof(obuf2), "%d RPM", this->fanspeed);
+	}
+	else {
+		sprintf_s(obuf2, sizeof(obuf2), "%d/%d RPM", this->fanspeed,
+			(this->State.FanSpeedHi2 << 8) | this->State.FanSpeedLo2);
+	}
 
 	::SetDlgItemText(this->hwndDialog, 8102, obuf2);
 
