@@ -143,7 +143,7 @@ FANCONTROL::HandleData(void) {
 	sprintf_s(obuf2, sizeof(obuf2), "%d/%d RPM", this->fanspeed,
 		(this->State.FanSpeedHi2 << 8) | this->State.FanSpeedLo2);
 
-	if (obuf2 == "0/0 RPM") {
+	if (obuf2 == "0/0 RPM" || ((this->State.FanSpeedHi2 << 8) | this->State.FanSpeedLo2) == 0) {
 		sprintf_s(obuf2, sizeof(obuf2), "%d RPM", this->fanspeed);
 	}
 
