@@ -121,6 +121,16 @@ Some thinkbook models have different EC address, so the program might not work
 
 Please open a pull request and have at lease one review to merge it into main
 
+By doing so, you agree to didicate your contribution to the public domain. In compliance with the Unlicense license, you must agree to the following:
+
+> I dedicate any and all copyright interest in this software to the
+public domain. I make this dedication for the benefit of the public at
+large and to the detriment of my heirs and successors. I intend this
+dedication to be an overt act of relinquishment in perpetuity of all
+present and future rights to this software under copyright law.
+
+For more information, please refer to <http://unlicense.org/>
+
 ## Licenssing
 This program is under the Unlicense "license"
 
