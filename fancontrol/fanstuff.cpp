@@ -143,7 +143,14 @@ FANCONTROL::HandleData(void) {
 	sprintf_s(obuf2, sizeof(obuf2), "%d/%d RPM", this->fanspeed,
 		(this->State.FanSpeedHi2 << 8) | this->State.FanSpeedLo2);
 
+	// Check if both fans are undetected or if second fan is undetected
 	if (obuf2 == "0/0 RPM" || ((this->State.FanSpeedHi2 << 8) | this->State.FanSpeedLo2) == 0) {
+
+		// revert display to single fan mode
+		this->lastfanspeed = this->fanspeed;
+		this->fanspeed = (this->State.FanSpeedHiS << 8) | this->State.FanSpeedLoS;
+
+		if (this->fanspeed > 0x1fff) fanspeed = lastfanspeed;
 		sprintf_s(obuf2, sizeof(obuf2), "%d RPM", this->fanspeed);
 	}
 
@@ -624,6 +631,18 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 	ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
 
 	if (ok)
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo1);
+	if (!ok) {
+		this->Trace("failed to read FanSpeedLowByte 1 from EC");
+	}
+
+	if (ok)
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->FanSpeedHi1);
+	if (!ok) {
+		this->Trace("failed to read FanSpeedHighByte 1 from EC");
+	}
+
+	if (ok)
 		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo2);
 	if (!ok) {
 		this->Trace("failed to read FanSpeedLowByte 2 from EC");
@@ -635,17 +654,21 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 		this->Trace("failed to read FanSpeedHighByte 2 from EC");
 	}
 
+	ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN);
+
 	if (ok)
-		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo1);
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLoS);
 	if (!ok) {
-		this->Trace("failed to read FanSpeedLowByte 1 from EC");
+		this->Trace("failed to read FanSpeedLowByte Single from EC");
 	}
 
 	if (ok)
-		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->FanSpeedHi1);
+		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->FanSpeedHiS);
 	if (!ok) {
-		this->Trace("failed to read FanSpeedHighByte 1 from EC");
+		this->Trace("failed to read FanSpeedHighByte Single from EC");
 	}
+
+	ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
 
 	if (!this->UseTWR) {
 		idxtemp = 0;

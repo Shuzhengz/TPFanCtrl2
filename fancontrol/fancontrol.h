@@ -63,7 +63,11 @@ protected:
 			FanSpeedLo1,
 			FanSpeedHi1,
 			FanSpeedLo2,
-			FanSpeedHi2;
+			FanSpeedHi2,
+
+			// Single Fan Mode
+			FanSpeedLoS,
+			FanSpeedHiS;
 
 		char Sensors[12];
 		int SensorAddr[12];

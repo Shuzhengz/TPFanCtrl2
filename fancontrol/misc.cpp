@@ -46,6 +46,8 @@ FANCONTROL::ReadConfig(const char* configfile)
 	this->State.FanSpeedLo1 = 0x00;
 	this->State.FanSpeedHi2 = 0x00;
 	this->State.FanSpeedLo2 = 0x00;
+	this->State.FanSpeedHiS = 0x00;
+	this->State.FanSpeedLoS = 0x00;
 	this->fanspeed = 0;
 	this->IndSmartLevel = 0;
 	//
