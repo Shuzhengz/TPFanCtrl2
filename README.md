@@ -4,7 +4,10 @@ ThinkPad Fan Control 2, a fan control utility for ThinkPad users running Windows
 
 ## About
 
-This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanControl/tree/master/fancontrol), and is based on [byrnes' dual fan mod](https://github.com/byrnes/TPFanControl). It's updated it to work with two fan devices. It has only been tested on X1 Extreme Gen. 1 and P1 Gen. 4, but it should work on most other dual-fan Thinkpads that are released. The default fan profile is a silent one, with the fans only coming on at 60c. This can be changed by editing tpfancontrol.ini.
+This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanControl/tree/master/fancontrol), and is based on 
+[byrnes' dual fan mod](https://github.com/byrnes/TPFanControl).
+It's updated it to work with two fan devices. It has only been tested on X1 Extreme Gen. 1 and P1 Gen. 4, but it should work on most other dual-
+fan Thinkpads that are released. The default fan profile is a silent one, with the fans only coming on at 60c. This can be changed by editing tpfancontrol.ini.
 
 Visual Studio 2022 Community was used to build and debug. A release build is in the works
 
@@ -12,14 +15,18 @@ Visual Studio 2022 Community was used to build and debug. A release build is in 
   <img src="https://raw.githubusercontent.com/Shuzhengz/TPFanCtrl2/master/fancontrol/res/TPFC2.png" alt="Example Photo" width="750"/>
 </p>
 
+Important: This software is released as a public domain software, there is no warranty or promise of bug fixes. The binaries and its source code are provided "as is", 
+and should be used at your own risk. For more information, please refer to <http://unlicense.org/>.
 
 ## Requirements
 
-To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port/index.shtm) manually or install the original version of TPFanControl found [here](https://sourceforge.net/projects/tp4xfancontrol/) (source code [here](https://github.com/ThinkPad-Forum/TPFanControl)), and run the dual-fan version instead of the original version.
+To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port/index.shtm) manually or install the original version of TPFanControl found 
+[here](https://sourceforge.net/projects/tp4xfancontrol/) (source code [here](https://github.com/ThinkPad-Forum/TPFanControl)), 
+and run the dual-fan version instead of the original version.
 
 Administration permission is required for the program to be able to control system fan speed.
 
-Windows 10 or 11 is required to run the program.
+Windows 10 or 11 is required to run the program. Windows XP, Vista, 7, and 8 may work, but are untested and should not be expected to.
 
 
 ## Configuring
@@ -53,7 +60,8 @@ Example of configurable parameters:
 
 <h5>Advanced level value is converted into hex, the value above is a rough estimate of what to expect</h5>
 
-<h5>The 0-7 range is intended to be used as the fan levels intended by the manufacture (7 being the highest that the laptop BIOS can go), and to take full advantage of the fan you'll need to enter 0-128 in hex (for example, 128 in hex is 0x80, which is entered as 80).</h5>
+<h5>The 0-7 range is intended to be used as the fan levels intended by the manufacture (7 being the highest that the laptop BIOS can go), and to take full advantage of 
+the fan you'll need to enter 0-128 in hex (for example, 128 in hex is 0x80, which is entered as 80).</h5>
 
 ### Additional Information
 
@@ -64,13 +72,16 @@ You can find additional information here on the ThinkPad Wiki: [https://thinkwik
 
 Building this program requires Microsoft Visual Studio 2022 Community
 
-The project should have the correct configuration upon opening the project file `fancontrol.sln`, though you might have to manually copy and paste the `.ini` file into the Debug folder to test the built program
+The project should have the correct configuration upon opening the project file `fancontrol.sln`, though you might have to manually copy and paste the `.ini` file into 
+the Debug folder to test the built program
 
 The project currently builds with the configuration: `Debug` `Win32` (You will need admin permission to run the built program)
 
-Do not build the project without TPFCIcon and TPFCIcon_noballons, they are necessary parts of the application and the main fan control software will not function without them
+Do not build the project without TPFCIcon and TPFCIcon_noballons, they are necessary parts of the application and the main fan control software will not function without 
+them
 
-The source code of spinoff releases of the program (i.e. 2.1.5 B) for different machines are stored within the archive direcotry, you can build them by subsituting the main fancontrol directory with the fancontrol directory of the desiered version. Note that TPFCIcon and TPFCIcon_noballons should stay the same for every release.
+The source code of spinoff releases of the program (i.e. 2.1.5 B) for different machines are stored within the archive direcotry, you can build them by subsituting the 
+main fancontrol directory with the fancontrol directory of the desiered version. Note that TPFCIcon and TPFCIcon_noballons should stay the same for every release.
 
 ### Note
 
@@ -111,7 +122,8 @@ This is caused by EC management for the newer ThinkPad BIOS. There is currently 
 
 ### ThinkPad P50
 
-P50 Laptop users should use the 2.1.5B release as the fan control parameters are different, but the temperature is currently broken in the build, so it is recommended to use it in manual mode only
+P50 Laptop users should use the 2.1.5B release as the fan control parameters are different, but the temperature is currently broken in the build, so it is recommended to 
+use it in manual mode only
 
 ### Thinkbooks
 
@@ -136,4 +148,5 @@ This program is under the Unlicense "license"
 
 This means that the software is released into the public domain, and therefore does not technically have a license
 
-The author claims no copyright, copyleft, license or whatsoever for the program itself. You may use, reuse or distribute its binaries or source code in any desired way or form, Useage of binaries or source shall be entirely and without exception at your own risk.
+The author claims no copyright, copyleft, license or whatsoever for the program itself. You may use, reuse or distribute its binaries or source code in any desired way 
+or form, Useage of binaries or source shall be entirely and without exception at your own risk.
