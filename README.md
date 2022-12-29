@@ -121,7 +121,9 @@ Some thinkbook models have different EC address, so the program might not work
 
 Please open a pull request and have at lease one review to merge it into main
 
-## License
-This program has an Unlicense license
+## Licenssing
+This program is under the Unlicense "license"
+
+This means that the software is released into the public domain, and therefore does not technically have a license
 
 The author claims no copyright, copyleft, license or whatsoever for the program itself. You may use, reuse or distribute its binaries or source code in any desired way or form, Useage of binaries or source shall be entirely and without exception at your own risk.
