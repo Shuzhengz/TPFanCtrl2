@@ -157,8 +157,6 @@ BEGIN
 //    MENUITEM "Smart Mode 2",                5004
     MENUITEM "Manual Mode",                 5005
     MENUITEM "End Program",                 5020
-    MENUITEM SEPARATOR
-    MENUITEM "FAQs / Google",               5050
 END
 
 

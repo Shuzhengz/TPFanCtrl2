@@ -43,8 +43,6 @@ BEGIN
     MENUITEM "Text Icon",                   5080
     MENUITEM SEPARATOR
     MENUITEM "End Program",                 5020
-    MENUITEM SEPARATOR
-    MENUITEM "Donate / FAQ",                5050
 END
 
 
