@@ -72,7 +72,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <AdditionalOptions> /J</AdditionalOptions>
+      <AdditionalOptions> /J /source-charset:utf-8</AdditionalOptions>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>_prec.h</PrecompiledHeaderFile>
       <AssemblerListingLocation>.\Release/</AssemblerListingLocation>
