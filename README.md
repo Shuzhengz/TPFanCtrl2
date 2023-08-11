@@ -143,7 +143,7 @@ present and future rights to this software under copyright law.
 
 For more information, please refer to <http://unlicense.org/>
 
-## Licenssing
+## Licensing
 This program is under the Unlicense "license"
 
 This means that the software is released into the public domain, and therefore does not technically have a license
