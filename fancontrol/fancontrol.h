@@ -73,15 +73,15 @@ protected:
 	} State;
 
 	struct SMARTENTRY {
-		int temp, fan;
+		int temp, fan, hystUp, hystDown;
 	} SmartLevels[32];
 
 	struct SMARTENTRY1 {
-		int temp1, fan1;
+		int temp1, fan1, hystUp1, hystDown1;
 	} SmartLevels1[32];
 
 	struct SMARTENTRY2 {
-		int temp2, fan2;
+		int temp2, fan2, hystUp2, hystDown2;
 	} SmartLevels2[32];
 
 	struct FSMARTENTRY {        //fahrenheit values
@@ -91,7 +91,7 @@ protected:
 	struct SENSOROFFSET {
 		int offs, hystMin, hystMax; // min and max temp values that offs takes effect. -1 to disable
 	} SensorOffset[16];
-
+	int LastSmartLevel = -1;
 	int IconLevels[3];    // temp levels for coloring the icon
 	int FIconLevels[3];    // fahrenheit temp levels for coloring the icon
 	int CurrentIcon;
