@@ -131,13 +131,13 @@ FANCONTROL::ReadConfig(const char* configfile)
 														}
 														else
 															if (_strnicmp(buf, "level=", 6) == 0) {
-																sscanf_s(buf + 6, "%d %d", &this->SmartLevels[lcnt].temp, &this->SmartLevels[lcnt].fan);
-																sscanf_s(buf + 6, "%d %d", &this->SmartLevels1[lcnt].temp1, &this->SmartLevels1[lcnt].fan1);
+																sscanf_s(buf + 6, "%d %d %d %d", &this->SmartLevels[lcnt].temp, &this->SmartLevels[lcnt].fan, &this->SmartLevels[lcnt].hystUp, &this->SmartLevels[lcnt].hystDown);
+																sscanf_s(buf + 6, "%d %d %d %d", &this->SmartLevels1[lcnt].temp1, &this->SmartLevels1[lcnt].fan1, &this->SmartLevels1[lcnt].hystUp1, &this->SmartLevels1[lcnt].hystDown1);
 																lcnt++;
 															}
 															else
 																if (_strnicmp(buf, "level2=", 7) == 0) {
-																	sscanf_s(buf + 7, "%d %d", &this->SmartLevels2[lcnt2].temp2, &this->SmartLevels2[lcnt2].fan2);
+																	sscanf_s(buf + 7, "%d %d %d %d", &this->SmartLevels2[lcnt2].temp2, &this->SmartLevels2[lcnt2].fan2, &this->SmartLevels2[lcnt].hystUp2, &this->SmartLevels2[lcnt].hystDown2);
 																	lcnt2++;
 																}
 																else
