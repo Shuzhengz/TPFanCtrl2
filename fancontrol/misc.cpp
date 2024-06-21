@@ -368,53 +368,53 @@ FANCONTROL::ReadConfig(const char* configfile)
 			// Read SensorOffsets
 																																																											else
 																																																												if (_strnicmp(buf, "SensorOffset1=", 14) == 0)
-																																																													this->SensorOffset[0] = atoi(buf + 14);
+																																																													sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[0].offs, &this->SensorOffset[0].hystMin, &this->SensorOffset[0].hystMax);
 																																																												else
 																																																													if (_strnicmp(buf, "SensorOffset2=", 14) == 0)
-																																																														this->SensorOffset[1] = atoi(buf + 14);
+																																																														sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[1].offs, &this->SensorOffset[1].hystMin, &this->SensorOffset[1].hystMax);
 																																																													else
 																																																														if (_strnicmp(buf, "SensorOffset3=", 14) == 0)
-																																																															this->SensorOffset[2] = atoi(buf + 14);
+																																																															sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[2].offs, &this->SensorOffset[2].hystMin, &this->SensorOffset[2].hystMax);
 																																																														else
 																																																															if (_strnicmp(buf, "SensorOffset4=", 14) == 0)
-																																																																this->SensorOffset[3] = atoi(buf + 14);
+																																																																sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[3].offs, &this->SensorOffset[3].hystMin, &this->SensorOffset[3].hystMax);
 																																																															else
 																																																																if (_strnicmp(buf, "SensorOffset5=", 14) == 0)
-																																																																	this->SensorOffset[4] = atoi(buf + 14);
+																																																																	sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[4].offs, &this->SensorOffset[4].hystMin, &this->SensorOffset[4].hystMax);
 																																																																else
 																																																																	if (_strnicmp(buf, "SensorOffset6=", 14) == 0)
-																																																																		this->SensorOffset[5] = atoi(buf + 14);
+																																																																		sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[5].offs, &this->SensorOffset[5].hystMin, &this->SensorOffset[5].hystMax);
 																																																																	else
 																																																																		if (_strnicmp(buf, "SensorOffset7=", 14) == 0)
-																																																																			this->SensorOffset[6] = atoi(buf + 14);
+																																																																			sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[6].offs, &this->SensorOffset[6].hystMin, &this->SensorOffset[6].hystMax);
 																																																																		else
 																																																																			if (_strnicmp(buf, "SensorOffset8=", 14) == 0)
-																																																																				this->SensorOffset[7] = atoi(buf + 14);
+																																																																				sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[7].offs, &this->SensorOffset[7].hystMin, &this->SensorOffset[7].hystMax);
 																																																																			else
 																																																																				if (_strnicmp(buf, "SensorOffset9=", 14) == 0)
-																																																																					this->SensorOffset[8] = atoi(buf + 14);
+																																																																					sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[8].offs, &this->SensorOffset[8].hystMin, &this->SensorOffset[8].hystMax);
 																																																																				else
 																																																																					if (_strnicmp(buf, "SensorOffset10=", 15) == 0)
-																																																																						this->SensorOffset[9] = atoi(buf + 15);
+																																																																						sscanf_s(buf + 14, "%d %d %d", &this->SensorOffset[9].offs, &this->SensorOffset[9].hystMin, &this->SensorOffset[9].hystMax);
 																																																																					else
 																																																																						if (_strnicmp(buf, "SensorOffset11=", 15) == 0)
-																																																																							this->SensorOffset[10] = atoi(buf + 15);
+																																																																							sscanf_s(buf + 15, "%d %d %d", &this->SensorOffset[10].offs, &this->SensorOffset[10].hystMin, &this->SensorOffset[10].hystMax);
 																																																																						else
 																																																																							if (_strnicmp(buf, "SensorOffset12=", 15) == 0)
-																																																																								this->SensorOffset[11] = atoi(buf + 15);
+																																																																								sscanf_s(buf + 15, "%d %d %d", &this->SensorOffset[11].offs, &this->SensorOffset[11].hystMin, &this->SensorOffset[11].hystMax);
 																																																																							else
 																																																																								if (_strnicmp(buf, "SensorOffset13=", 15) == 0)
-																																																																									this->SensorOffset[12] = atoi(buf + 15);
+																																																																									sscanf_s(buf + 15, "%d %d %d", &this->SensorOffset[12].offs, &this->SensorOffset[12].hystMin, &this->SensorOffset[12].hystMax);
 																																																																								else
 																																																																									if (_strnicmp(buf, "SensorOffset14=", 15) == 0)
-																																																																										this->SensorOffset[13] = atoi(buf + 15);
+																																																																										sscanf_s(buf + 15, "%d %d %d", &this->SensorOffset[13].offs, &this->SensorOffset[13].hystMin, &this->SensorOffset[13].hystMax);
 																																																																									else
 																																																																										if (_strnicmp(buf, "SensorOffset15=", 15) == 0)
-																																																																											this->SensorOffset[14] = atoi(buf + 15);
+																																																																											sscanf_s(buf + 15, "%d %d %d", &this->SensorOffset[14].offs, &this->SensorOffset[14].hystMin, &this->SensorOffset[14].hystMax);
 																																																																										else
 																																																																											if (_strnicmp(buf, "SensorOffset16=", 15) == 0)
-																																																																												this->SensorOffset[15] = atoi(buf + 15);
-
+																																																																												sscanf_s(buf + 15, "%d %d %d", &this->SensorOffset[15].offs, &this->SensorOffset[15].hystMin, &this->SensorOffset[15].hystMax);
+																																																																											
 			// End of Reading Sensor Offsets
 
 																																																																											else
@@ -581,19 +581,19 @@ FANCONTROL::ReadConfig(const char* configfile)
 
 	if (Fahrenheit) {
 		sprintf_s(buf, sizeof(buf), "  SensorOffset1-12= %d %d %d %d %d %d %d %d %d %d %d %d ° F",
-			this->SensorOffset[0], this->SensorOffset[1], this->SensorOffset[2],
-			this->SensorOffset[3], this->SensorOffset[4], this->SensorOffset[5],
-			this->SensorOffset[6], this->SensorOffset[7], this->SensorOffset[8],
-			this->SensorOffset[9], this->SensorOffset[10], this->SensorOffset[11]);
+			this->SensorOffset[0].offs, this->SensorOffset[1].offs, this->SensorOffset[2].offs,
+			this->SensorOffset[3].offs, this->SensorOffset[4].offs, this->SensorOffset[5].offs,
+			this->SensorOffset[6].offs, this->SensorOffset[7].offs, this->SensorOffset[8].offs,
+			this->SensorOffset[9].offs, this->SensorOffset[10].offs, this->SensorOffset[11].offs);
 
-		for (i = 0; i < 15; i++) { SensorOffset[i] = SensorOffset[i] * 5 / 9; }
+		for (i = 0; i < 15; i++) { SensorOffset[i].offs = SensorOffset[i].offs * 5 / 9; }
 	}
 	else {
 		sprintf_s(buf, sizeof(buf), "  SensorOffset1-12= %d %d %d %d %d %d %d %d %d %d %d %d ° C",
-			this->SensorOffset[0], this->SensorOffset[1], this->SensorOffset[2],
-			this->SensorOffset[3], this->SensorOffset[4], this->SensorOffset[5],
-			this->SensorOffset[6], this->SensorOffset[7], this->SensorOffset[8],
-			this->SensorOffset[9], this->SensorOffset[10], this->SensorOffset[11]);
+			this->SensorOffset[0].offs, this->SensorOffset[1].offs, this->SensorOffset[2].offs,
+			this->SensorOffset[3].offs, this->SensorOffset[4].offs, this->SensorOffset[5].offs,
+			this->SensorOffset[6].offs, this->SensorOffset[7].offs, this->SensorOffset[8].offs,
+			this->SensorOffset[9].offs, this->SensorOffset[10].offs, this->SensorOffset[11].offs);
 	}
 
 	this->Trace(buf);

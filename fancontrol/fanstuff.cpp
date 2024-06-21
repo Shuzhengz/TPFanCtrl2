@@ -62,7 +62,12 @@ FANCONTROL::HandleData(void) {
 
 		if (this->State.Sensors[i] != 0x80 && this - State.Sensors[i] != 0x00 && strstr(list, what) == 0) {
 			int isens = this->State.Sensors[i];
-			int ioffs = this->SensorOffset[i];
+			int ioffs = this->SensorOffset[i].offs;
+
+			// apply offset if in temp range
+			int calcTemp = isens - SensorOffset[i].offs;
+			if (isens >= SensorOffset[i].hystMin && isens <= SensorOffset[i].hystMax)
+				ioffs = 0;
 
 			if (ShowBiasedTemps)
 				senstemp = isens;
@@ -648,7 +653,7 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 		for (i = 0; i < 8 && ok; i++) {    // temp sensors 0x78 - 0x7f
 			ok = ReadByteFromEC(TP_ECOFFSET_TEMP0 + i, &pfcstate->Sensors[idxtemp]);
 			if (this->ShowBiasedTemps)
-				pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp];
+				pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp].offs;
 			if (!ok) {
 				this->Trace("failed to read TEMP0 byte from EC");
 			}
@@ -664,7 +669,7 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 				pfcstate->SensorName[idxtemp] = this->gSensorNames[idxtemp];
 				ok = ReadByteFromEC(TP_ECOFFSET_TEMP1 + i, &pfcstate->Sensors[idxtemp]);
 				if (this->ShowBiasedTemps)
-					pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp];
+					pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp].offs;
 				if (!ok) {
 					this->Trace("failed to read TEMP1 byte from EC");
 				}

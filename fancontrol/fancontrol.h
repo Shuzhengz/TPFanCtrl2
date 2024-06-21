@@ -88,12 +88,14 @@ protected:
 		int ftemp, ffan;
 	} FSmartLevels[32];
 
+	struct SENSOROFFSET {
+		int offs, hystMin, hystMax; // min and max temp values that offs takes effect. -1 to disable
+	} SensorOffset[16];
 
 	int IconLevels[3];    // temp levels for coloring the icon
 	int FIconLevels[3];    // fahrenheit temp levels for coloring the icon
 	int CurrentIcon;
 	int IndSmartLevel;
-	int SensorOffset[16];
 	int FSensorOffset[16];
 	int iFarbeIconB;
 	int iFontIconB;
