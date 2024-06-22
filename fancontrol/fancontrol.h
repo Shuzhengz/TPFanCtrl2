@@ -88,7 +88,7 @@ protected:
 		int ftemp, ffan;
 	} FSmartLevels[32];
 
-
+	int ProcessPriority;
 	int IconLevels[3];    // temp levels for coloring the icon
 	int FIconLevels[3];    // fahrenheit temp levels for coloring the icon
 	int CurrentIcon;
