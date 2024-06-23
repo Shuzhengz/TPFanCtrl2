@@ -19,6 +19,313 @@
 #include "tools.h"
 #include "fancontrol.h"
 
+bool
+FANCONTROL::__ParseReadConfig(const char* configfile, int *out_lcnt, int *out_lcnt2)
+{
+	char buf[1024];
+	int lcnt = 0, lcnt2 = 0;
+	FILE* f;
+	errno_t errf = fopen_s(&f, configfile, "r");
+	if (errf) {
+		return false;
+	}
+
+	while (!feof(f)) {
+		strcpy_s(buf, sizeof(buf), "");
+		fgets(buf, sizeof(buf), f);
+		if (buf[0] == '/' || buf[0] == '#' || buf[0] == ';')
+			continue;
+
+		if (_strnicmp(buf, "UseTWR=", 7) == 0) {
+			this->UseTWR = atoi(buf + 7);
+		}
+		else if (_strnicmp(buf, "Active=", 7) == 0) {
+			this->ActiveMode = atoi(buf + 7);
+		}
+		else if (_strnicmp(buf, "ManFanSpeed=", 12) == 0) {
+			this->ManFanSpeed = atoi(buf + 12);
+		}
+		else if (_strnicmp(buf, "ProcessPriority=", 16) == 0) {
+			this->ProcessPriority = atoi(buf + 16);
+		}
+		else if (_strnicmp(buf, "cycle=", 6) == 0) {
+			this->Cycle = atoi(buf + 6);
+		}
+		else if (_strnicmp(buf, "IconCycle=", 10) == 0) {
+			this->IconCycle = atoi(buf + 10);
+		}
+		else if (_strnicmp(buf, "ReIcCycle=", 10) == 0) {
+			this->ReIcCycle = atoi(buf + 10);
+		}
+		else if (_strnicmp(buf, "IconFontSize=", 13) == 0) {
+			this->iFontIconB = atoi(buf + 13);
+		}
+		else if (_strnicmp(buf, "MenuLabelSM1=", 13) == 0) {
+			char* p = buf + 13, * p2 = this->MenuLabelSM1;
+			while (*p != '/') {	// copy until '/' excluding tab, carr ret, new line
+				// if (*p!='*') continue; else break;
+				if (*p != '\t' && *p != '\r' && *p != '\n')
+					*p2++ = *p;
+				p++;
+			}
+			*p2 = '\0';
+		}
+		else if (_strnicmp(buf, "MenuLabelSM2=", 13) == 0) {
+			char* p = buf + 13, * p2 = this->MenuLabelSM2;
+			while (*p != '/') {	// copy until '/' excluding tab, carr ret, new line
+				if (*p != '\t' && *p != '\r' && *p != '\n')
+					*p2++ = *p;
+				p++;
+			}
+			*p2 = '\0';
+		}
+		else if (_strnicmp(buf, "FanSpeedLowByte=", 16) == 0) {
+			this -> FanSpeedLowByte = atoi(buf + 16);
+		}
+		else if (_strnicmp(buf, "NoExtSensor=", 12) == 0) {
+			this -> NoExtSensor = atoi(buf + 12);
+		}
+		else if (_strnicmp(buf, "SlimDialog=", 11) == 0) {
+			this -> SlimDialog = atoi(buf + 11);
+			if (this -> SlimDialog != 0) this -> SlimDialog = 1;
+		}
+		else if (_strnicmp(buf, "level=", 6) == 0) {
+			sscanf_s(buf + 6, "%d %d", & this -> SmartLevels[lcnt].temp, & this -> SmartLevels[lcnt].fan);
+			sscanf_s(buf + 6, "%d %d", & this -> SmartLevels1[lcnt].temp1, & this -> SmartLevels1[lcnt].fan1);
+			lcnt++;
+		}
+		else if (_strnicmp(buf, "level2=", 7) == 0) {
+			sscanf_s(buf + 7, "%d %d", & this -> SmartLevels2[lcnt2].temp2, & this -> SmartLevels2[lcnt2].fan2);
+			lcnt2++;
+		}
+		else if (_strnicmp(buf, "fanbeep=", 8) == 0) {
+			sscanf_s(buf + 8, "%d %d", & this -> FanBeepFreq, & this -> FanBeepDura);
+		}
+		else if (_strnicmp(buf, "iconlevels=", 11) == 0) {
+			sscanf_s(buf + 11, "%d %d %d", & this -> IconLevels[0], & this -> IconLevels[1], & this -> IconLevels[2]);
+		}
+		else if (_strnicmp(buf, "NoWaitMessage=", 14) == 0) {
+			this -> NoWaitMessage = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "StartMinimized=", 15) == 0) {
+			this -> StartMinimized = atoi(buf + 15);
+		}
+		else if (_strnicmp(buf, "NoBallons=", 10) == 0) {
+			this -> NoBallons = atoi(buf + 10);
+		}
+		else if (_strnicmp(buf, "HK_BIOS=", 8) == 0) {
+			this -> HK_BIOS_Method = buf[8] - 0x30;
+			this -> HK_BIOS = buf[10];
+			if ((this -> HK_BIOS == 0x46) & (buf[11] > 0x30) & (buf[11] < 0x40))
+				this -> HK_BIOS = 0x70 + atoi(buf + 11) - 1;
+		}
+		else if (_strnicmp(buf, "HK_Manual=", 10) == 0) {
+			this -> HK_Manual_Method = buf[10] - 0x30;
+			this -> HK_Manual = buf[12];
+			if ((this -> HK_Manual == 0x46) & (buf[13] > 0x30) & (buf[13] < 0x40))
+				this -> HK_Manual = 0x70 + atoi(buf + 13) - 1;
+		}
+		else if (_strnicmp(buf, "HK_Smart=", 9) == 0) {
+			this -> HK_Smart_Method = buf[9] - 0x30;
+			this -> HK_Smart = buf[11];
+			if ((this -> HK_Smart == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+				this -> HK_Smart = 0x70 + atoi(buf + 12) - 1;
+		}
+		else if (_strnicmp(buf, "HK_SM1=", 7) == 0) {
+			this -> HK_SM1_Method = buf[7] - 0x30;
+			this -> HK_SM1 = buf[9];
+			if ((this -> HK_SM1 == 0x46) & (buf[10] > 0x30) & (buf[10] < 0x40))
+				this -> HK_SM1 = 0x70 + atoi(buf + 10) - 1;
+		}
+		else if (_strnicmp(buf, "HK_SM2=", 7) == 0) {
+			this -> HK_SM2_Method = buf[7] - 0x30;
+			this -> HK_SM2 = buf[9];
+			if ((this -> HK_SM2 == 0x46) & (buf[10] > 0x30) & (buf[10] < 0x40))
+				this -> HK_SM2 = 0x70 + atoi(buf + 10) - 1;
+		}
+		else if (_strnicmp(buf, "HK_TG_BS=", 9) == 0) {
+			this -> HK_TG_BS_Method = buf[9] - 0x30;
+			this -> HK_TG_BS = buf[11];
+			if ((this -> HK_TG_BS == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+				this -> HK_TG_BS = 0x70 + atoi(buf + 12) - 1;
+		}
+		else if (_strnicmp(buf, "HK_TG_BM=", 9) == 0) {
+			this -> HK_TG_BM_Method = buf[9] - 0x30;
+			this -> HK_TG_BM = buf[11];
+			if ((this -> HK_TG_BM == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+				this -> HK_TG_BM = 0x70 + atoi(buf + 12) - 1;
+		}
+		else if (_strnicmp(buf, "HK_TG_MS=", 9) == 0) {
+			this -> HK_TG_MS_Method = buf[9] - 0x30;
+			this -> HK_TG_MS = buf[11];
+			if ((this -> HK_TG_MS == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+				this -> HK_TG_MS = 0x70 + atoi(buf + 12) - 1;
+		}
+		else if (_strnicmp(buf, "HK_TG_12=", 9) == 0) {
+			this -> HK_TG_12_Method = buf[9] - 0x30;
+			this -> HK_TG_12 = buf[11];
+			if ((this -> HK_TG_12 == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+				this -> HK_TG_12 = 0x70 + atoi(buf + 12) - 1;
+		}
+		else if (_strnicmp(buf, "IconColorFan=", 13) == 0) {
+			this -> IconColorFan = atoi(buf + 13);
+		}
+		else if (_strnicmp(buf, "Lev64Norm=", 10) == 0) {
+			this -> Lev64Norm = atoi(buf + 10);
+		}
+		else if (_strnicmp(buf, "BluetoothEDR=", 13) == 0) {
+			this -> BluetoothEDR = atoi(buf + 13);
+		}
+		else if (_strnicmp(buf, "ManModeExit=", 12) == 0) {
+			this -> ManModeExit = atoi(buf + 12);
+		}
+		else if (_strnicmp(buf, "ShowBiasedTemps=", 16) == 0) {
+			this -> ShowBiasedTemps = atoi(buf + 16);
+		}
+		else if (_strnicmp(buf, "MaxReadErrors=", 14) == 0) {
+			this -> MaxReadErrors = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SecWinUptime=", 13) == 0) {
+			this -> SecWinUptime = atoi(buf + 13);
+		}
+		else if (_strnicmp(buf, "SecStartDelay=", 14) == 0) {
+			this -> SecStartDelay = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "Log2File=", 9) == 0) {
+			this -> Log2File = atoi(buf + 9);
+		}
+		else if (_strnicmp(buf, "StayOnTop=", 10) == 0) {
+			this -> StayOnTop = atoi(buf + 10);
+		}
+		else if (_strnicmp(buf, "Log2csv=", 8) == 0) {
+			this -> Log2csv = atoi(buf + 8);
+		}
+		else if (_strnicmp(buf, "ShowAll=", 8) == 0) {
+			this -> ShowAll = atoi(buf + 8);
+		}
+		else if (_strnicmp(buf, "ShowTempIcon=", 8) == 0) {
+			this -> ShowTempIcon = atoi(buf + 13);
+		}
+		// Read SensorName		
+		else if (_strnicmp(buf, "SensorName1=", 12) == 0) {
+			strncpy_s(this -> gSensorNames[0], sizeof(this -> gSensorNames[0]), buf + 12, 3);
+		}
+		else if (_strnicmp(buf, "SensorName2=", 12) == 0) {
+			strncpy_s(this -> gSensorNames[1], sizeof(this -> gSensorNames[1]), buf + 12, 3);
+		}
+		else if (_strnicmp(buf, "SensorName3=", 12) == 0) {
+			strncpy_s(this -> gSensorNames[2], sizeof(this -> gSensorNames[2]), buf + 12, 3);
+		}
+		else if (_strnicmp(buf, "SensorName4=", 12) == 0) {
+			strncpy_s(this -> gSensorNames[3], sizeof(this -> gSensorNames[3]), buf + 12, 3);
+		}
+		else if (_strnicmp(buf, "SensorName5=", 12) == 0) {
+			strncpy_s(this -> gSensorNames[4], sizeof(this -> gSensorNames[4]), buf + 12, 3);
+		}
+		else if (_strnicmp(buf, "SensorName6=", 12) == 0) {
+			strncpy_s(this -> gSensorNames[5], sizeof(this -> gSensorNames[5]), buf + 12, 3);
+		}
+		else if (_strnicmp(buf, "SensorName7=", 12) == 0) {
+			strncpy_s(this -> gSensorNames[6], sizeof(this -> gSensorNames[6]), buf + 12, 3);
+		}
+		else if (_strnicmp(buf, "SensorName8=", 12) == 0) {
+			strncpy_s(this -> gSensorNames[7], sizeof(this -> gSensorNames[7]), buf + 12, 3);
+		}
+		else if (_strnicmp(buf, "SensorName9=", 12) == 0) {
+			strncpy_s(this -> gSensorNames[8], sizeof(this -> gSensorNames[8]), buf + 12, 3);
+		}
+		else if (_strnicmp(buf, "SensorName10=", 13) == 0) {
+			strncpy_s(this -> gSensorNames[9], sizeof(this -> gSensorNames[9]), buf + 13, 3);
+		}
+		else if (_strnicmp(buf, "SensorName11=", 13) == 0) {
+			strncpy_s(this -> gSensorNames[10], sizeof(this -> gSensorNames[10]), buf + 13, 3);
+		}
+		else if (_strnicmp(buf, "SensorName12=", 13) == 0) {
+			strncpy_s(this -> gSensorNames[11], sizeof(this -> gSensorNames[11]), buf + 13, 3);
+		}
+		else if (_strnicmp(buf, "SensorName13=", 13) == 0) {
+			strncpy_s(this -> gSensorNames[12], sizeof(this -> gSensorNames[12]), buf + 13, 3);
+		}
+		else if (_strnicmp(buf, "SensorName14=", 13) == 0) {
+			strncpy_s(this -> gSensorNames[13], sizeof(this -> gSensorNames[13]), buf + 13, 3);
+		}
+		else if (_strnicmp(buf, "SensorName15=", 13) == 0) {
+			strncpy_s(this -> gSensorNames[14], sizeof(this -> gSensorNames[14]), buf + 13, 3);
+		}
+		else if (_strnicmp(buf, "SensorName16=", 13) == 0) {
+			strncpy_s(this -> gSensorNames[15], sizeof(this -> gSensorNames[15]), buf + 13, 3);
+		}
+		// End of Reading Sensor Names
+
+		// Read SensorOffsets
+		else if (_strnicmp(buf, "SensorOffset1=", 14) == 0) {
+			this->SensorOffset[0] = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SensorOffset2=", 14) == 0) {
+			this->SensorOffset[1] = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SensorOffset3=", 14) == 0) {
+			this->SensorOffset[2] = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SensorOffset4=", 14) == 0) {
+			this->SensorOffset[3] = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SensorOffset5=", 14) == 0) {
+			this->SensorOffset[4] = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SensorOffset6=", 14) == 0) {
+			this->SensorOffset[5] = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SensorOffset7=", 14) == 0) {
+			this->SensorOffset[6] = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SensorOffset8=", 14) == 0) {
+			this->SensorOffset[7] = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SensorOffset9=", 14) == 0) {
+			this->SensorOffset[8] = atoi(buf + 14);
+		}
+		else if (_strnicmp(buf, "SensorOffset10=", 15) == 0) {
+			this->SensorOffset[9] = atoi(buf + 15);
+		}
+		else if (_strnicmp(buf, "SensorOffset11=", 15) == 0) {
+			this->SensorOffset[10] = atoi(buf + 15);
+		}
+		else if (_strnicmp(buf, "SensorOffset12=", 15) == 0) {
+			this->SensorOffset[11] = atoi(buf + 15);
+		}
+		else if (_strnicmp(buf, "SensorOffset13=", 15) == 0) {
+			this->SensorOffset[12] = atoi(buf + 15);
+		}
+		else if (_strnicmp(buf, "SensorOffset14=", 15) == 0) {
+			this->SensorOffset[13] = atoi(buf + 15);
+		}
+		else if (_strnicmp(buf, "SensorOffset15=", 15) == 0) {
+			this->SensorOffset[14] = atoi(buf + 15);
+		}
+		else if (_strnicmp(buf, "SensorOffset16=", 15) == 0) {
+			this->SensorOffset[15] = atoi(buf + 15);
+		}
+		// End of Reading Sensor Offsets
+
+		else if (_strnicmp(buf, "IgnoreSensors=", 14) == 0) {
+			char* p = buf + 14, * p2 = this->IgnoreSensors;
+
+			while (*p) {	// copy excluding space and tab
+				if (*p != ' ' && *p != '\t' && *p != '\r' && *p != '\n')
+					*p2++ = *p;
+				p++;
+			}
+			*p2 = '\0';
+		}
+	}
+
+	*out_lcnt = lcnt;
+	*out_lcnt2 = lcnt2;
+
+	fclose(f);
+	return true;
+}
 
 //-------------------------------------------------------------------------
 //  read config file
@@ -28,13 +335,10 @@ FANCONTROL::ReadConfig(const char* configfile)
 {
 	char buf[1024];
 	int i, ok = false, lcnt = 0, lcnt2 = 0;
-	int ProcessPriority = 2;
+	this->ProcessPriority = 2;
 
 	strncpy_s(this->MenuLabelSM1, sizeof(this->MenuLabelSM1), "Smart Level 1", 14);
 	strncpy_s(this->MenuLabelSM2, sizeof(this->MenuLabelSM1), "Smart Level 2", 14);
-
-
-
 
 	//TODO: memcpy
 	//for (i= 0; i<15; i++) {SensorOffset[i]=0;}
@@ -48,391 +352,8 @@ FANCONTROL::ReadConfig(const char* configfile)
 	this->State.FanSpeedLo2 = 0x00;
 	this->fanspeed = 0;
 	this->IndSmartLevel = 0;
-	//
-	// read from file
-	//
-	FILE* f;
-	errno_t errf = fopen_s(&f, configfile, "r");
-	if (!errf) {
-		while (!feof(f)) {
-			strcpy_s(buf, sizeof(buf), "");
-			fgets(buf, sizeof(buf), f);
-			if (buf[0] == '/' || buf[0] == '#' || buf[0] == ';')
-				continue;
 
-			if (_strnicmp(buf, "UseTWR=", 7) == 0) {
-				this->UseTWR = atoi(buf + 7);
-			}
-			if (_strnicmp(buf, "Active=", 7) == 0) {
-				this->ActiveMode = atoi(buf + 7);
-			}
-			else
-				if (_strnicmp(buf, "ManFanSpeed=", 12) == 0) {
-					this->ManFanSpeed = atoi(buf + 12);
-				}
-				else
-					if (_strnicmp(buf, "ProcessPriority=", 16) == 0) {
-						ProcessPriority = atoi(buf + 16);
-					}
-					else
-						if (_strnicmp(buf, "cycle=", 6) == 0) {
-							this->Cycle = atoi(buf + 6);
-						}
-						else
-							if (_strnicmp(buf, "IconCycle=", 10) == 0) {
-								this->IconCycle = atoi(buf + 10);
-							}
-							else
-								if (_strnicmp(buf, "ReIcCycle=", 10) == 0) {
-									this->ReIcCycle = atoi(buf + 10);
-								}
-								else
-									if (_strnicmp(buf, "IconFontSize=", 13) == 0) {
-										this->iFontIconB = atoi(buf + 13);
-									}
-
-									else
-
-										if (_strnicmp(buf, "MenuLabelSM1=", 13) == 0) {
-											char* p = buf + 13, * p2 = this->MenuLabelSM1;
-											while (*p != '/') {	// copy until '/' excluding tab, carr ret, new line
-						//						if (*p!='*') continue; else break;
-												if (*p != '\t' && *p != '\r' && *p != '\n')
-													*p2++ = *p;
-												p++;
-											}
-											*p2 = '\0';
-										}
-
-										else
-
-											if (_strnicmp(buf, "MenuLabelSM2=", 13) == 0) {
-												char* p = buf + 13, * p2 = this->MenuLabelSM2;
-												while (*p != '/') {	// copy until '/' excluding tab, carr ret, new line
-													if (*p != '\t' && *p != '\r' && *p != '\n')
-														*p2++ = *p;
-													p++;
-												}
-												*p2 = '\0';
-											}
-
-											else
-												if (_strnicmp(buf, "FanSpeedLowByte=", 16) == 0) {
-													this->FanSpeedLowByte = atoi(buf + 16);
-												}
-												else
-													if (_strnicmp(buf, "NoExtSensor=", 12) == 0) {
-														this->NoExtSensor = atoi(buf + 12);
-													}
-													else
-														if (_strnicmp(buf, "SlimDialog=", 11) == 0) {
-															this->SlimDialog = atoi(buf + 11);
-															if (this->SlimDialog != 0) this->SlimDialog = 1;
-														}
-														else
-															if (_strnicmp(buf, "level=", 6) == 0) {
-																sscanf_s(buf + 6, "%d %d", &this->SmartLevels[lcnt].temp, &this->SmartLevels[lcnt].fan);
-																sscanf_s(buf + 6, "%d %d", &this->SmartLevels1[lcnt].temp1, &this->SmartLevels1[lcnt].fan1);
-																lcnt++;
-															}
-															else
-																if (_strnicmp(buf, "level2=", 7) == 0) {
-																	sscanf_s(buf + 7, "%d %d", &this->SmartLevels2[lcnt2].temp2, &this->SmartLevels2[lcnt2].fan2);
-																	lcnt2++;
-																}
-																else
-																	if (_strnicmp(buf, "fanbeep=", 8) == 0) {
-																		sscanf_s(buf + 8, "%d %d", &this->FanBeepFreq, &this->FanBeepDura);
-																	}
-																	else
-																		if (_strnicmp(buf, "iconlevels=", 11) == 0) {
-																			sscanf_s(buf + 11, "%d %d %d", &this->IconLevels[0], &this->IconLevels[1], &this->IconLevels[2]);
-																		}
-
-																		else
-																			if (_strnicmp(buf, "NoWaitMessage=", 14) == 0) {
-																				this->NoWaitMessage = atoi(buf + 14);
-																			}
-
-																			else
-																				if (_strnicmp(buf, "StartMinimized=", 15) == 0) {
-																					this->StartMinimized = atoi(buf + 15);
-																				}
-																				else
-																					if (_strnicmp(buf, "NoBallons=", 10) == 0) {
-																						this->NoBallons = atoi(buf + 10);
-																					}
-
-																					else
-																						if (_strnicmp(buf, "HK_BIOS=", 8) == 0) {
-																							this->HK_BIOS_Method = buf[8] - 0x30;
-																							this->HK_BIOS = buf[10];
-																							if ((this->HK_BIOS == 0x46) & (buf[11] > 0x30) & (buf[11] < 0x40))
-																								this->HK_BIOS = 0x70 + atoi(buf + 11) - 1;
-																						}
-
-																						else
-																							if (_strnicmp(buf, "HK_Manual=", 10) == 0) {
-																								this->HK_Manual_Method = buf[10] - 0x30;
-																								this->HK_Manual = buf[12];
-																								if ((this->HK_Manual == 0x46) & (buf[13] > 0x30) & (buf[13] < 0x40))
-																									this->HK_Manual = 0x70 + atoi(buf + 13) - 1;
-																							}
-
-																							else
-																								if (_strnicmp(buf, "HK_Smart=", 9) == 0) {
-																									this->HK_Smart_Method = buf[9] - 0x30;
-																									this->HK_Smart = buf[11];
-																									if ((this->HK_Smart == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
-																										this->HK_Smart = 0x70 + atoi(buf + 12) - 1;
-																								}
-
-																								else
-																									if (_strnicmp(buf, "HK_SM1=", 7) == 0) {
-																										this->HK_SM1_Method = buf[7] - 0x30;
-																										this->HK_SM1 = buf[9];
-																										if ((this->HK_SM1 == 0x46) & (buf[10] > 0x30) & (buf[10] < 0x40))
-																											this->HK_SM1 = 0x70 + atoi(buf + 10) - 1;
-																									}
-
-																									else
-																										if (_strnicmp(buf, "HK_SM2=", 7) == 0) {
-																											this->HK_SM2_Method = buf[7] - 0x30;
-																											this->HK_SM2 = buf[9];
-																											if ((this->HK_SM2 == 0x46) & (buf[10] > 0x30) & (buf[10] < 0x40))
-																												this->HK_SM2 = 0x70 + atoi(buf + 10) - 1;
-																										}
-
-																										else
-																											if (_strnicmp(buf, "HK_TG_BS=", 9) == 0) {
-																												this->HK_TG_BS_Method = buf[9] - 0x30;
-																												this->HK_TG_BS = buf[11];
-																												if ((this->HK_TG_BS == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
-																													this->HK_TG_BS = 0x70 + atoi(buf + 12) - 1;
-																											}
-
-																											else
-																												if (_strnicmp(buf, "HK_TG_BM=", 9) == 0) {
-																													this->HK_TG_BM_Method = buf[9] - 0x30;
-																													this->HK_TG_BM = buf[11];
-																													if ((this->HK_TG_BM == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
-																														this->HK_TG_BM = 0x70 + atoi(buf + 12) - 1;
-																												}
-
-																												else
-																													if (_strnicmp(buf, "HK_TG_MS=", 9) == 0) {
-																														this->HK_TG_MS_Method = buf[9] - 0x30;
-																														this->HK_TG_MS = buf[11];
-																														if ((this->HK_TG_MS == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
-																															this->HK_TG_MS = 0x70 + atoi(buf + 12) - 1;
-																													}
-
-																													else
-																														if (_strnicmp(buf, "HK_TG_12=", 9) == 0) {
-																															this->HK_TG_12_Method = buf[9] - 0x30;
-																															this->HK_TG_12 = buf[11];
-																															if ((this->HK_TG_12 == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
-																																this->HK_TG_12 = 0x70 + atoi(buf + 12) - 1;
-																														}
-
-																														else
-																															if (_strnicmp(buf, "IconColorFan=", 13) == 0) {
-																																this->IconColorFan = atoi(buf + 13);
-																															}
-
-																															else
-																																if (_strnicmp(buf, "Lev64Norm=", 10) == 0) {
-																																	this->Lev64Norm = atoi(buf + 10);
-																																}
-
-																																else
-																																	if (_strnicmp(buf, "BluetoothEDR=", 13) == 0) {
-																																		this->BluetoothEDR = atoi(buf + 13);
-																																	}
-
-																																	else
-																																		if (_strnicmp(buf, "ManModeExit=", 12) == 0) {
-																																			this->ManModeExit = atoi(buf + 12);
-																																		}
-
-																																		else
-																																			if (_strnicmp(buf, "ShowBiasedTemps=", 16) == 0) {
-																																				this->ShowBiasedTemps = atoi(buf + 16);
-																																			}
-
-																																			else
-																																				if (_strnicmp(buf, "MaxReadErrors=", 14) == 0) {
-																																					this->MaxReadErrors = atoi(buf + 14);
-																																				}
-
-																																				else
-																																					if (_strnicmp(buf, "SecWinUptime=", 13) == 0) {
-																																						this->SecWinUptime = atoi(buf + 13);
-																																					}
-
-																																					else
-																																						if (_strnicmp(buf, "SecStartDelay=", 14) == 0) {
-																																							this->SecStartDelay = atoi(buf + 14);
-																																						}
-																																						else
-																																							if (_strnicmp(buf, "Log2File=", 9) == 0) {
-																																								this->Log2File = atoi(buf + 9);
-																																							}
-																																							else
-																																								if (_strnicmp(buf, "StayOnTop=", 10) == 0) {
-																																									this->StayOnTop = atoi(buf + 10);
-																																								}
-
-																																								else
-																																									if (_strnicmp(buf, "Log2csv=", 8) == 0) {
-																																										this->Log2csv = atoi(buf + 8);
-																																									}
-
-																																									else
-																																										if (_strnicmp(buf, "ShowAll=", 8) == 0) {
-																																											this->ShowAll = atoi(buf + 8);
-																																										}
-																																										else
-																																											if (_strnicmp(buf, "ShowTempIcon=", 8) == 0) {
-																																												this->ShowTempIcon = atoi(buf + 13);
-																																											}
-
-			// Read SensorName		
-																																											else
-																																												if (_strnicmp(buf, "SensorName1=", 12) == 0) {
-																																													strncpy_s(this->gSensorNames[0], sizeof(this->gSensorNames[0]), buf + 12, 3);
-																																												}
-																																												else
-																																													if (_strnicmp(buf, "SensorName2=", 12) == 0) {
-																																														strncpy_s(this->gSensorNames[1], sizeof(this->gSensorNames[1]), buf + 12, 3);
-																																													}
-																																													else
-																																														if (_strnicmp(buf, "SensorName3=", 12) == 0) {
-																																															strncpy_s(this->gSensorNames[2], sizeof(this->gSensorNames[2]), buf + 12, 3);
-																																														}
-																																														else
-																																															if (_strnicmp(buf, "SensorName4=", 12) == 0) {
-																																																strncpy_s(this->gSensorNames[3], sizeof(this->gSensorNames[3]), buf + 12, 3);
-																																															}
-																																															else
-																																																if (_strnicmp(buf, "SensorName5=", 12) == 0) {
-																																																	strncpy_s(this->gSensorNames[4], sizeof(this->gSensorNames[4]), buf + 12, 3);
-																																																}
-																																																else
-																																																	if (_strnicmp(buf, "SensorName6=", 12) == 0) {
-																																																		strncpy_s(this->gSensorNames[5], sizeof(this->gSensorNames[5]), buf + 12, 3);
-																																																	}
-																																																	else
-																																																		if (_strnicmp(buf, "SensorName7=", 12) == 0) {
-																																																			strncpy_s(this->gSensorNames[6], sizeof(this->gSensorNames[6]), buf + 12, 3);
-																																																		}
-																																																		else
-																																																			if (_strnicmp(buf, "SensorName8=", 12) == 0) {
-																																																				strncpy_s(this->gSensorNames[7], sizeof(this->gSensorNames[7]), buf + 12, 3);
-																																																			}
-																																																			else
-																																																				if (_strnicmp(buf, "SensorName9=", 12) == 0) {
-																																																					strncpy_s(this->gSensorNames[8], sizeof(this->gSensorNames[8]), buf + 12, 3);
-																																																				}
-																																																				else
-																																																					if (_strnicmp(buf, "SensorName10=", 13) == 0) {
-																																																						strncpy_s(this->gSensorNames[9], sizeof(this->gSensorNames[9]), buf + 13, 3);
-																																																					}
-																																																					else
-																																																						if (_strnicmp(buf, "SensorName11=", 13) == 0) {
-																																																							strncpy_s(this->gSensorNames[10], sizeof(this->gSensorNames[10]), buf + 13, 3);
-																																																						}
-																																																						else
-																																																							if (_strnicmp(buf, "SensorName12=", 13) == 0) {
-																																																								strncpy_s(this->gSensorNames[11], sizeof(this->gSensorNames[11]), buf + 13, 3);
-																																																							}
-																																																							else
-																																																								if (_strnicmp(buf, "SensorName13=", 13) == 0) {
-																																																									strncpy_s(this->gSensorNames[12], sizeof(this->gSensorNames[12]), buf + 13, 3);
-																																																								}
-																																																								else
-																																																									if (_strnicmp(buf, "SensorName14=", 13) == 0) {
-																																																										strncpy_s(this->gSensorNames[13], sizeof(this->gSensorNames[13]), buf + 13, 3);
-																																																									}
-																																																									else
-																																																										if (_strnicmp(buf, "SensorName15=", 13) == 0) {
-																																																											strncpy_s(this->gSensorNames[14], sizeof(this->gSensorNames[14]), buf + 13, 3);
-																																																										}
-																																																										else
-																																																											if (_strnicmp(buf, "SensorName16=", 13) == 0) {
-																																																												strncpy_s(this->gSensorNames[15], sizeof(this->gSensorNames[15]), buf + 13, 3);
-																																																											}
-			// End of Reading Sensor Names
-
-
-			// Read SensorOffsets
-																																																											else
-																																																												if (_strnicmp(buf, "SensorOffset1=", 14) == 0)
-																																																													this->SensorOffset[0] = atoi(buf + 14);
-																																																												else
-																																																													if (_strnicmp(buf, "SensorOffset2=", 14) == 0)
-																																																														this->SensorOffset[1] = atoi(buf + 14);
-																																																													else
-																																																														if (_strnicmp(buf, "SensorOffset3=", 14) == 0)
-																																																															this->SensorOffset[2] = atoi(buf + 14);
-																																																														else
-																																																															if (_strnicmp(buf, "SensorOffset4=", 14) == 0)
-																																																																this->SensorOffset[3] = atoi(buf + 14);
-																																																															else
-																																																																if (_strnicmp(buf, "SensorOffset5=", 14) == 0)
-																																																																	this->SensorOffset[4] = atoi(buf + 14);
-																																																																else
-																																																																	if (_strnicmp(buf, "SensorOffset6=", 14) == 0)
-																																																																		this->SensorOffset[5] = atoi(buf + 14);
-																																																																	else
-																																																																		if (_strnicmp(buf, "SensorOffset7=", 14) == 0)
-																																																																			this->SensorOffset[6] = atoi(buf + 14);
-																																																																		else
-																																																																			if (_strnicmp(buf, "SensorOffset8=", 14) == 0)
-																																																																				this->SensorOffset[7] = atoi(buf + 14);
-																																																																			else
-																																																																				if (_strnicmp(buf, "SensorOffset9=", 14) == 0)
-																																																																					this->SensorOffset[8] = atoi(buf + 14);
-																																																																				else
-																																																																					if (_strnicmp(buf, "SensorOffset10=", 15) == 0)
-																																																																						this->SensorOffset[9] = atoi(buf + 15);
-																																																																					else
-																																																																						if (_strnicmp(buf, "SensorOffset11=", 15) == 0)
-																																																																							this->SensorOffset[10] = atoi(buf + 15);
-																																																																						else
-																																																																							if (_strnicmp(buf, "SensorOffset12=", 15) == 0)
-																																																																								this->SensorOffset[11] = atoi(buf + 15);
-																																																																							else
-																																																																								if (_strnicmp(buf, "SensorOffset13=", 15) == 0)
-																																																																									this->SensorOffset[12] = atoi(buf + 15);
-																																																																								else
-																																																																									if (_strnicmp(buf, "SensorOffset14=", 15) == 0)
-																																																																										this->SensorOffset[13] = atoi(buf + 15);
-																																																																									else
-																																																																										if (_strnicmp(buf, "SensorOffset15=", 15) == 0)
-																																																																											this->SensorOffset[14] = atoi(buf + 15);
-																																																																										else
-																																																																											if (_strnicmp(buf, "SensorOffset16=", 15) == 0)
-																																																																												this->SensorOffset[15] = atoi(buf + 15);
-
-			// End of Reading Sensor Offsets
-
-																																																																											else
-																																																																												if (_strnicmp(buf, "IgnoreSensors=", 14) == 0) {
-																																																																													char* p = buf + 14, * p2 = this->IgnoreSensors;
-
-																																																																													while (*p) {	// copy excluding space and tab
-																																																																														if (*p != ' ' && *p != '\t' && *p != '\r' && *p != '\n')
-																																																																															*p2++ = *p;
-																																																																														p++;
-																																																																													}
-																																																																													*p2 = '\0';
-																																																																												}
-		}
-
-
-		fclose(f);
-
+	if (this->__ParseReadConfig(configfile, &lcnt, &lcnt2)) {
 		if (this->StayOnTop)
 			this->hwndDialog = ::CreateDialogParam(hinstapp,
 				MAKEINTRESOURCE(9000),
@@ -447,8 +368,6 @@ FANCONTROL::ReadConfig(const char* configfile)
 				(DLGPROC)BaseDlgProc,
 				(LPARAM)this);
 
-
-
 		// end marker for smart levels array
 		if (lcnt) {
 			this->SmartLevels[lcnt].temp = -1;
@@ -456,19 +375,14 @@ FANCONTROL::ReadConfig(const char* configfile)
 			this->SmartLevels[lcnt].fan = 0x80;
 			this->SmartLevels1[lcnt].fan1 = 0x80;
 		}
-
 		if (lcnt2) {
 			this->SmartLevels2[lcnt2].temp2 = -1;
 			this->SmartLevels2[lcnt2].fan2 = 0x80;
 		}
-
 		ok = true;
-
-
 
 		this->Trace("Current Config:");
 	}
-
 	else {
 		this->Trace("TPFanControl.ini missing, default values:");
 	}
@@ -484,7 +398,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 
 	// Set ProcessPriority
 	BOOL _SPC;
-	switch (ProcessPriority) {
+	switch (this->ProcessPriority) {
 	case 5: _SPC = SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS); break;
 	case 4: _SPC = SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS); break;
 	case 3: _SPC = SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS); break;
