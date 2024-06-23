@@ -397,7 +397,8 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 			this);
 		::SendDlgItemMessage(this->hwndDialog, 8112, EM_LIMITTEXT, 256, 0);
 		::SendDlgItemMessage(this->hwndDialog, 9200, EM_LIMITTEXT, 4096, 0);
-		::SetDlgItemText(this->hwndDialog, 8310, _itoa(this->ManFanSpeed, buf, 10));
+		_itoa_s(this->ManFanSpeed, buf, 10);
+		::SetDlgItemText(this->hwndDialog, 8310, buf);
 	}
 
 
@@ -431,7 +432,8 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 				this);
 			::SendDlgItemMessage(this->hwndDialog, 8112, EM_LIMITTEXT, 256, 0);
 			::SendDlgItemMessage(this->hwndDialog, 9200, EM_LIMITTEXT, 4096, 0);
-			::SetDlgItemText(this->hwndDialog, 8310, _itoa(this->ManFanSpeed, buf, 10));
+			_itoa_s(this->ManFanSpeed, buf, 10);
+			::SetDlgItemText(this->hwndDialog, 8310, buf);
 			this->ShowAllToDialog(ShowAll);
 
 		}

@@ -101,7 +101,7 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 
 	*pdata = ReadPort(EC_DATAPORT);
 
-	if (verbosity > 0) sprintf(logbuf + strlen(logbuf), "readec: offset= %x, data= %02x\n", offset, *pdata);
+	if (verbosity > 0) sprintf_s(logbuf + strlen(logbuf), sizeof(logbuf + strlen(logbuf)), "readec: offset= %x, data= %02x\n", offset, *pdata);
 
 	return 1;
 }

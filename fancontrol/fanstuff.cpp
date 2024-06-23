@@ -108,7 +108,7 @@ FANCONTROL::HandleData(void) {
 		}
 		else {
 			if (!(SlimDialog && StayOnTop))
-				sprintf_s(obuf2 + strlen(obuf2), sizeof(obuf2) - strlen(obuf2), " Non Bios", fanctrl & 0x3F);
+				sprintf_s(obuf2 + strlen(obuf2), sizeof(obuf2) - strlen(obuf2), " Non Bios");
 			sprintf_s(title2 + strlen(title2), sizeof(title2) - strlen(title2), " Fan %d (%s)",
 				fanctrl & 0x3F,
 				this->CurrentModeFromDialog() == 2 ? "Smart" : "Fixed");
