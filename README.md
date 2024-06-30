@@ -18,6 +18,9 @@ Visual Studio 2022 Community was used to build and debug. A release build is in 
 Important: This software is released as a public domain software, there is no warranty or promise of bug fixes. The binaries and its source code are provided "as is", 
 and should be used at your own risk. For more information, please refer to <http://unlicense.org/>.
 
+Please note that I'm very busy with other work for the time being so it'll take a while for me to get to new issues, however please feel free to create pull requests,
+I will review those as soon as possible.
+
 ## Requirements
 
 To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port/index.shtm) manually or install the original version of TPFanControl found 
