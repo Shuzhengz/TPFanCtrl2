@@ -6,17 +6,17 @@ ThinkPad Fan Control 2, a fan control utility for ThinkPad users running Windows
 
 This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanControl/tree/master/fancontrol), and is based on 
 [byrnes' dual fan mod](https://github.com/byrnes/TPFanControl).
-It's updated it to work with two fan devices. It has only been tested on X1 Extreme Gen. 1 and P1 Gen. 4, but it should work on most other dual-
-fan Thinkpads that are released. The default fan profile is a silent one, with the fans only coming on at 60c. This can be changed by editing tpfancontrol.ini.
+It's updated it to work with two fan devices. It has only been tested on X1 Extreme Gen. 1 and P1 Gen. 4, but it should work on most other dual-fan Thinkpads that are
+released. The default fan profile prioritizes fan noise, with fans only turning on at 60C. This can be changed by editing `tpfancontrol.ini`.
 
-Visual Studio 2022 Community was used to build and debug. A release build is in the works
+Visual Studio 2022 Community was used to build and debug.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Shuzhengz/TPFanCtrl2/master/fancontrol/res/TPFC2.png" alt="Example Photo" width="750"/>
 </p>
 
-Important: This software is released as a public domain software, there is no warranty or promise of bug fixes. The binaries and its source code are provided "as is", 
-and should be used at your own risk. For more information, please refer to <http://unlicense.org/>.
+**Important: This software is released as a public domain software, there is no warranty or promise of bug fixes. The binaries and its source code are provided "as is", 
+and should be used at your own risk. For more information, please refer to <http://unlicense.org/>.**
 
 Please note that I'm very busy with other work for the time being so it'll take a while for me to get to new issues, however please feel free to create pull requests,
 I will review those as soon as possible.
