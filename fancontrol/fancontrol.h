@@ -27,7 +27,7 @@
 #include "TaskbarTextIcon.h"
 
 
-#define FANCONTROLVERSION "2.1.5 Dual Fan"
+#define FANCONTROLVERSION "2.1.6"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6
@@ -63,7 +63,11 @@ protected:
 			FanSpeedLo1,
 			FanSpeedHi1,
 			FanSpeedLo2,
-			FanSpeedHi2;
+			FanSpeedHi2,
+
+			// Single Fan Mode
+			FanSpeedLoS,
+			FanSpeedHiS;
 
 		char Sensors[12];
 		int SensorAddr[12];
