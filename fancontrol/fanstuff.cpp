@@ -62,7 +62,12 @@ FANCONTROL::HandleData(void) {
 
 		if (this->State.Sensors[i] != 0x80 && this - State.Sensors[i] != 0x00 && strstr(list, what) == 0) {
 			int isens = this->State.Sensors[i];
-			int ioffs = this->SensorOffset[i];
+			int ioffs = this->SensorOffset[i].offs;
+
+			// apply offset if in temp range
+			int calcTemp = isens - SensorOffset[i].offs;
+			if (isens >= SensorOffset[i].hystMin && isens <= SensorOffset[i].hystMax)
+				ioffs = 0;
 
 			if (ShowBiasedTemps)
 				senstemp = isens;
@@ -331,15 +336,18 @@ int
 FANCONTROL::SmartControl(void) {
 	int ok = 0, i,
 		newfanctrl = -1,
+		levelIndex = -1,
 		fanctrl = this->State.FanCtrl;
 	char obuf[256] = "";
 
 	if (this->PreviousMode == 1) {
+		this->LastSmartLevel = -1; // uninitiate hysteresis var
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from BIOS->");
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed");
 		this->Trace(obuf);
 	}
 	if (this->PreviousMode == 3) {
+		this->LastSmartLevel = -1; // uninitiate hysteresis var
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from Manual->");
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed");
 		this->Trace(obuf);
@@ -349,13 +357,16 @@ FANCONTROL::SmartControl(void) {
 
 	if ((fanctrl > 7 && (fanctrl != 64 || !Lev64Norm)) || this->PreviousMode == 3 || this->PreviousMode == 1) {
 		newfanctrl = 0;
+		levelIndex = 0;
 		fanctrl = 0;
 	}
 
 
 	for (i = 0; this->SmartLevels[i].temp != -1; i++) {
-		if (this->MaxTemp >= this->SmartLevels[i].temp && this->SmartLevels[i].fan >= fanctrl)
+		if (this->MaxTemp >= this->SmartLevels[i].temp && this->SmartLevels[i].fan >= fanctrl) {
 			newfanctrl = this->SmartLevels[i].fan;
+			levelIndex = i;
+		}
 	}
 
 	// not uptriggered check for downtrigger:
@@ -364,6 +375,7 @@ FANCONTROL::SmartControl(void) {
 		for (i = 0; this->SmartLevels[i].temp != -1; i++) {
 			if (this->MaxTemp <= this->SmartLevels[i].temp && this->SmartLevels[i].fan < fanctrl) {
 				newfanctrl = this->SmartLevels[i].fan;
+				levelIndex = i;
 				break;
 			}
 		}
@@ -375,6 +387,24 @@ FANCONTROL::SmartControl(void) {
 		//if (newfanctrl==0x80) { // switch to BIOS-auto mode
 		//	//this->ModeToDialog(1); // bios
 		//}
+
+		// do not change if histerysis zone, determine which hyst zone if we are in based on previous temp
+		// DO NOT HAVE HYSTERESIS OVERLAP WITH FAN TEMPS IN CONFIG!
+		SMARTENTRY newLevel = this->SmartLevels[levelIndex];
+		if (this->LastSmartLevel < 0) { // ignore hist on first time setting fan
+			this->LastSmartLevel = levelIndex;
+			return ok = this->SetFan("Smart", newfanctrl);
+		}
+
+		if (this->MaxTemp < this->SmartLevels[this->LastSmartLevel].temp) {
+			if (this->MaxTemp > newLevel.temp - newLevel.hystDown)
+				return ok; // cooling
+		} else {
+			if (this->MaxTemp < newLevel.temp + newLevel.hystUp)
+				return ok; // rising 
+		}
+
+		this->LastSmartLevel = levelIndex; // track fan that we switch to
 		ok = this->SetFan("Smart", newfanctrl);
 	}
 
@@ -648,7 +678,7 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 		for (i = 0; i < 8 && ok; i++) {    // temp sensors 0x78 - 0x7f
 			ok = ReadByteFromEC(TP_ECOFFSET_TEMP0 + i, &pfcstate->Sensors[idxtemp]);
 			if (this->ShowBiasedTemps)
-				pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp];
+				pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp].offs;
 			if (!ok) {
 				this->Trace("failed to read TEMP0 byte from EC");
 			}
@@ -664,7 +694,7 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 				pfcstate->SensorName[idxtemp] = this->gSensorNames[idxtemp];
 				ok = ReadByteFromEC(TP_ECOFFSET_TEMP1 + i, &pfcstate->Sensors[idxtemp]);
 				if (this->ShowBiasedTemps)
-					pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp];
+					pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp].offs;
 				if (!ok) {
 					this->Trace("failed to read TEMP1 byte from EC");
 				}
