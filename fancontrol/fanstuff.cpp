@@ -660,6 +660,10 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 		this->Trace("failed to read FanSpeedHighByte 2 from EC");
 	}
 
+	ok = ReadByteFromEC(TP_ECOFFSET_FAN, &pfcstate->FanCtrl);
+
+	ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
+
 	if (ok)
 		ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->FanSpeedLo1);
 	if (!ok) {
