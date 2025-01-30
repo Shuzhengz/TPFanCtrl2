@@ -323,7 +323,8 @@ FANCONTROL::HandleData(void) {
 	}
 
 	this->PreviousMode = this->CurrentMode;
-	if (this->CurrentMode == 3 && this->MaxTemp > 75) this->CurrentMode = 2; //hello
+
+	if (this->CurrentMode == 3 && this->MaxTemp > this->ManModeExit2) this->CurrentMode = 2;
 
 	return ok;
 }
