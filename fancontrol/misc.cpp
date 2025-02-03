@@ -42,11 +42,11 @@ FANCONTROL::ReadConfig(const char* configfile)
 	setzero(SensorOffset, sizeof(SensorOffset));
 	setzero(FSensorOffset, sizeof(FSensorOffset));
 
-	this->State.FanSpeedHi1 = 0x00;
-	this->State.FanSpeedLo1 = 0x00;
-	this->State.FanSpeedHi2 = 0x00;
-	this->State.FanSpeedLo2 = 0x00;
-	this->fanspeed = 0;
+	this->State.Fan1SpeedHi = 0x00;
+	this->State.Fan1SpeedLo = 0x00;
+	this->State.Fan2SpeedHi = 0x00;
+	this->State.Fan2SpeedLo = 0x00;
+	this->fan1speed = 0;
 	this->IndSmartLevel = 0;
 	//
 	// read from file
@@ -464,9 +464,8 @@ FANCONTROL::ReadConfig(const char* configfile)
 
 		ok = true;
 
-
-
 		this->Trace("Current Config:");
+		this->Trace(FANCONTROLVERSION);
 	}
 
 	else {
@@ -599,11 +598,12 @@ FANCONTROL::ReadConfig(const char* configfile)
 	this->Trace(buf);
 
 	sprintf_s(buf, sizeof(buf), "  IgnoreSensors= %s, ProcessPriority= %d, IconCycle= %d", IgnoreSensors, ProcessPriority, IconCycle);
+
 	this->Trace(buf);
 
 	sprintf_s(buf, sizeof(buf), "  BluetoothEDR= %d, NoWaitMessage= %d, ShowBiasedTemps= %d", this->BluetoothEDR, NoWaitMessage, ShowBiasedTemps);
-	this->Trace(buf);
 
+	this->Trace(buf);
 
 	//ManModeExit Fahrenheit to Celsius and v.v.
 
@@ -654,8 +654,8 @@ FANCONTROL::ReadConfig(const char* configfile)
 	this->iMaxTemp = 0;
 	this->iFarbeIconB = 10;
 	this->iFontIconB = 9;
-	this->lastfanspeed = 0;
-	this->fanspeed = 0;
+	this->lastfan1speed = 0;
+	this->fan1speed = 0;
 
 	return ok;
 
