@@ -24,24 +24,19 @@
 #define EC_DATAPORT    0x1600    // EC data io-port 0x62
 #define EC_CTRLPORT    0x1604    // EC control io-port 0x66
 
-
 // Embedded controller status register bits
 #define EC_STAT_OBF     0x01 // Output buffer full
 #define EC_STAT_IBF     0x02 // Input buffer full
 #define EC_STAT_CMD     0x08 // Last write was a command write (0=data)
 
-
 // Embedded controller commands
 // (write to EC_CTRLPORT to initiate read/write operation)
-#define EC_CTRLPORT_READ     (char)0x80
+#define EC_CTRLPORT_READ      (char)0x80
 #define EC_CTRLPORT_WRITE     (char)0x81
 #define EC_CTRLPORT_QUERY     (char)0x84
 
-
 int verbosity = 0;    // verbosity for the logbuf (0= nothing)
-char lasterrorstring[256] = "",
-logbuf[8192] = "";
-
+char lasterrorstring[256] = "", logbuf[8192] = "";
 
 //-------------------------------------------------------------------------
 // read a byte from the embedded controller (EC) via port io 
@@ -71,7 +66,6 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 				iOK = true;
 				break;
 			}
-
 			::Sleep(iTick);
 
 		} // try again after a moment
@@ -92,8 +86,6 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 			::Sleep(iTick); // check again after a moment
 		}
 
-		// decrement counter. If greater than 0 afterwards,
-		// start the read process over again
 		numToTrySetup -= 1;
 	}
 
@@ -105,7 +97,6 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 
 	return 1;
 }
-
 
 //-------------------------------------------------------------------------
 // write a byte to the embedded controller (EC) via port io
@@ -140,6 +131,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 		}  // try again after a moment
 
 		if (!iOK) return 0;
+
 		iOK = false;
 
 		WritePort(EC_CTRLPORT, EC_CTRLPORT_WRITE);                      // tell 'em we want to "WRITE"
@@ -167,6 +159,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 			}
 			::Sleep(iTick);
 		}                                                                // try again after a moment
+
 		numToTrySetup -= 1;
 	}
 
