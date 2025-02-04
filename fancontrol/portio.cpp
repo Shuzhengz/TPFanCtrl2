@@ -128,7 +128,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 		int data2 = (char)ReadPort(EC_DATAPORT);
 	}
 
-	// wait for OBF buffers to clear or timeout
+	// wait for OBF buffer to clear or timeout
 	timedOut = true;
 	for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {
 		data = (char)ReadPort(EC_CTRLPORT) & 0xff;
