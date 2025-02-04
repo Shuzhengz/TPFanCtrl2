@@ -43,53 +43,62 @@ char lasterrorstring[256] = "", logbuf[8192] = "";
 //-------------------------------------------------------------------------
 int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 	char data = -1;
-	int numToTrySetup = 50;
-	int iOK = false;
-	int iTimeout = 100;
-	int iTimeoutBuf = 1000;
+
+	int timedOut;
 	int iTime = 0;
+	int iTimeoutBuf = 1000;
+	int iTimeout = 100;
 	int iTick = 10;
 
-	while (numToTrySetup > 0) {
-
-		for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {    // wait for full buffers to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;            // or timeout iTimeoutBuf = 1000
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) break;
-			::Sleep(iTick);
+	// wait for full buffers to clear or timeout
+	timedOut = true;
+	for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {
+		data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+		if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
+			timedOut = false;
+			break;
 		}
-
-		WritePort(EC_CTRLPORT, EC_CTRLPORT_READ);                 // tell 'em we want to "READ"
-
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {       // wait for IBF and OBF to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
-				iOK = true;
-				break;
-			}
-			::Sleep(iTick);
-		}
-
-		if (!iOK) return 0;
-
-		iOK = false;
-
-		WritePort(EC_DATAPORT, offset);                           // tell 'em where we want to read from
-
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {       // wait for OBF 
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-
-			if ((data & EC_STAT_OBF)) {
-				iOK = true;
-				numToTrySetup = 1;
-				break;
-			}
-			::Sleep(iTick);
-		}
-
-		numToTrySetup -= 1;
+		::Sleep(iTick);
+	}
+	if (timedOut) {
+		sprintf_s(logbuf + strlen(logbuf), sizeof(logbuf + strlen(logbuf)), "readec: timed out clear full buffers");
+		return false;
 	}
 
-	if (!iOK) return 0;
+	// indicate read operation desired
+	WritePort(EC_CTRLPORT, EC_CTRLPORT_READ);
+
+	// wait for IBF and OBF to clear or timeout
+	timedOut = true;
+	for (iTime = 0; iTime < iTimeout; iTime += iTick) {
+		data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+		if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
+			timedOut = false;
+			break;
+		}
+		::Sleep(iTick);
+	}
+	if (timedOut) {
+		sprintf_s(logbuf + strlen(logbuf), sizeof(logbuf + strlen(logbuf)), "readec: timed out clear buffers");
+		return false;
+	}
+
+	// indicate read operation desired location
+	WritePort(EC_DATAPORT, offset);
+
+	timedOut = true;
+	for (iTime = 0; iTime < iTimeout; iTime += iTick) {        
+		data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+		if ((data & EC_STAT_OBF)) {
+			timedOut = false;
+			break;
+		}
+		::Sleep(iTick);
+	}
+	if (timedOut) {
+		sprintf_s(logbuf + strlen(logbuf), sizeof(logbuf + strlen(logbuf)), "readec: timed out read data arrived");
+		return false;
+	}
 
 	*pdata = ReadPort(EC_DATAPORT);
 
@@ -104,73 +113,86 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	char data = -1;
 	char data2 = -1;
-	int iOK = false;
+
+	int timedOut;
 	int iTimeout = 100;
 	int iTimeoutBuf = 1000;
 	int iTime = 0;
 	int iTick = 10;
-	int numToTrySetup = 5;
 
-	while (numToTrySetup > 0) {
-
-		for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {    // wait for full buffers to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;            // or timeout iTimeoutBuf = 1000
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
-				break;
-			}
-			::Sleep(iTick);
+	// wait for full buffers to clear or timeout
+	timedOut = true;
+	for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {
+		data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+		if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
+			timedOut = false;
+			break;
 		}
-
-		if (data & EC_STAT_OBF) {
-			data2 = (char)ReadPort(EC_DATAPORT);                  //clear OBF if full
-		}
-
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {       // wait for IOBF to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-			if (!(data & EC_STAT_OBF)) {
-				iOK = true;
-				break;
-			}
-			::Sleep(iTick);
-		}
-
-		if (!iOK) return 0;
-
-		iOK = false;
-
-		WritePort(EC_CTRLPORT, EC_CTRLPORT_WRITE);                // tell 'em we want to "WRITE"
-
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {       // wait for IBF and OBF to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
-				iOK = true;
-				break;
-			}
-			::Sleep(iTick);
-		}
-
-		if (!iOK) return 0;
-
-		iOK = false;
-
-		WritePort(EC_DATAPORT, offset);                           // tell 'em where we want to write to
-
-		for (iTime = 0; iTime < iTimeout; iTime += iTick) {       // wait for IBF and OBF to clear
-			data = (char)ReadPort(EC_CTRLPORT) & 0xff;
-			if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
-				iOK = true;
-				numToTrySetup = 1;
-				break;
-			}
-			::Sleep(iTick);
-		}                                                         // try again after a moment
-
-		numToTrySetup -= 1;
+		::Sleep(iTick);
+	}
+	if (timedOut) {
+		sprintf_s(logbuf + strlen(logbuf), sizeof(logbuf + strlen(logbuf)), "writeec: timed out clear full buffers");
+		return false;
 	}
 
-	if (!iOK) return 0;
+	//clear OBF if full
+	if (data & EC_STAT_OBF) {
+		data2 = (char)ReadPort(EC_DATAPORT);                  
+	}
 
-	WritePort(EC_DATAPORT, NewData);                              // tell 'em what we want to write there
+	// wait for IOBF to clear
+	timedOut = true;
+	for (iTime = 0; iTime < iTimeout; iTime += iTick) {
+		data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+		if (!(data & EC_STAT_OBF)) {
+			timedOut = false;
+			break;
+		}
+		::Sleep(iTick);
+	}
+	if (timedOut) {
+		sprintf_s(logbuf + strlen(logbuf), sizeof(logbuf + strlen(logbuf)), "writeec: timed out clear buffers");
+		return false;
+	}
+
+	// indicate write operation desired
+	WritePort(EC_CTRLPORT, EC_CTRLPORT_WRITE);
+
+	// wait for IBF and OBF to clear or timeout
+	timedOut = true;
+	for (iTime = 0; iTime < iTimeout; iTime += iTick) {
+		data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+		if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
+			timedOut = false;
+			break;
+		}
+		::Sleep(iTick);
+	}
+	if (timedOut) {
+		sprintf_s(logbuf + strlen(logbuf), sizeof(logbuf + strlen(logbuf)), "writeec: timed out clear buffers before write");
+		return false;
+	}
+
+	// indicate read operation desired location
+	WritePort(EC_DATAPORT, offset);                           
+
+	// wait for IBF and OBF to clear
+	timedOut = true;
+	for (iTime = 0; iTime < iTimeout; iTime += iTick) {       
+		data = (char)ReadPort(EC_CTRLPORT) & 0xff;
+		if (!(data & (EC_STAT_IBF | EC_STAT_OBF))) {
+			timedOut = false;
+			break;
+		}
+		::Sleep(iTick);
+	}
+	if (timedOut) {
+		sprintf_s(logbuf + strlen(logbuf), sizeof(logbuf + strlen(logbuf)), "writeec: timed out clear buffers after write");
+		return false;
+	}
+
+	// perform the write operation
+	WritePort(EC_DATAPORT, NewData);
 
 	return 1;
 }
