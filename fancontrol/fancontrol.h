@@ -235,7 +235,6 @@ protected:
 
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
 
-
 	// misc.cpp
 	int ReadConfig(const char* filename);
 
@@ -257,9 +256,8 @@ protected:
 		ULONG p
 	);
 
-
 	// portio.cpp
-	int ReadByteFromECint(int offset, char* pdata);
+	int WaitForFlags(int timeout, char flags);
 
 	int ReadByteFromEC(int offset, char* pdata);
 
