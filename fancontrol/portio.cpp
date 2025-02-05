@@ -116,10 +116,10 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	// indicate write operation desired location
 	WritePort(ACPI_EC_DATAPORT, offset);                           
 
-	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
-		this->Trace("writeec: timed out #3");
-		return FALSE;
-	}
+	//if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
+	//	this->Trace("writeec: timed out #3");
+	//	return FALSE;
+	//}
 
 	// perform the write operation
 	WritePort(ACPI_EC_DATAPORT, NewData);
