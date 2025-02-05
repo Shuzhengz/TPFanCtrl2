@@ -602,7 +602,6 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
 	return ok;
 }
 
-
 //-------------------------------------------------------------------------
 //  read fan and temperatures from embedded controller
 //-------------------------------------------------------------------------

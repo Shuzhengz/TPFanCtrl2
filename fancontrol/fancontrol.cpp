@@ -519,7 +519,6 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 		::ShowWindow(this->hwndDialog, SW_MINIMIZE);
 }
 
-
 //-------------------------------------------------------------------------
 //  destructor
 //-------------------------------------------------------------------------
