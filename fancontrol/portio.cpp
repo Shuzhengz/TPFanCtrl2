@@ -52,13 +52,10 @@ int FANCONTROL::WaitForFlags(int timeout, char flags, BOOL pos) {
 	for (iTime = 0; iTime < timeout; iTime += iTick) {
 		data = ReadPort(ACPI_EC_CTRLPORT);
 		if ((pos && !(data & flags)) || (!pos && (data & flags))) {
-			timedOut = false;
+			timedOut = FALSE;
 			break;
 		}
 		::Sleep(iTick);
-	}
-	if (timedOut) {
-		this->Trace("flagsec: timed out #1\n");
 	}
 	return timedOut;
 }
@@ -71,29 +68,29 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 	int iTimeout = 100;
 
 	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
-		this->Trace("readec: timed out #1\n");
-		return false;
+		this->Trace("readec: timed out #1");
+		return FALSE;
 	}
 
 	// indicate read operation desired
 	WritePort(ACPI_EC_CTRLPORT, ACPI_EC_COMMAND_READ);
 
 	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
-		this->Trace("readec: timed out #2\n");
-		return false;
+		this->Trace("readec: timed out #2");
+		return FALSE;
 	}
 
 	// indicate read operation desired location
 	WritePort(ACPI_EC_DATAPORT, offset);
 
 	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_OBF, FALSE)) {
-		this->Trace("readec: timed out #3\n");
-		return false;
+		this->Trace("readec: timed out #3");
+		return FALSE;
 	}
 
 	*pdata = ReadPort(ACPI_EC_DATAPORT);
 
-	return 1;
+	return TRUE;
 }
 
 //-------------------------------------------------------------------------
@@ -106,28 +103,28 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	int iTimeoutBuf = 1000;
 
 	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
-		this->Trace("writeec: timed out #1\n");
-		return false;
+		this->Trace("writeec: timed out #1");
+		return FALSE;
 	}
 
 	// indicate write operation desired
 	WritePort(ACPI_EC_CTRLPORT, ACPI_EC_COMMAND_WRITE);
 
 	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
-		this->Trace("writeec: timed out #2\n");
-		return false;
+		this->Trace("writeec: timed out #2");
+		return FALSE;
 	}
 
 	// indicate write operation desired location
 	WritePort(ACPI_EC_DATAPORT, offset);                           
 
 	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
-		this->Trace("writeec: timed out #3\n");
-		return false;
+		this->Trace("writeec: timed out #3");
+		return FALSE;
 	}
 
 	// perform the write operation
 	WritePort(ACPI_EC_DATAPORT, NewData);
 
-	return true;
+	return TRUE;
 }
