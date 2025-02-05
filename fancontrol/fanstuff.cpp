@@ -20,13 +20,13 @@
 #include "tools.h"
 #include "TVicPort.h"
 
-#define TP_ECOFFSET_FAN_SWITCH    (char)0x31
-#define TP_ECOFFSET_FAN1        (char)0x0000
-#define TP_ECOFFSET_FAN2        (char)0x0001
-#define TP_ECOFFSET_FAN            (char)0x2F    // 1 byte (binary xyzz zzz)
-#define TP_ECOFFSET_FANSPEED    (char)0x84  // 16 bit word, lo/hi byte
+#define TP_ECOFFSET_FAN_SWITCH  (char)0x31
+#define TP_ECVALUE_SELFAN1      (char)0x0000
+#define TP_ECVALUE_SELFAN2      (char)0x0001
+#define TP_ECOFFSET_FAN         (char)0x2F    // 1 byte (binary xyzz zzz)
+#define TP_ECOFFSET_FANSPEED    (char)0x84    // 16 bit word, lo/hi byte
 #define TP_ECOFFSET_TEMP0       (char)0x78    // 8 temp sensor bytes from here
-#define TP_ECOFFSET_TEMP1       (char)0xC0  // 4 temp sensor bytes from here
+#define TP_ECOFFSET_TEMP1       (char)0xC0    // 4 temp sensor bytes from here
 
 
 
@@ -76,7 +76,8 @@ FANCONTROL::HandleData(void) {
 
 			if (senstemp < 128) {
 				maxtemp = __max(senstemp, maxtemp);
-				if (maxtemp <= senstemp) imaxtemp = i;
+				if (maxtemp <= senstemp)
+					imaxtemp = i;
 			}
 		}
 	}
@@ -134,11 +135,13 @@ FANCONTROL::HandleData(void) {
 	// display fan speed
 	this->lastfan1speed = this->fan1speed;
 	this->fan1speed = (this->State.Fan1SpeedHi << 8) | this->State.Fan1SpeedLo;
-	if (this->fan1speed > 0x1fff) fan1speed = lastfan1speed;
+	if (this->fan1speed > 0x1fff)
+		fan1speed = lastfan1speed;
 
 	this->lastfan2speed = this->fan2speed;
 	this->fan2speed = (this->State.Fan2SpeedHi << 8) | this->State.Fan2SpeedLo;
-	if (this->fan2speed > 0x1fff) fan2speed = lastfan2speed;
+	if (this->fan2speed > 0x1fff)
+		fan2speed = lastfan2speed;
 
 	sprintf_s(obuf2, sizeof(obuf2), "%d/%d RPM", this->fan1speed, this->fan2speed);
 
@@ -179,13 +182,10 @@ FANCONTROL::HandleData(void) {
 
 				if (SlimDialog && StayOnTop)
 					sprintf_s(templist2 + strlen_templist, sizeof(templist2) - strlen_templist, "%d %s %s", i + 1,
-						this->State.SensorName[i],
-						obuf2);
+						this->State.SensorName[i], obuf2);
 				else
 					sprintf_s(templist2 + strlen_templist, sizeof(templist2) - strlen_templist, "%d %s %s (0x%02x)",
-						i + 1,
-						this->State.SensorName[i],
-						obuf2,
+						i + 1, this->State.SensorName[i], obuf2,
 						this->State.SensorAddr[i]);
 
 				strcat_s(templist2, sizeof(templist2), "\r\n");
@@ -238,7 +238,8 @@ FANCONTROL::HandleData(void) {
 	// display fan speed (experimental, not visible)
 	// fanspeed= (this->State.FanSpeedHi << 8) | this->State.FanSpeedLo;
 
-	if (fan1speed > 0x1fff) fan1speed = lastfan1speed;
+	if (fan1speed > 0x1fff)
+		fan1speed = lastfan1speed;
 	sprintf_s(obuf2, sizeof(obuf2), "%d", this->fan1speed);
 
 	sprintf_s(CurrentStatuscsv, sizeof(CurrentStatuscsv), "%s %s; %d; %d; ", templist, obuf2, State.FanCtrl, MaxTemp);
@@ -258,13 +259,19 @@ FANCONTROL::HandleData(void) {
 		if (this->PreviousMode != this->CurrentMode) {
 			sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from ");
 
-			if (this->PreviousMode == 1) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS->"); }
-			if (this->PreviousMode == 2) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart->"); }
-			if (this->PreviousMode == 3) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual->"); }
+			if (this->PreviousMode == 1)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS->");
+			if (this->PreviousMode == 2)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart->");
+			if (this->PreviousMode == 3)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual->");
 
-			if (this->CurrentMode == 1) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS, setting fan speed"); }
-			if (this->CurrentMode == 2) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed"); }
-			if (this->CurrentMode == 3) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual, setting fan speed"); }
+			if (this->CurrentMode == 1)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS, setting fan speed");
+			if (this->CurrentMode == 2)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed");
+			if (this->CurrentMode == 3)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual, setting fan speed");
 
 			this->Trace(obuf);
 		}
@@ -281,13 +288,19 @@ FANCONTROL::HandleData(void) {
 		if (this->PreviousMode != this->CurrentMode) {
 			sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from ");
 
-			if (this->PreviousMode == 1) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS->"); }
-			if (this->PreviousMode == 2) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart->"); }
-			if (this->PreviousMode == 3) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual->"); }
+			if (this->PreviousMode == 1)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS->");
+			if (this->PreviousMode == 2)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart->");
+			if (this->PreviousMode == 3)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual->");
 
-			if (this->CurrentMode == 1) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS, setting fan speed"); }
-			if (this->CurrentMode == 2) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed"); }
-			if (this->CurrentMode == 3) { sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual, setting fan speed"); }
+			if (this->CurrentMode == 1)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "BIOS, setting fan speed");
+			if (this->CurrentMode == 2)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed");
+			if (this->CurrentMode == 3)
+				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Manual, setting fan speed");
 
 			this->Trace(obuf);
 		}
@@ -295,9 +308,8 @@ FANCONTROL::HandleData(void) {
 		::GetDlgItemText(this->hwndDialog, 8310, manlevel, sizeof(manlevel));
 
 		if (isdigit(manlevel[0]) && atoi(manlevel) >= 0 && atoi(manlevel) <= 255) {
-			if (this->State.FanCtrl != atoi(manlevel)) {
+			if (this->State.FanCtrl != atoi(manlevel))
 				ok = this->SetFan("Manual", atoi(manlevel));
-			}
 			else
 				ok = true;
 		}
@@ -335,6 +347,7 @@ FANCONTROL::SmartControl(void) {
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from Manual->");
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed");
 
+		this->Trace(obuf);
 	}
 
 	newfanctrl = -1;
@@ -376,14 +389,12 @@ FANCONTROL::SmartControl(void) {
 			return ok = this->SetFan("Smart", newfanctrl);
 		}
 
-		if (this->MaxTemp < this->SmartLevels[this->LastSmartLevel].temp) {
+		if (this->MaxTemp < this->SmartLevels[this->LastSmartLevel].temp)
 			if (this->MaxTemp > newLevel.temp - newLevel.hystDown)
 				return ok; // cooling
-		}
-		else {
-			if (this->MaxTemp < newLevel.temp + newLevel.hystUp)
-				return ok; // rising 
-		}
+			else
+				if (this->MaxTemp < newLevel.temp + newLevel.hystUp)
+					return ok; // rising 
 
 		this->LastSmartLevel = levelIndex; // track fan that we switch to
 		ok = this->SetFan("Smart", newfanctrl);
@@ -417,11 +428,12 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final) {
 	sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Result: ");
 
 	if (this->ActiveMode && !this->FinalSeen) {
-
 		int ok_ecaccess = false;
 		for (int i = 0; i < 10; i++) {
-			if (ok_ecaccess = this->EcAccess.Lock(100))break;
-			else ::Sleep(100);
+			if (ok_ecaccess = this->EcAccess.Lock(100))
+				break;
+			else
+				::Sleep(100);
 		}
 		if (!ok_ecaccess) {
 			this->Trace("Could not acquire mutex to set fan state");
@@ -430,12 +442,12 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final) {
 
 		for (int i = 0; i < 5; i++) {
 			// set new fan level
-			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN1);
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
 
 			::Sleep(100);
 
-			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN2);
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
 
 			::Sleep(100);
@@ -446,10 +458,14 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final) {
 			::Sleep(100);
 
 			// verify completion of fan1
-			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN1);
+			//ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
+
+			::Sleep(100);
+
 			fan1_ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
 
-			if (fan1_ok == 1 && fan2_ok == 1) {
+			if (fan1_ok && fan2_ok) {
 				sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "[i=%d] ", i);
 				break;
 			}
@@ -490,7 +506,8 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final) {
 	this->Trace(this->CurrentStatus);
 	this->Trace(obuf);
 
-	if (!final) ::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
+	if (!final)
+		::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 
 	return ok;
 }
@@ -506,7 +523,7 @@ FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit
 	for (int i = 0; i < 10; i++) {
 		if (ok_ecaccess = this->EcAccess.Lock(100))
 			break;
-		else 
+		else
 			::Sleep(100);
 	}
 	if (!ok_ecaccess) {
@@ -607,186 +624,108 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
 //-------------------------------------------------------------------------
 int
 FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
-	int i, idxtemp, ok;
+	int i, idxtemp, ok = TRUE;
 
 	pfcstate->FanCtrl = -1;
 
 	memset(pfcstate->Sensors, 0, sizeof(pfcstate->Sensors));
 
-	ok = ReadByteFromEC(TP_ECOFFSET_FAN, &pfcstate->FanCtrl);
-	if (!ok) {
-		this->Trace("failed to read status from EC");
-		goto skip;
+	// Status Register
+	if (ReadByteFromEC(TP_ECOFFSET_FAN, &pfcstate->FanCtrl)) {
+		;
+	}
+	else {
+		this->Trace("failed to read status register from EC");
+		ok = FALSE;
 	}
 
-	ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN2);
-	if (!ok) {
-		this->Trace("failed to select Fan 2 in EC");
-		goto skip;
-	}
+	if (!ok) return FALSE;
 
-	ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->Fan2SpeedLo);
-	if (!ok) {
-		this->Trace("failed to read FanSpeedLowByte 2 from EC");
-		goto skip;
-	}
-
-	ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->Fan2SpeedHi);
-	if (!ok) {
-		this->Trace("failed to read FanSpeedHighByte 2 from EC");
-		goto skip;
-	}
-
-	ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECOFFSET_FAN1);
-	if (!ok) {
-		this->Trace("failed to select Fan 1 in EC");
-		goto skip;
-	}
-
-	ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->Fan1SpeedLo);
-	if (!ok) {
-		this->Trace("failed to read FanSpeedLowByte 1 from EC");
-		goto skip;
-	}
-
-	ok = ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->Fan1SpeedHi);
-	if (!ok) {
-		this->Trace("failed to read FanSpeedHighByte 1 from EC");
-		goto skip;
-	}
-
-	skip:
-
-	if (!this->UseTWR) {
-		idxtemp = 0;
-
-		for (i = 0; i < 8 && ok; i++) {    // temp sensors 0x78 - 0x7f
-			ok = ReadByteFromEC(TP_ECOFFSET_TEMP0 + i, &pfcstate->Sensors[idxtemp]);
-			if (this->ShowBiasedTemps)
-				pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp].offs;
-			if (!ok) {
-				this->Trace("failed to read TEMP0 byte from EC");
+	// Fan 2 speed registers hi/lo
+	if (WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN2)) {
+		if (ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->Fan2SpeedLo)) {
+			if (ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->Fan2SpeedHi)) {
+				;
 			}
-			pfcstate->SensorAddr[idxtemp] = TP_ECOFFSET_TEMP0 + i;
-			pfcstate->SensorName[idxtemp] = this->gSensorNames[idxtemp];
-			idxtemp++;
+			else {
+				this->Trace("failed to read FanSpeedHighByte 2 from EC");
+				ok = FALSE;
+			}
 		}
-
-		for (i = 0; i < 4 && ok; i++) {    // temp sensors 0xC0 - 0xC4
-			pfcstate->SensorAddr[idxtemp] = TP_ECOFFSET_TEMP1 + i;
-			pfcstate->SensorName[idxtemp] = "n/a";
-			if (!this->NoExtSensor) {
-				pfcstate->SensorName[idxtemp] = this->gSensorNames[idxtemp];
-				ok = ReadByteFromEC(TP_ECOFFSET_TEMP1 + i, &pfcstate->Sensors[idxtemp]);
-				if (this->ShowBiasedTemps)
-					pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp].offs;
-				if (!ok) {
-					this->Trace("failed to read TEMP1 byte from EC");
-				}
-			}
-			idxtemp++;
+		else {
+			this->Trace("failed to read FanSpeedLowByte 2 from EC");
+			ok = FALSE;
 		}
 	}
 	else {
-		char data = -1;
-		char dataOut[16];
-		int iOK = false;
-		int iTimeout = 100;
-		int iTimeoutBuf = 1000;
-		int iTime = 0;
-		int iTick = 10;
-		int ivers = 0;
-
-	Retry:
-
-		ivers++;
-
-		if (ivers >= 3) {
-			this->Trace("failed to read temps , EC is not ready for TWR");
-			ok = 0;
-			return ok;
-		}
-
-		for (iTime = 0; iTime < iTimeoutBuf; iTime += iTick) {    // wait for ec ready
-			data = (char)ReadPort(0x1604) & 0xff;                // or timeout iTimeoutBuf = 1000
-			if (!data)                                            // ec is ready: ctrlprt = 0
-				break;
-			if (data & 0x50)                                    // some unrequested outputis waiting
-				ReadPort(0x161f);                                // clear data output
-			::Sleep(iTick);
-		}
-
-		WritePort(0x1610, 0x20);                            // tell them we want to read
-		data = (char)ReadPort(0x1604) & 0xff;
-		if (!(data & 0x20))                                    // ec is not ready
-			goto Retry;
-
-		for (int i = 1; i < 15; i++) {
-			WritePort(0x1610 + i, 0x00);
-		}
-
-		WritePort(0x161f, 0x00);
-
-		for (iTime = 0; iTime < iTimeoutBuf; iTime++) {            // wait for full buffers to clear
-			data = (char)ReadPort(0x1604) & 0xff;                // or timeout iTimeoutBuf = 1000
-			if (data == 0x50)
-				break;
-		}
-
-		if (data != 0x50)
-			goto Retry;
-
-		for (int i = 0; i < 16; i++) {
-			dataOut[i] = (char)ReadPort(0x1610 + i) & 0xff;
-		}
-
-		pfcstate->SensorAddr[0] = 0x78;
-		pfcstate->SensorName[0] = this->gSensorNames[0];
-		pfcstate->Sensors[0] = dataOut[0];
-
-		pfcstate->SensorAddr[1] = 0x79;
-		pfcstate->SensorName[1] = this->gSensorNames[1];
-		pfcstate->Sensors[1] = dataOut[1];
-
-		pfcstate->SensorAddr[2] = 0x7a;
-		pfcstate->SensorName[2] = this->gSensorNames[2];
-		pfcstate->Sensors[2] = dataOut[2];
-
-		pfcstate->SensorAddr[3] = 0x7b;
-		pfcstate->SensorName[3] = this->gSensorNames[3];
-		pfcstate->Sensors[3] = dataOut[3];
-
-		pfcstate->SensorAddr[4] = 0x7c;
-		pfcstate->SensorName[4] = this->gSensorNames[4];
-		pfcstate->Sensors[4] = dataOut[4];
-
-		pfcstate->SensorAddr[5] = 0x7d;
-		pfcstate->SensorName[5] = this->gSensorNames[5];
-		pfcstate->Sensors[5] = dataOut[6];
-
-		pfcstate->SensorAddr[6] = 0x7e;
-		pfcstate->SensorName[6] = this->gSensorNames[6];
-		pfcstate->Sensors[6] = dataOut[8];
-
-		pfcstate->SensorAddr[7] = 0x7f;
-		pfcstate->SensorName[7] = this->gSensorNames[7];
-		pfcstate->Sensors[7] = dataOut[9];
-
-		pfcstate->SensorAddr[8] = 0xc0;
-		pfcstate->SensorName[8] = this->gSensorNames[8];
-		pfcstate->Sensors[8] = dataOut[10];
-
-		pfcstate->SensorAddr[9] = 0xc1;
-		pfcstate->SensorName[9] = this->gSensorNames[9];
-		pfcstate->Sensors[9] = dataOut[11];
-
-		pfcstate->SensorAddr[10] = 0xc2;
-		pfcstate->SensorName[10] = this->gSensorNames[10];
-		pfcstate->Sensors[10] = dataOut[12];
-
-		pfcstate->SensorAddr[11] = 0xc3;
-		pfcstate->SensorName[11] = this->gSensorNames[11];
-		pfcstate->Sensors[11] = dataOut[13];
+		this->Trace("failed to select Fan 2 in EC");
+		ok = FALSE;
 	}
+
+	if (!ok) return FALSE;
+
+	// Fan 1 speed registers hi/lo
+	if (WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN1)) {
+		if (ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->Fan1SpeedLo)) {
+			if (ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->Fan1SpeedHi)) {
+				;
+			}
+			else {
+				this->Trace("failed to read FanSpeedHighByte 1 from EC");
+				ok = FALSE;
+			}
+		}
+		else {
+			this->Trace("failed to read FanSpeedLowByte 1 from EC");
+			ok = FALSE;
+		}
+	}
+	else {
+		this->Trace("failed to select Fan 2 in EC");
+		ok = FALSE;
+	}
+
+	if (!ok) return FALSE;
+
+	idxtemp = 0;
+
+	for (i = 0; i < 8 && ok; i++) {    // temp sensors 0x78 - 0x7f
+		pfcstate->SensorAddr[idxtemp] = TP_ECOFFSET_TEMP0 + i;
+
+		pfcstate->SensorName[idxtemp] = this->gSensorNames[idxtemp];
+
+		if (ReadByteFromEC(TP_ECOFFSET_TEMP0 + i, &pfcstate->Sensors[idxtemp])) {
+			if (this->ShowBiasedTemps)
+				pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp].offs;
+		}
+		else {
+			this->Trace("failed to read a TEMP0 byte from EC");
+			ok = FALSE;
+		}
+
+		idxtemp++;
+	}
+
+	for (i = 0; i < 4 && ok; i++) {    // temp sensors 0xC0 - 0xC4
+		pfcstate->SensorAddr[idxtemp] = TP_ECOFFSET_TEMP1 + i;
+
+		pfcstate->SensorName[idxtemp] = "n/a";
+
+		if (!this->NoExtSensor) {
+			pfcstate->SensorName[idxtemp] = this->gSensorNames[idxtemp];
+
+			if (ReadByteFromEC(TP_ECOFFSET_TEMP1 + i, &pfcstate->Sensors[idxtemp])) {
+				if (this->ShowBiasedTemps)
+					pfcstate->Sensors[idxtemp] = pfcstate->Sensors[idxtemp] - this->SensorOffset[idxtemp].offs;
+			}
+			else {
+				this->Trace("failed to read a TEMP1 byte from EC");
+				ok = FALSE;
+			}
+		}
+
+		idxtemp++;
+	}
+
 	return ok;
 }

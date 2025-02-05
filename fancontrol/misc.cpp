@@ -33,9 +33,6 @@ FANCONTROL::ReadConfig(const char* configfile)
 	strncpy_s(this->MenuLabelSM1, sizeof(this->MenuLabelSM1), "Smart Level 1", 14);
 	strncpy_s(this->MenuLabelSM2, sizeof(this->MenuLabelSM1), "Smart Level 2", 14);
 
-
-
-
 	//TODO: memcpy
 	//for (i= 0; i<15; i++) {SensorOffset[i]=0;}
 	//for (i= 0; i<15; i++) {FSensorOffset[i]=0;}
@@ -167,7 +164,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																						if (_strnicmp(buf, "HK_BIOS=", 8) == 0) {
 																							this->HK_BIOS_Method = buf[8] - 0x30;
 																							this->HK_BIOS = buf[10];
-																							if ((this->HK_BIOS == 0x46) & (buf[11] > 0x30) & (buf[11] < 0x40))
+																							if ((this->HK_BIOS == 0x46) && (buf[11] > 0x30) && (buf[11] < 0x40))
 																								this->HK_BIOS = 0x70 + atoi(buf + 11) - 1;
 																						}
 
@@ -175,7 +172,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																							if (_strnicmp(buf, "HK_Manual=", 10) == 0) {
 																								this->HK_Manual_Method = buf[10] - 0x30;
 																								this->HK_Manual = buf[12];
-																								if ((this->HK_Manual == 0x46) & (buf[13] > 0x30) & (buf[13] < 0x40))
+																								if ((this->HK_Manual == 0x46) && (buf[13] > 0x30) && (buf[13] < 0x40))
 																									this->HK_Manual = 0x70 + atoi(buf + 13) - 1;
 																							}
 
@@ -183,7 +180,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																								if (_strnicmp(buf, "HK_Smart=", 9) == 0) {
 																									this->HK_Smart_Method = buf[9] - 0x30;
 																									this->HK_Smart = buf[11];
-																									if ((this->HK_Smart == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																									if ((this->HK_Smart == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																										this->HK_Smart = 0x70 + atoi(buf + 12) - 1;
 																								}
 
@@ -191,7 +188,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																									if (_strnicmp(buf, "HK_SM1=", 7) == 0) {
 																										this->HK_SM1_Method = buf[7] - 0x30;
 																										this->HK_SM1 = buf[9];
-																										if ((this->HK_SM1 == 0x46) & (buf[10] > 0x30) & (buf[10] < 0x40))
+																										if ((this->HK_SM1 == 0x46) && (buf[10] > 0x30) && (buf[10] < 0x40))
 																											this->HK_SM1 = 0x70 + atoi(buf + 10) - 1;
 																									}
 
@@ -199,7 +196,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																										if (_strnicmp(buf, "HK_SM2=", 7) == 0) {
 																											this->HK_SM2_Method = buf[7] - 0x30;
 																											this->HK_SM2 = buf[9];
-																											if ((this->HK_SM2 == 0x46) & (buf[10] > 0x30) & (buf[10] < 0x40))
+																											if ((this->HK_SM2 == 0x46) && (buf[10] > 0x30) && (buf[10] < 0x40))
 																												this->HK_SM2 = 0x70 + atoi(buf + 10) - 1;
 																										}
 
@@ -207,7 +204,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																											if (_strnicmp(buf, "HK_TG_BS=", 9) == 0) {
 																												this->HK_TG_BS_Method = buf[9] - 0x30;
 																												this->HK_TG_BS = buf[11];
-																												if ((this->HK_TG_BS == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																												if ((this->HK_TG_BS == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																													this->HK_TG_BS = 0x70 + atoi(buf + 12) - 1;
 																											}
 
@@ -215,7 +212,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																												if (_strnicmp(buf, "HK_TG_BM=", 9) == 0) {
 																													this->HK_TG_BM_Method = buf[9] - 0x30;
 																													this->HK_TG_BM = buf[11];
-																													if ((this->HK_TG_BM == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																													if ((this->HK_TG_BM == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																														this->HK_TG_BM = 0x70 + atoi(buf + 12) - 1;
 																												}
 
@@ -223,7 +220,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																													if (_strnicmp(buf, "HK_TG_MS=", 9) == 0) {
 																														this->HK_TG_MS_Method = buf[9] - 0x30;
 																														this->HK_TG_MS = buf[11];
-																														if ((this->HK_TG_MS == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																														if ((this->HK_TG_MS == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																															this->HK_TG_MS = 0x70 + atoi(buf + 12) - 1;
 																													}
 
@@ -231,7 +228,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																														if (_strnicmp(buf, "HK_TG_12=", 9) == 0) {
 																															this->HK_TG_12_Method = buf[9] - 0x30;
 																															this->HK_TG_12 = buf[11];
-																															if ((this->HK_TG_12 == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																															if ((this->HK_TG_12 == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																																this->HK_TG_12 = 0x70 + atoi(buf + 12) - 1;
 																														}
 
@@ -363,8 +360,6 @@ FANCONTROL::ReadConfig(const char* configfile)
 																																																												strncpy_s(this->gSensorNames[15], sizeof(this->gSensorNames[15]), buf + 13, 3);
 																																																											}
 			// End of Reading Sensor Names
-
-
 			// Read SensorOffsets
 																																																											else
 																																																												if (_strnicmp(buf, "SensorOffset1=", 14) == 0)
