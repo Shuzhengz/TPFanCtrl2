@@ -127,7 +127,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	WritePort(ACPI_EC_DATAPORT, offset);                           
 
 	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
-		this->Trace("writeec: timed out #2\n");
+		this->Trace("writeec: timed out #3\n");
 		return false;
 	}
 
