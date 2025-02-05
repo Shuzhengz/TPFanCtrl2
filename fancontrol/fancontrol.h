@@ -27,7 +27,7 @@
 #include "TaskbarTextIcon.h"
 
 
-#define FANCONTROLVERSION "2.2.0 Dual Fan"
+#define FANCONTROLVERSION "2.2.4 Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6
@@ -60,15 +60,14 @@ protected:
 	struct FCSTATE {
 
 		char FanCtrl,
-			FanSpeedLo1,
-			FanSpeedHi1,
-			FanSpeedLo2,
-			FanSpeedHi2;
+			Fan1SpeedLo,
+			Fan1SpeedHi,
+			Fan2SpeedLo,
+			Fan2SpeedHi;
 
 		char Sensors[12];
 		int SensorAddr[12];
 		const char* SensorName[12];
-
 
 	} State;
 
@@ -91,6 +90,7 @@ protected:
 	struct SENSOROFFSET {
 		int offs, hystMin, hystMax; // min and max temp values that offs takes effect. -1 to disable
 	} SensorOffset[16];
+
 	int LastSmartLevel = -1;
 	int IconLevels[3];    // temp levels for coloring the icon
 	int FIconLevels[3];    // fahrenheit temp levels for coloring the icon
@@ -114,7 +114,7 @@ protected:
 	int TaskbarNew;
 	int MaxTemp;
 	int iMaxTemp;
-	int fanspeed, lastfanspeed, showfanspeed;
+	int fan1speed, lastfan1speed, fan2speed, lastfan2speed;
 	int FanBeepFreq, FanBeepDura;
 	int MinimizeToSysTray,
 		Lev64Norm,
@@ -235,7 +235,6 @@ protected:
 
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
 
-
 	// misc.cpp
 	int ReadConfig(const char* filename);
 
@@ -257,9 +256,8 @@ protected:
 		ULONG p
 	);
 
-
 	// portio.cpp
-	int ReadByteFromECint(int offset, char* pdata);
+	int WaitForFlags(int timeout, char flags, BOOL pos);
 
 	int ReadByteFromEC(int offset, char* pdata);
 
