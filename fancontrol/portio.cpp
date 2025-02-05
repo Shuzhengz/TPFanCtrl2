@@ -176,5 +176,5 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	// perform the write operation
 	WritePort(EC_DATAPORT, NewData);
 
-	return 1;
+	return true;
 }
