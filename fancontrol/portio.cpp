@@ -41,11 +41,11 @@
 // wait for the desired status from the embedded controller (EC) via port io 
 //--------------------------------------------------------------------------
 int FANCONTROL::WaitForFlags(int timeout, char flags) {
+	char data;
+
 	int timedOut;
 	int iTime = 0;
 	int iTick = 10;
-
-	char data;
 
 	// wait for flags to clear
 	timedOut = true;
@@ -80,7 +80,7 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 	// indicate read operation desired
 	WritePort(ACPI_EC_CTRLPORT, ACPI_EC_COMMAND_READ);
 
-	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
+	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
 		this->Trace("readec: timed out #2\n");
 		return false;
 	}
@@ -88,7 +88,7 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 	// indicate read operation desired location
 	WritePort(ACPI_EC_DATAPORT, offset);
 
-	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_OBF)) {
+	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_OBF)) {
 		this->Trace("readec: timed out #3\n");
 		return false;
 	}
@@ -102,13 +102,10 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 // write a byte to the embedded controller (EC) via port io
 //-------------------------------------------------------------------------
 int FANCONTROL::WriteByteToEC(int offset, char NewData) {
-	char data = -1;
+	char data;
 
-	int timedOut;
 	int iTimeout = 100;
 	int iTimeoutBuf = 1000;
-	int iTime = 0;
-	int iTick = 10;
 
 	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
 		this->Trace("writeec: timed out #1\n");
@@ -118,7 +115,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	// indicate write operation desired
 	WritePort(ACPI_EC_CTRLPORT, ACPI_EC_COMMAND_WRITE);
 
-	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
+	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
 		this->Trace("writeec: timed out #2\n");
 		return false;
 	}
@@ -126,7 +123,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	// indicate write operation desired location
 	WritePort(ACPI_EC_DATAPORT, offset);                           
 
-	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
+	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
 		this->Trace("writeec: timed out #3\n");
 		return false;
 	}
