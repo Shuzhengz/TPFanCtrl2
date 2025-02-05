@@ -340,6 +340,7 @@ FANCONTROL::SmartControl(void) {
 
 		this->Trace(obuf);
 	}
+
 	if (this->PreviousMode == 3) {
 		this->LastSmartLevel = -1; // uninitiate hysteresis var
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from Manual->");

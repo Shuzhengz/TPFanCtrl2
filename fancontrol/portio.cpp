@@ -97,8 +97,6 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 // write a byte to the embedded controller (EC) via port io
 //-------------------------------------------------------------------------
 int FANCONTROL::WriteByteToEC(int offset, char NewData) {
-	char data;
-
 	int iTimeout = 100;
 	int iTimeoutBuf = 1000;
 
