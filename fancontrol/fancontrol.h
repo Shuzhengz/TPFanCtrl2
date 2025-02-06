@@ -257,7 +257,7 @@ protected:
 	);
 
 	// portio.cpp
-	int WaitForFlags(int timeout, char flags, BOOL pos);
+	int WaitForFlags(char flags, BOOL onoff = false, int timeout = 1000);
 
 	int ReadByteFromEC(int offset, char* pdata);
 

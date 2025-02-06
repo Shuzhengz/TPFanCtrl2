@@ -40,75 +40,79 @@
 //--------------------------------------------------------------------------
 // wait for the desired status from the embedded controller (EC) via port io 
 //--------------------------------------------------------------------------
-int FANCONTROL::WaitForFlags(int timeout, char flags, BOOL pos) {
+int FANCONTROL::WaitForFlags(char flags, int onoff, int timeout) {
 	char data;
 
-	int timedOut;
 	int iTime = 0;
 	int iTick = 10;
 
 	// wait for flags to clear
-	timedOut = true;
 	for (iTime = 0; iTime < timeout; iTime += iTick) {
 		data = ReadPort(ACPI_EC_CTRLPORT);
-		if ((pos && !(data & flags)) || (!pos && (data & flags))) {
-			timedOut = FALSE;
-			break;
-		}
+
+		int flagstate = (data & flags) != 0;
+		int	wantedstate = onoff != 0;
+
+		if (flagstate == wantedstate)
+			return true;
+
 		::Sleep(iTick);
 	}
-	return timedOut;
+	return false;
 }
 
 //-------------------------------------------------------------------------
 // read a byte from the embedded controller (EC) via port io 
 //-------------------------------------------------------------------------
 int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
-	int iTimeoutBuf = 1000;
-	int iTimeout = 100;
 
-	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
+	// wait for IBF and OBF to clear
+	if (!WaitForFlags(ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
 		this->Trace("readec: timed out #1");
-		return FALSE;
+		return false;
 	}
 
 	// indicate read operation desired
 	WritePort(ACPI_EC_CTRLPORT, ACPI_EC_COMMAND_READ);
 
-	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
+	// wait for IBF to clear (command byte removed from EC's input queue)
+	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
 		this->Trace("readec: timed out #2");
-		return FALSE;
+		return false;
 	}
 
 	// indicate read operation desired location
 	WritePort(ACPI_EC_DATAPORT, offset);
 
-	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_OBF, FALSE)) {
+	// wait for IBF to clear (address byte removed from EC's input queue)
+	// Note: Techically we should also waitforflags(OBF,TRUE) here,
+	// (a byte being in the EC's output buffer being ready to read).
+	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
 		this->Trace("readec: timed out #3");
-		return FALSE;
+		return false;
 	}
 
 	*pdata = ReadPort(ACPI_EC_DATAPORT);
 
-	return TRUE;
+	return true;
 }
 
 //-------------------------------------------------------------------------
 // write a byte to the embedded controller (EC) via port io
 //-------------------------------------------------------------------------
 int FANCONTROL::WriteByteToEC(int offset, char NewData) {
-	int iTimeout = 100;
-	int iTimeoutBuf = 1000;
 
-	if (WaitForFlags(iTimeoutBuf, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
+	// wait for IBF and OBF to clear
+	if (!WaitForFlags(ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
 		this->Trace("writeec: timed out #1");
-		return FALSE;
+		return false;
 	}
 
 	// indicate write operation desired
 	WritePort(ACPI_EC_CTRLPORT, ACPI_EC_COMMAND_WRITE);
 
-	if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
+	// wait for IBF to clear (command byte removed from EC's input queue)
+	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
 		this->Trace("writeec: timed out #2");
 		return FALSE;
 	}
@@ -116,13 +120,20 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	// indicate write operation desired location
 	WritePort(ACPI_EC_DATAPORT, offset);                           
 
-	//if (WaitForFlags(iTimeout, ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF, TRUE)) {
-	//	this->Trace("writeec: timed out #3");
-	//	return FALSE;
-	//}
+	// wait for IBF to clear (address byte removed from EC's input queue)
+	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
+		this->Trace("writeec: timed out #3");
+		return false;
+	}
 
 	// perform the write operation
 	WritePort(ACPI_EC_DATAPORT, NewData);
 
-	return TRUE;
+	// wait for IBF to clear (data byte removed from EC's input queue)
+	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
+		this->Trace("writeec: timed out #3");
+		return false;
+	}
+
+	return true;
 }
