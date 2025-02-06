@@ -493,7 +493,6 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final) {
 	return ok;
 }
 
-
 int
 FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit) {
 	int ok = 0;
