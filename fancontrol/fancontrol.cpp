@@ -58,6 +58,8 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	HK_TG_MS(0),
 	HK_TG_12_Method(0),
 	HK_TG_12(0),
+	EC_DATA(0),
+	EC_CTRL(0),
 	BluetoothEDR(0),
 	ManModeExit(80),
 	ManModeExit2(80),

@@ -27,7 +27,7 @@
 #include "TaskbarTextIcon.h"
 
 
-#define FANCONTROLVERSION "2.2.4 Dual Fan"
+#define FANCONTROLVERSION "2.2.5 Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6
@@ -147,6 +147,7 @@ protected:
 		HK_TG_BM,
 		HK_TG_MS,
 		HK_TG_12;
+	int EC_CTRL, EC_DATA;
 	int BluetoothEDR;
 	int ManModeExit;
 	int ManModeExit2;

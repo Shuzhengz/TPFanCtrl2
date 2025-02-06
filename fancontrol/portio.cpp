@@ -20,8 +20,10 @@
 #include "TVicPort.h"
 
 // Registers of the embedded controller
-#define ACPI_EC_DATAPORT    0x1600  // EC data io-port 0x62
-#define ACPI_EC_CTRLPORT    0x1604  // EC control io-port 0x66
+#define ACPI_EC_TYPE1_CTRLPORT    0x66  
+#define ACPI_EC_TYPE1_DATAPORT    0x62   
+#define ACPI_EC_TYPE2_CTRLPORT    0x1604
+#define ACPI_EC_TYPE2_DATAPORT    0x1600  
 
 // Embedded controller status register bits
 #define ACPI_EC_FLAG_OBF	0x01	/* Output buffer full */
@@ -48,7 +50,7 @@ int FANCONTROL::WaitForFlags(char flags, int onoff, int timeout) {
 
 	// wait for flags to clear
 	for (iTime = 0; iTime < timeout; iTime += iTick) {
-		data = ReadPort(ACPI_EC_CTRLPORT);
+		data = ReadPort(this->EC_CTRL);
 
 		int flagstate = (data & flags) != 0;
 		int	wantedstate = onoff != 0;
@@ -66,14 +68,30 @@ int FANCONTROL::WaitForFlags(char flags, int onoff, int timeout) {
 //-------------------------------------------------------------------------
 int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 
+	if (this->EC_CTRL == 0) {
+		this->EC_CTRL = ACPI_EC_TYPE1_CTRLPORT;
+		this->EC_DATA = ACPI_EC_TYPE1_DATAPORT;
+		this->Trace("Using ACPI_EC_TYPE1");
+	}
+
 	// wait for IBF and OBF to clear
 	if (!WaitForFlags(ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {
 		this->Trace("readec: timed out #1");
+		if (this->EC_CTRL == ACPI_EC_TYPE1_CTRLPORT) {
+			this->EC_CTRL = ACPI_EC_TYPE2_CTRLPORT;
+			this->EC_DATA = ACPI_EC_TYPE2_DATAPORT;
+			this->Trace("Using ACPI_EC_TYPE2");
+		}
+		else {
+			this->EC_CTRL = ACPI_EC_TYPE1_CTRLPORT;
+			this->EC_DATA = ACPI_EC_TYPE1_DATAPORT;
+			this->Trace("Using ACPI_EC_TYPE1");
+		}
 		return false;
 	}
 
 	// indicate read operation desired
-	WritePort(ACPI_EC_CTRLPORT, ACPI_EC_COMMAND_READ);
+	WritePort(this->EC_CTRL, ACPI_EC_COMMAND_READ);
 
 	// wait for IBF to clear (command byte removed from EC's input queue)
 	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
@@ -82,7 +100,7 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 	}
 
 	// indicate read operation desired location
-	WritePort(ACPI_EC_DATAPORT, offset);
+	WritePort(this->EC_DATA, offset);
 
 	// wait for IBF to clear (address byte removed from EC's input queue)
 	// Note: Techically we should also waitforflags(OBF,TRUE) here,
@@ -92,7 +110,7 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 		return false;
 	}
 
-	*pdata = ReadPort(ACPI_EC_DATAPORT);
+	*pdata = ReadPort(this->EC_DATA);
 
 	return true;
 }
@@ -109,7 +127,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	}
 
 	// indicate write operation desired
-	WritePort(ACPI_EC_CTRLPORT, ACPI_EC_COMMAND_WRITE);
+	WritePort(this->EC_CTRL, ACPI_EC_COMMAND_WRITE);
 
 	// wait for IBF to clear (command byte removed from EC's input queue)
 	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
@@ -118,7 +136,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	}
 
 	// indicate write operation desired location
-	WritePort(ACPI_EC_DATAPORT, offset);                           
+	WritePort(this->EC_DATA, offset);
 
 	// wait for IBF to clear (address byte removed from EC's input queue)
 	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
@@ -127,7 +145,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 	}
 
 	// perform the write operation
-	WritePort(ACPI_EC_DATAPORT, NewData);
+	WritePort(this->EC_DATA, NewData);
 
 	// wait for IBF to clear (data byte removed from EC's input queue)
 	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
