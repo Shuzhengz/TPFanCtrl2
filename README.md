@@ -6,8 +6,8 @@ ThinkPad Fan Control 2, a fan control utility for ThinkPad users running Windows
 
 This is a fork of the [original TPFC](https://github.com/ThinkPad-Forum/TPFanControl/tree/master/fancontrol), and is based on 
 [byrnes' dual fan mod](https://github.com/byrnes/TPFanControl).
-It's updated it to work with two fan devices. It has only been tested on X1 Extreme Gen. 1 and P1 Gen. 4, but it should work on most other dual-fan Thinkpads that are
-released. The default fan profile prioritizes fan noise, with fans only turning on at 60C. This can be changed by editing `tpfancontrol.ini`.
+It's updated it to work with two fan devices. The default fan profile prioritizes fan noise, with fans only turning on at 60C. This can be changed by editing 
+`tpfancontrol.ini`.
 
 Visual Studio 2022 Community was used to build and debug.
 
@@ -127,6 +127,10 @@ This is caused by EC management for the newer ThinkPad BIOS. There is currently 
 
 P50 Laptop users should use the 2.1.5B release as the fan control parameters are different, but the temperature is currently broken in the build, so it is recommended to 
 use it in manual mode only
+
+### ThinkPad Z13
+
+Please use FanDjango's [V2.2.5 release](https://github.com/FanDjango/TPFanCtrl2/releases/tag/V2.2.5)
 
 ### Thinkbooks
 
