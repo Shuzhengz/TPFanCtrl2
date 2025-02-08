@@ -151,7 +151,7 @@ int FANCONTROL::WriteByteToEC(int offset, char NewData) {
 
 	// wait for IBF to clear (data byte removed from EC's input queue)
 	if (!WaitForFlags(ACPI_EC_FLAG_IBF)) {
-		this->Trace("writeec: timed out #3");
+		this->Trace("writeec: timed out #4");
 		return false;
 	}
 
