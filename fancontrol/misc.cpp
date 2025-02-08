@@ -497,7 +497,6 @@ FANCONTROL::ReadConfig(const char* configfile)
 	sprintf_s(buf, sizeof(buf), "  IconLevels= %d %d %d, NoExtSensor= %d, Lev64Norm= %d",
 		this->IconLevels[0], this->IconLevels[1], this->IconLevels[2],
 		this->NoExtSensor, this->Lev64Norm);
-
 	this->Trace(buf);
 
 	sprintf_s(buf, sizeof(buf), "  Log2File= %d, Log2csv= %d, ShowAll= %d, IconColorFan= %d",
@@ -511,11 +510,9 @@ FANCONTROL::ReadConfig(const char* configfile)
 	if (Fahrenheit) {
 		strcpy_s(buf, sizeof(buf), "  ");
 		for (i = 0; this->SmartLevels[i].temp != -1; i++) {
-			sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° F->",
-				i > 0 ? ", " : "", this->SmartLevels[i].temp);
+			sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° F->", i > 0 ? ", " : "", this->SmartLevels[i].temp);
 			if (this->SmartLevels[i].fan != 0x80)
-				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d",
-					this->SmartLevels[i].fan);
+				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d", this->SmartLevels[i].fan);
 			else
 				strcat_s(buf, sizeof(buf), "0x80");
 		}
@@ -523,19 +520,15 @@ FANCONTROL::ReadConfig(const char* configfile)
 	else {
 		strcpy_s(buf, sizeof(buf), "  Levels= ");
 		for (i = 0; this->SmartLevels[i].temp != -1; i++) {
-			sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° C -> ",
-				i > 0 ? ",  " : "",
-				this->SmartLevels[i].temp);
+			sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° C -> ", i > 0 ? ",  " : "", this->SmartLevels[i].temp);
 			if (this->SmartLevels[i].fan != 0x80)
-				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d",
-					this->SmartLevels[i].fan);
+				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d", this->SmartLevels[i].fan);
 			else
 				strcat_s(buf, sizeof(buf), "0x80");
 		}
 	}
 
 	this->Trace(buf);
-
 
 	//Levels2	
 
@@ -544,11 +537,9 @@ FANCONTROL::ReadConfig(const char* configfile)
 		if (Fahrenheit) {
 			strcpy_s(buf, sizeof(buf), "  ");
 			for (i = 0; this->SmartLevels2[i].temp2 != -1; i++) {
-				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° F->",
-					i > 0 ? ", " : "", this->SmartLevels2[i].temp2);
+				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° F->", i > 0 ? ", " : "", this->SmartLevels2[i].temp2);
 				if (this->SmartLevels2[i].fan2 != 0x80)
-					sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d",
-						this->SmartLevels2[i].fan2);
+					sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d", this->SmartLevels2[i].fan2);
 				else
 					strcat_s(buf, sizeof(buf), "0x80");
 			}
@@ -556,12 +547,9 @@ FANCONTROL::ReadConfig(const char* configfile)
 		else {
 			strcpy_s(buf, sizeof(buf), "  Levels2= ");
 			for (i = 0; this->SmartLevels2[i].temp2 != -1; i++) {
-				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° C -> ",
-					i > 0 ? ",  " : "",
-					this->SmartLevels2[i].temp2);
+				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° C -> ", i > 0 ? ",  " : "", this->SmartLevels2[i].temp2);
 				if (this->SmartLevels2[i].fan2 != 0x80)
-					sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d",
-						this->SmartLevels2[i].fan2);
+					sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d", this->SmartLevels2[i].fan2);
 				else
 					strcat_s(buf, sizeof(buf), "0x80");
 			}
@@ -631,8 +619,8 @@ FANCONTROL::ReadConfig(const char* configfile)
 			(
 				"del TPFanControl_last_csv.txt && ren TPFanControl_csv.txt TPFanControl_last_csv.txt"
 			);
-		sprintf_s(buf, sizeof(buf), "time;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;rpm;fan;switch;",
-			this->gSensorNames[0], this->gSensorNames[1], this->gSensorNames[2],
+		sprintf_s(buf, sizeof(buf), "time;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;rpm;fan;switch;", 
+			this->gSensorNames[0], this->gSensorNames[1], this->gSensorNames[2], 
 			this->gSensorNames[3], this->gSensorNames[4], this->gSensorNames[5],
 			this->gSensorNames[6], this->gSensorNames[7], this->gSensorNames[8],
 			this->gSensorNames[9], this->gSensorNames[10], this->gSensorNames[11]);
@@ -710,8 +698,6 @@ FANCONTROL::CurrentTimeLocalized(char* result, size_t sizeof_result)
 	// strncat_s(result,sizeof_result, otime, sizeof_result-strlen(result)-1);
 }
 
-
-
 //-------------------------------------------------------------------------
 //  
 //-------------------------------------------------------------------------
@@ -724,9 +710,6 @@ FANCONTROL::IsMinimized(void)
 
 	return wp.showCmd == SW_SHOWMINIMIZED;
 }
-
-
-
 
 //-------------------------------------------------------------------------
 //  show trace output in lower window part
@@ -763,7 +746,6 @@ FANCONTROL::Trace(const char* text)
 		p--;
 	}
 
-
 	// 
 	// write logfile
 	//
@@ -785,8 +767,6 @@ FANCONTROL::Trace(const char* text)
 	::SendDlgItemMessage(this->hwndDialog, 9200, EM_LINESCROLL, 0, 9999);
 }
 
-
-
 void
 FANCONTROL::Tracecsv(const char* text)
 {
@@ -798,7 +778,6 @@ FANCONTROL::Tracecsv(const char* text)
 		sprintf_s(line, sizeof(line), "%s; %s\r\n", datebuf, text);	// probably acpi reading conflict
 	else
 		strcpy_s(line, sizeof(line), "\r\n");
-
 
 	// write logfile
 	//

@@ -19,6 +19,7 @@
 #include "tools.h"
 #include "taskbartexticon.h"
 #include "WinUser.h"
+#include "sysinfoapi.h"
 
 //-------------------------------------------------------------------------
 //  constructor
@@ -95,7 +96,6 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	int i = 0;
 	char buf[256] = "";
 
-
 	// SensorNames
 		// 78-7F (state index 0-7)
 	strcpy_s(this->gSensorNames[0], sizeof(this->gSensorNames[0]), "cpu"); // main processor
@@ -109,8 +109,7 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 //  	// C0-C4 (state index 8-11)
 	strcpy_s(this->gSensorNames[8], sizeof(this->gSensorNames[8]), "bus"); // unknown
 	strcpy_s(this->gSensorNames[9], sizeof(this->gSensorNames[9]), "pci"); // mini-pci, WLAN, southbridge area
-	strcpy_s(this->gSensorNames[10], sizeof(this->gSensorNames[10]),
-		"pwr"); // power supply (get's hot while charging battery)
+	strcpy_s(this->gSensorNames[10], sizeof(this->gSensorNames[10]), "pwr"); // power supply (get's hot while charging battery)
 	strcpy_s(this->gSensorNames[11], sizeof(this->gSensorNames[11]), "xc3"); // usually n/a
 	// future
 	strcpy_s(this->gSensorNames[12], sizeof(this->gSensorNames[12]), "");
