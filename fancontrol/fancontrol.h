@@ -106,7 +106,6 @@ protected:
 	int NoExtSensor;
 	int FanSpeedLowByte;
 	int ActiveMode,
-		UseTWR,
 		ManFanSpeed,
 		FinalSeen;
 	int CurrentMode, fanctrl2,

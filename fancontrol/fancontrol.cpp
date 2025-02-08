@@ -83,7 +83,6 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	Runs_as_service(FALSE),
 	ActiveMode(false),
 	ManFanSpeed(7),
-	UseTWR(FALSE),
 	FinalSeen(FALSE),
 	m_fanTimer(NULL),
 	m_titleTimer(NULL),
