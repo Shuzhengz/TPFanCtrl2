@@ -26,7 +26,6 @@
 #include "winstuff.h"
 #include "TaskbarTextIcon.h"
 
-
 #define FANCONTROLVERSION "2.2.5 Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5
@@ -211,14 +210,12 @@ protected:
 	CTaskbarTextIcon** ppTbTextIcon;
 	MUTEXSEM* pTextIconMutex;
 
-
 	static int _stdcall
 		FANCONTROL_Thread(ULONG
 			parm) \
 	{ return ((FANCONTROL*)parm)->WorkThread(); }
 
 	int WorkThread();
-
 
 	// fancontrol.cpp
 	int ReadEcStatus(FCSTATE* pfcstate);
@@ -251,7 +248,6 @@ protected:
 	void CurrentTimeLocalized(char* result, size_t sizeof_result);
 
 	HANDLE CreateThread(int(_stdcall
-
 		* fnct)(ULONG),
 		ULONG p
 	);
