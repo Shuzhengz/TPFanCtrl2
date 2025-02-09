@@ -26,7 +26,7 @@
 #include "winstuff.h"
 #include "TaskbarTextIcon.h"
 
-#define FANCONTROLVERSION "2.2.5 Dual Fan"
+#define FANCONTROLVERSION "2.2.6 Dual Fan (NewAge)"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6
@@ -90,7 +90,6 @@ protected:
 		int offs, hystMin, hystMax; // min and max temp values that offs takes effect. -1 to disable
 	} SensorOffset[16];
 
-	int LastSmartLevel = -1;
 	int IconLevels[3];    // temp levels for coloring the icon
 	int FIconLevels[3];    // fahrenheit temp levels for coloring the icon
 	int CurrentIcon;
@@ -148,7 +147,7 @@ protected:
 	int EC_CTRL, EC_DATA;
 	int BluetoothEDR;
 	int ManModeExit;
-	int ManModeExit2;
+	int ManModeExitInternal;
 	int ShowBiasedTemps;
 	int SecStartDelay;
 	char gSensorNames[17][4];
@@ -224,7 +223,7 @@ protected:
 
 	int HandleData();
 
-	int SmartControl();
+	void SmartControl();
 
 	int SetFan(const char* source, int level, BOOL final = false);
 
