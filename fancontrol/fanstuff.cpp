@@ -148,6 +148,7 @@ FANCONTROL::HandleData(void) {
 	::SetDlgItemText(this->hwndDialog, 8103, obuf2);
 
 	strcpy_s(templist2, sizeof(templist2), "");
+
 	for (i = 0; i < 12; i++) {
 		int temp = this->State.Sensors[i];
 
@@ -186,6 +187,7 @@ FANCONTROL::HandleData(void) {
 
 	// compact single line status (combined)
 	strcpy_s(templist, sizeof(templist), "");
+
 	if (Fahrenheit) {
 		for (i = 0; i < 12; i++) {
 			if (this->State.Sensors[i] < 128) {
@@ -220,7 +222,9 @@ FANCONTROL::HandleData(void) {
 
 	if (fan1speed > 0x1fff)
 		fan1speed = lastfan1speed;
-	sprintf_s(obuf2, sizeof(obuf2), "%d", this->fan1speed);
+	if (fan2speed > 0x1fff)
+		fan2speed = lastfan2speed;
+	sprintf_s(obuf2, sizeof(obuf2), "%d/%d", this->fan1speed, this->fan2speed);
 
 	sprintf_s(CurrentStatuscsv, sizeof(CurrentStatuscsv), "%s %s; %d; %d; ", templist, obuf2, State.FanCtrl, MaxTemp);
 
@@ -333,8 +337,8 @@ FANCONTROL::SmartControl(void) {
 
 	newfanctrl = -1;
 
-	if ((fanctrl > 7 && (fanctrl != 64 || !Lev64Norm)) || this->PreviousMode == 3 || this->PreviousMode == 1) {
-		newfanctrl = 0;
+	if ((fanctrl > 7 && (fanctrl != 64 || !Lev64Norm)) || this->PreviousMode == 1 || this->PreviousMode == 3) {
+		newfanctrl = -1;
 		levelIndex = 0;
 		fanctrl = 0;
 	}
@@ -380,7 +384,6 @@ FANCONTROL::SmartControl(void) {
 		this->LastSmartLevel = levelIndex; // track fan that we switch to
 		ok = this->SetFan("Smart", newfanctrl);
 	}
-
 
 	return ok;
 }
