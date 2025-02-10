@@ -63,7 +63,7 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 	EC_CTRL(0),
 	BluetoothEDR(0),
 	ManModeExit(80),
-	ManModeExit2(80),
+	ManModeExitInternal(80),
 	ShowBiasedTemps(0),
 	SecWinUptime(0),
 	SlimDialog(0),
@@ -832,7 +832,7 @@ FANCONTROL::DlgProc(HWND
 		switch (mp1)
 		{
 
-		case 1:        // update fan state
+		case 1: // update fan state
 			::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 			if (this->Log2csv == 1)
 			{
@@ -840,10 +840,8 @@ FANCONTROL::DlgProc(HWND
 			}
 			break;
 
-		case 2:        // update window title
-
-		// skip ManMode?
-			if (this->CurrentMode == 3 && this->MaxTemp > this->ManModeExit2) {
+		case 2: // update window title
+			if (this->CurrentMode == 3 && this->MaxTemp > this->ManModeExitInternal) {
 				this->ModeToDialog(2);
 				::PostMessage(this->hwndDialog, WM__GETDATA, 0, 0);
 			}
@@ -899,8 +897,8 @@ FANCONTROL::DlgProc(HWND
 				this->iFarbeIconB = icon;
 			}
 			break;
-		case 3:        // update vista icon
 
+		case 3: // update vista icon
 		//*************************************************************************************
 		//begin named pipe client session
 		//
@@ -1137,7 +1135,7 @@ FANCONTROL::DlgProc(HWND
 //*************************************************************************************
 			break;
 
-		case 4:        // renew tempicon
+		case 4: // renew tempicon
 			if (ShowTempIcon && ReIcCycle) {
 				this->RemoveTextIcons();
 				this->ProcessTextIcons();
@@ -1156,7 +1154,7 @@ FANCONTROL::DlgProc(HWND
 			this->RemoveTextIcons();
 		}
 
-		//	say windows not to hold much more memspace
+		//	tell windows not to hold much more memspace
 		//	SetProcessWorkingSetSize(GetCurrentProcess(),65536,WANTED_MEM_SIZE);
 		break;
 

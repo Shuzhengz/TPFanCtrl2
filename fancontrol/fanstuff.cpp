@@ -152,7 +152,7 @@ FANCONTROL::HandleData(void) {
 	for (i = 0; i < 12; i++) {
 		int temp = this->State.Sensors[i];
 
-		if (temp < 128 && temp != 0) {
+		if (temp != 0 && temp < 128) {
 			if (Fahrenheit)
 				sprintf_s(obuf2, sizeof(obuf2), "%d° F", temp * 9 / 5 + 32);
 			else
@@ -166,9 +166,9 @@ FANCONTROL::HandleData(void) {
 			strcat_s(templist2, sizeof(templist2), "\r\n");
 		}
 		else {
-			// strcat_s(templist2,sizeof(templist2), "n/a\r\n");
 			if (this->ShowAll == 1) {
 				sprintf_s(obuf2, sizeof(obuf2), "n/a");
+
 				size_t strlen_templist = strlen_s(templist2, sizeof(templist2));
 
 				if (SlimDialog && StayOnTop)
@@ -211,14 +211,15 @@ FANCONTROL::HandleData(void) {
 			}
 		}
 	}
+
 	templist[strlen(templist) - 1] = '\0';
+
 	if (Fahrenheit)
 		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d° F (%s)", State.FanCtrl, MaxTemp * 9 / 5 + 32, templist);
 	else
 		sprintf_s(CurrentStatus, sizeof(CurrentStatus), "Fan: 0x%02x / Switch: %d° C (%s)", State.FanCtrl, MaxTemp,	templist);
 
-	// display fan speed (experimental, not visible)
-	// fanspeed= (this->State.FanSpeedHi << 8) | this->State.FanSpeedLo;
+	// display fan speed
 
 	if (fan1speed > 0x1fff)
 		fan1speed = lastfan1speed;
@@ -303,7 +304,8 @@ FANCONTROL::HandleData(void) {
 
 	this->PreviousMode = this->CurrentMode;
 
-	if (this->CurrentMode == 3 && this->MaxTemp > this->ManModeExit2) this->CurrentMode = 2;
+	if (this->CurrentMode == 3 && this->MaxTemp > this->ManModeExitInternal)
+		this->CurrentMode = 2;
 
 	return ok;
 }
@@ -311,16 +313,15 @@ FANCONTROL::HandleData(void) {
 //-------------------------------------------------------------------------
 //  smart fan control depending on temperature
 //-------------------------------------------------------------------------
-int
+void
 FANCONTROL::SmartControl(void) {
-	int ok = 0, i,
+	int i,
 		newfanctrl = -1,
 		levelIndex = -1,
 		fanctrl = this->State.FanCtrl;
 	char obuf[256] = "";
 
 	if (this->PreviousMode == 1) {
-		this->LastSmartLevel = -1; // uninitiate hysteresis var
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from BIOS->");
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed");
 
@@ -328,66 +329,52 @@ FANCONTROL::SmartControl(void) {
 	}
 
 	if (this->PreviousMode == 3) {
-		this->LastSmartLevel = -1; // uninitiate hysteresis var
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Change Mode from Manual->");
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Smart, recalculate fan speed");
 
 		this->Trace(obuf);
 	}
 
-	newfanctrl = -1;
+//i         Temp Fan Hup Hdown 
+//0 Level = 50   0   0   0 
+//1 Level = 60   1   0   5 <--- means, when going down switch to this level at 55
+//2 Level = 70   2   0   0 
+//3 Level = 80   4   5   0 <--- means, when going up, switch this level at 85
+//4 Level = 90   7   0   0 
+//5 Level = 95   64  0   0 
+//6 Level = 105 128  0   0 
 
 	if ((fanctrl > 7 && (fanctrl != 64 || !Lev64Norm)) || this->PreviousMode == 1 || this->PreviousMode == 3) {
-		newfanctrl = -1;
 		levelIndex = 0;
-		fanctrl = 0;
+		newfanctrl = 0;
 	}
 
+	// need to ramp up?
 	for (i = 0; this->SmartLevels[i].temp != -1; i++) {
-		if (this->MaxTemp >= this->SmartLevels[i].temp && this->SmartLevels[i].fan >= fanctrl) {
-			newfanctrl = this->SmartLevels[i].fan;
+		if (this->MaxTemp >= this->SmartLevels[i].temp + this->SmartLevels[i].hystUp && this->SmartLevels[i].fan >= fanctrl) {
 			levelIndex = i;
+			newfanctrl = this->SmartLevels[i].fan;
 		}
 	}
 
-	// not uptriggered check for downtrigger:
-
+	// ramp up not needed? check for ramp down?
 	if (newfanctrl == -1) {
 		for (i = 0; this->SmartLevels[i].temp != -1; i++) {
-			if (this->MaxTemp <= this->SmartLevels[i].temp && this->SmartLevels[i].fan < fanctrl) {
-				newfanctrl = this->SmartLevels[i].fan;
+			if (this->MaxTemp <= this->SmartLevels[i].temp - this->SmartLevels[i].hystDown && this->SmartLevels[i].fan < fanctrl) {
 				levelIndex = i;
+				newfanctrl = this->SmartLevels[i].fan;
 				break;
 			}
 		}
 	}
 
 	// fan speed needs change?
-
-	if (newfanctrl != -1 && newfanctrl != this->State.FanCtrl) {
-
-		// do not change if histerysis zone, determine which hyst zone if we are in based on previous temp
-		// DO NOT HAVE HYSTERESIS OVERLAP WITH FAN TEMPS IN CONFIG!
-		SMARTENTRY newLevel = this->SmartLevels[levelIndex];
-		if (this->LastSmartLevel < 0) { // ignore hist on first time setting fan
-			this->LastSmartLevel = levelIndex;
-			return ok = this->SetFan("Smart", newfanctrl);
-		}
-
-		if (this->MaxTemp < this->SmartLevels[this->LastSmartLevel].temp)
-			if (this->MaxTemp > newLevel.temp - newLevel.hystDown)
-				return ok; // cooling
-			else
-				if (this->MaxTemp < newLevel.temp + newLevel.hystUp)
-					return ok; // rising 
-
-		this->LastSmartLevel = levelIndex; // track fan that we switch to
-		ok = this->SetFan("Smart", newfanctrl);
+	if (newfanctrl != -1 && newfanctrl != fanctrl) {
+		this->SetFan("Smart", newfanctrl);
 	}
 
-	return ok;
+	return;
 }
-
 
 //-------------------------------------------------------------------------
 //  set fan state via EC

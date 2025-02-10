@@ -591,9 +591,9 @@ FANCONTROL::ReadConfig(const char* configfile)
 		this->ManModeExit = (this->ManModeExit * 9 / 5) + 32;
 
 	if (Fahrenheit)
-		this->ManModeExit2 = (this->ManModeExit - 32) * 5 / 9;
+		this->ManModeExitInternal = (this->ManModeExit - 32) * 5 / 9;
 	else
-		this->ManModeExit2 = this->ManModeExit;
+		this->ManModeExitInternal = this->ManModeExit;
 
 	sprintf_s(buf, sizeof(buf), "  ManModeExit= %d, SecWinUptime= %d, SecStartDelay= %d", this->ManModeExit, this->SecWinUptime, this->SecStartDelay);
 	this->Trace(buf);
