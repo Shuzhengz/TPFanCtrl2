@@ -26,7 +26,7 @@
 #include "winstuff.h"
 #include "TaskbarTextIcon.h"
 
-#define FANCONTROLVERSION "2.2.7 Dual Fan (NewAge)"
+#define FANCONTROLVERSION "2.3.0 Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6
