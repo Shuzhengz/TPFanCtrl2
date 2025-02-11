@@ -128,9 +128,9 @@ This is caused by EC management for the newer ThinkPad BIOS. There is currently 
 P50 Laptop users should use the 2.1.5B release as the fan control parameters are different, but the temperature is currently broken in the build, so it is recommended to 
 use it in manual mode only
 
-### ThinkPad Z13
+### ThinkPad Z13 and P53
 
-Please use FanDjango's [V2.2.5 release](https://github.com/FanDjango/TPFanCtrl2/releases/tag/V2.2.5)
+Please use FanDjango's [V2.2.7 release](https://github.com/FanDjango/TPFanCtrl2/releases/tag/V2.2.7_NewAge)
 
 ### Thinkbooks
 
