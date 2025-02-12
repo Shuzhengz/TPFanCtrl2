@@ -57,6 +57,9 @@ FANCONTROL::ReadConfig(const char* configfile)
 			if (buf[0] == '/' || buf[0] == '#' || buf[0] == ';')
 				continue;
 
+			if (_strnicmp(buf, "UseTWR=", 7) == 0) {
+				this->UseTWR = atoi(buf + 7);
+			}
 			if (_strnicmp(buf, "Active=", 7) == 0) {
 				this->ActiveMode = atoi(buf + 7);
 			}
