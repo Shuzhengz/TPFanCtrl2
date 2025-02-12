@@ -20,12 +20,12 @@
 #include "TVicPort.h"
 
 // Registers of the embedded controller
-// V0.6.2 final
-#define ACPI_EC_TYPE1_CTRLPORT    0x66  
-#define ACPI_EC_TYPE1_DATAPORT    0x62   
 // V0.6.3+ V.2.2.0+
-#define ACPI_EC_TYPE2_CTRLPORT    0x1604
-#define ACPI_EC_TYPE2_DATAPORT    0x1600  
+#define ACPI_EC_TYPE1_CTRLPORT    0x1604
+#define ACPI_EC_TYPE1_DATAPORT    0x1600  
+// V0.6.2 final
+#define ACPI_EC_TYPE2_CTRLPORT    0x66  
+#define ACPI_EC_TYPE2_DATAPORT    0x62   
 
 // Embedded controller status register bits
 #define ACPI_EC_FLAG_OBF	0x01	/* Output buffer full */
