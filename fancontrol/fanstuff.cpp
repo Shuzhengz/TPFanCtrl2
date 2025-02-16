@@ -673,7 +673,7 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 		}
 	}
 	else {
-		this->Trace("failed to select Fan 2 in EC");
+		this->Trace("failed to select Fan 1 in EC");
 		ok = false;
 	}
 
