@@ -570,7 +570,7 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
 
 	if (!ok_ecaccess) {
 		this->Trace("Could not acquire mutex to read EC status");
-		return ok;
+		return false;
 	}
 
 	for (int i = 0; i < 3; i++) {
@@ -578,7 +578,6 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
 		if (ok) {
 			ok = this->ReadEcRaw(&sample2);
 			if (ok) {
-
 				// match for identical fanctrl settings and temperature differences
 				// of no more than 1°C
 				BOOL match = sample1.FanCtrl == sample2.FanCtrl;
@@ -597,7 +596,6 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
 					ok = false;
 					::Sleep(200);
 				}
-
 			}
 		}
 	}
