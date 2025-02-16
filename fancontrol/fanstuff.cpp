@@ -552,7 +552,7 @@ FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit
 //-------------------------------------------------------------------------
 int
 FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
-	DWORD ok = 0, rc = 0;
+	int ok = 0;
 	FCSTATE sample1, sample2;
 
 	// reading from the EC seems to yield erratic results at times (probably
