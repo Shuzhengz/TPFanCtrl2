@@ -381,7 +381,7 @@ FANCONTROL::SmartControl(void) {
 		// do not change if hyst zone, determine which hyst zone if we are in based on previous temp
 		// DO NOT HAVE HYSTERESIS OVERLAP WITH FAN TEMPS IN CONFIG!
 		SMARTENTRY newLevel = this->SmartLevels[levelIndex];
-		if (this->LastSmartLevel < 0) { // ignore hist on first time setting fan
+		if (this->LastSmartLevel < 0) { // ignore hyst on first time setting fan
 			this->LastSmartLevel = levelIndex;
 			this->SetFan("Smart", newfanctrl);
 			return;
