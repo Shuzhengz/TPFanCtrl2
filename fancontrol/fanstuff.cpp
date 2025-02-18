@@ -637,7 +637,7 @@ BOOL
 FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 
 	// At any point in time, a failure in "ReadByteFromEC" or "WriteByteToEC"
-	// is a reason to abort the entire process and return "false" to indicate failure."
+	// is a reason to abort the entire process and return "false" to indicate failure.
 	// This process will be retried by the caller.
 
 	pfcstate->FanCtrl = -1;
