@@ -1423,7 +1423,7 @@ FANCONTROL::DlgProc(HWND
 			this->hThread = 0;
 		}
 
-		ok = mp1;  // equivalent of "ok= this->ReadEcStatus(&this->State);" via thread
+		ok = mp1;  // equivalent of "ok = this->ReadEcStatus(&this->State);" via thread
 
 		// Notifies program if pending suspension operation has occurred.
 		if (!DefWindowProc(this->hwndDialog, WM_POWERBROADCAST, PBT_APMSUSPEND, NULL)) {
@@ -1507,20 +1507,7 @@ FANCONTROL::DlgProc(HWND
 		{
 			MENU m(5000);
 
-			int ok_ecaccess = false;
-			for (
-				int i = 0;
-				i < 10; i++) {
-				if (ok_ecaccess = this->EcAccess.Lock(100))
-					break;
-				else 
-					::Sleep(100);
-			}
-
-			if (!ok_ecaccess) {
-				this->Trace("Could not acquire mutex to read BT/TL status");
-				break;
-			}
+			if (!this->LockECAccess()) break;
 
 			ok = this->ReadByteFromEC(59, &testpara);
 			if (testpara & 2) 
@@ -1588,7 +1575,7 @@ FANCONTROL::DlgProc(HWND
 			if (this->ShowTempIcon == 1)
 				m.DeleteMenuItem(5080);
 
-			this->EcAccess.Unlock();
+			this->FreeECAccess();
 
 			m.Popup(this->hwndDialog);
 		}
@@ -1605,7 +1592,6 @@ FANCONTROL::DlgProc(HWND
 	return
 		rc;
 }
-
 
 //-------------------------------------------------------------------------
 //  reading the EC status may take a while, hence do it in a thread

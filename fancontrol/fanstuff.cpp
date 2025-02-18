@@ -426,17 +426,7 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final) {
 	sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Result: ");
 
 	if (this->ActiveMode && !this->FinalSeen) {
-		int ok_ecaccess = false;
-		for (int i = 0; i < 10; i++) {
-			if (ok_ecaccess = this->EcAccess.Lock(100))
-				break;
-			else
-				::Sleep(100);
-		}
-		if (!ok_ecaccess) {
-			this->Trace("Could not acquire mutex to set fan state");
-			return 0;
-		}
+		if (!this->LockECAccess()) return false;
 
 		for (int i = 0; i < 5; i++) {
 			// set new fan level
@@ -471,7 +461,7 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final) {
 			::Sleep(300);
 		}
 
-		this->EcAccess.Unlock();
+		this->FreeECAccess();
 
 		if (this->State.FanCtrl == fanctrl) {
 			sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "OK");
@@ -510,23 +500,13 @@ FANCONTROL::SetFan(const char* source, int fanctrl, BOOL final) {
 	return ok;
 }
 
-int
+BOOL
 FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit) {
 	int ok = 0;
 	char obuf[256] = "", obuf2[256], datebuf[128];
 	char newhdwctrl;
 
-	int ok_ecaccess = false;
-	for (int i = 0; i < 10; i++) {
-		if (ok_ecaccess = this->EcAccess.Lock(100))
-			break;
-		else
-			::Sleep(100);
-	}
-	if (!ok_ecaccess) {
-		this->Trace("Could not acquire mutex to write EC register");
-		return 0;
-	}
+	if (!this->LockECAccess()) return false;
 
 	this->CurrentDateTimeLocalized(datebuf, sizeof(datebuf));
 
@@ -569,140 +549,148 @@ FANCONTROL::SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit
 
 	this->Trace(obuf);
 
-	this->EcAccess.Unlock();
+	this->FreeECAccess();
 
 	return ok;
 }
 
 //-------------------------------------------------------------------------
+//  check two EC status samples for accpetable equivalence
+//-------------------------------------------------------------------------
+BOOL
+FANCONTROL::SampleMatch(FCSTATE* smp1, FCSTATE* smp2) {
+	
+	// match for identical fanctrl settings
+	if (smp1->FanCtrl != smp2->FanCtrl) return false;
+
+	// insert any further match criteria here:
+	// -----------------------
+	//
+	// if (......) ......
+	//
+	// -----------------------
+
+	return true;
+}
+
+//-------------------------------------------------------------------------
+//  lock access to the EC controller
+//-------------------------------------------------------------------------
+BOOL
+FANCONTROL::LockECAccess() {
+	int numTries = 10, sleepTicks = 100;
+
+	int ok_ecaccess = false;
+	for (int i = 0; i < numTries; i++) {
+		if (ok_ecaccess = this->EcAccess.Lock(100))	return true;
+		if (i < numTries) ::Sleep(sleepTicks);
+	}
+
+	this->Trace("Could not acquire mutex to read EC status");
+	return false;
+}
+
+//-------------------------------------------------------------------------
+//  relinquisch any lock access to the EC controller
+//-------------------------------------------------------------------------
+void
+FANCONTROL::FreeECAccess() {
+	this->EcAccess.Unlock();
+}
+
+//-------------------------------------------------------------------------
 //  read fan and temperatures from embedded controller
 //-------------------------------------------------------------------------
-int
+BOOL
 FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
-	int ok = 0;
+	int numTries = 10, sleepTicks = 200;
+
 	FCSTATE sample1, sample2;
+
+	if (!this->LockECAccess()) return false;
 
 	// reading from the EC seems to yield erratic results at times (probably
 	// due to collision with other drivers reading from the port).  So try
-	// up to three times to read two samples which look ok and have matching
-	// value
+	// up to ten times to read two samples which look ok and have matching
+	// values, using the above match function
 
-	int ok_ecaccess = false;
-	for (int i = 0; i < 10; i++) {
-		if (ok_ecaccess = this->EcAccess.Lock(100))
-			break;
-		else
-			::Sleep(100);
-	}
-
-	if (!ok_ecaccess) {
-		this->Trace("Could not acquire mutex to read EC status");
-		return false;
-	}
-
-	for (int i = 0; i < 3; i++) {
-		ok = this->ReadEcRaw(&sample1);
-		if (ok) {
-			ok = this->ReadEcRaw(&sample2);
-			if (ok) {
-				// match for identical fanctrl settings and temperature differences
-				// of no more than 1°C
-				BOOL match = sample1.FanCtrl == sample2.FanCtrl;
-				for (int j = 0; j < 12 && match; j++) {
-					if (sample1.Sensors[j] > 128 || sample2.Sensors[j] > 128 ||
-						abs(sample1.Sensors[j] - sample2.Sensors[j]) > 1) {
-						match = false;
-					}
-				}
-
-				if (match) {	// looks good
-					ok = true;
-					break;
-				}
-				else {		// try again after short delay
-					ok = false;
-					::Sleep(200);
-				}
-			}
+	for (int i = 0; i < numTries; i++) {
+		if (this->ReadEcRaw(&sample1) && this->ReadEcRaw(&sample2) && this->SampleMatch(&sample1, &sample2)) {
+			memcpy(pfcstate, &sample2, sizeof(*pfcstate));
+			this->FreeECAccess();
+			return true;
 		}
+		if (i < numTries) ::Sleep(sleepTicks);
 	}
 
-	this->EcAccess.Unlock();
+	this->FreeECAccess();
 
-	if (ok) {
-		memcpy(pfcstate, &sample1, sizeof(*pfcstate));
-	}
+	this->Trace("failed to read reliable status values from EC");
 
-	return ok;
+	return false;
 }
 
 //-------------------------------------------------------------------------
 //  read fan and temperatures from embedded controller
 //-------------------------------------------------------------------------
-int
+BOOL
 FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
-	int i, idxtemp, ok = true;
 
 	pfcstate->FanCtrl = -1;
 
-	memset(pfcstate->Sensors, 0, sizeof(pfcstate->Sensors));
-
 	// Status Register
-	if (ReadByteFromEC(TP_ECOFFSET_FAN, &pfcstate->FanCtrl)) {
-		;
-	}
-	else {
+	if (!ReadByteFromEC(TP_ECOFFSET_FAN, &pfcstate->FanCtrl)) {
 		this->Trace("failed to read status register from EC");
-		ok = false;
+		return false;
 	}
 
-	if (!ok) return false;
+	//
+	// Fan 2 first
+	//
 
-	// Fan 2 speed registers hi/lo
-	if (WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN2)) {
-		if (ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->Fan2SpeedLo)) {
-			if (ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->Fan2SpeedHi)) {
-				;
-			}
-			else {
-				this->Trace("failed to read FanSpeedHighByte 2 from EC");
-				ok = false;
-			}
-		}
-		else {
-			this->Trace("failed to read FanSpeedLowByte 2 from EC");
-			ok = false;
-		}
-	}
-	else {
+	// Select 
+	if (!WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN2)) {
 		this->Trace("failed to select Fan 2 in EC");
-		ok = false;
+		return false;
 	}
 
-	if (!ok) return false;
-
-	// Fan 1 speed registers hi/lo
-	if (WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN1)) {
-		if (ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->Fan1SpeedLo)) {
-			if (ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->Fan1SpeedHi)) {
-				;
-			}
-			else {
-				this->Trace("failed to read FanSpeedHighByte 1 from EC");
-				ok = false;
-			}
-		}
-		else {
-			this->Trace("failed to read FanSpeedLowByte 1 from EC");
-			ok = false;
-		}
+	// Lo
+	if (!ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->Fan2SpeedLo)) {
+		this->Trace("failed to read FanSpeedLowByte 2 from EC");
+		return false;
 	}
-	else {
+	
+	// Hi
+	if (!ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->Fan2SpeedHi)) {
+		this->Trace("failed to read FanSpeedHighByte 2 from EC");
+		return false;
+	}
+
+	//
+	// Fan 1 last
+	//
+	if (!WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN1)) {
 		this->Trace("failed to select Fan 1 in EC");
-		ok = false;
+		return false;
 	}
 
-	if (!ok) return false;
+	// Lo
+	if (!ReadByteFromEC(TP_ECOFFSET_FANSPEED, &pfcstate->Fan1SpeedLo)) {
+		this->Trace("failed to read FanSpeedLowByte 1 from EC");
+		return false;
+	}
+	
+	// Hi
+	if (!ReadByteFromEC(TP_ECOFFSET_FANSPEED + 1, &pfcstate->Fan1SpeedHi)) {
+		this->Trace("failed to read FanSpeedHighByte 1 from EC");
+		return false;
+	}
+
+	// Get Sensors
+
+	int i, idxtemp, ok = true;
+
+	memset(pfcstate->Sensors, 0, sizeof(pfcstate->Sensors));
 
 	if (!this->UseTWR) {
 		idxtemp = 0;

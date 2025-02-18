@@ -44,23 +44,22 @@
 //--------------------------------------------------------------------------
 // wait for the desired status from the embedded controller (EC) via port io 
 //--------------------------------------------------------------------------
-int FANCONTROL::WaitForFlags(char flags, int onoff, int timeout) {
+BOOL
+FANCONTROL::WaitForFlags(char flags, int onoff, int timeout) const {
 	char data;
 
-	int iTime = 0;
-	int iTick = 10;
+	int time = 0, sleepTicks = 10;
 
-	// wait for flags to clear
-	for (iTime = 0; iTime < timeout; iTime += iTick) {
+	// wait for flags to clear and reach desired state
+	for (time = 0; time < timeout; time += sleepTicks) {
 		data = ReadPort(this->EC_CTRL);
 
 		int flagstate = (data & flags) != 0;
 		int	wantedstate = onoff != 0;
 
-		if (flagstate == wantedstate)
-			return true;
+		if (flagstate == wantedstate) return true;
 
-		::Sleep(iTick);
+		::Sleep(sleepTicks);
 	}
 	return false;
 }
@@ -68,7 +67,8 @@ int FANCONTROL::WaitForFlags(char flags, int onoff, int timeout) {
 //-------------------------------------------------------------------------
 // read a byte from the embedded controller (EC) via port io 
 //-------------------------------------------------------------------------
-int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
+BOOL
+FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 
 	if (this->EC_CTRL == 0) {
 		this->EC_CTRL = ACPI_EC_TYPE1_CTRLPORT;
@@ -82,12 +82,12 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 		if (this->EC_CTRL == ACPI_EC_TYPE1_CTRLPORT) {
 			this->EC_CTRL = ACPI_EC_TYPE2_CTRLPORT;
 			this->EC_DATA = ACPI_EC_TYPE2_DATAPORT;
-			this->Trace("Using ACPI_EC_TYPE2");
+			this->Trace("Now using ACPI_EC_TYPE2");
 		}
 		else {
 			this->EC_CTRL = ACPI_EC_TYPE1_CTRLPORT;
 			this->EC_DATA = ACPI_EC_TYPE1_DATAPORT;
-			this->Trace("Using ACPI_EC_TYPE1");
+			this->Trace("Now using ACPI_EC_TYPE1");
 		}
 		return false;
 	}
@@ -120,7 +120,8 @@ int FANCONTROL::ReadByteFromEC(int offset, char* pdata) {
 //-------------------------------------------------------------------------
 // write a byte to the embedded controller (EC) via port io
 //-------------------------------------------------------------------------
-int FANCONTROL::WriteByteToEC(int offset, char NewData) {
+BOOL
+FANCONTROL::WriteByteToEC(int offset, char NewData) {
 
 	// wait for IBF and OBF to clear
 	if (!WaitForFlags(ACPI_EC_FLAG_IBF | ACPI_EC_FLAG_OBF)) {

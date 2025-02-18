@@ -218,9 +218,15 @@ protected:
 	int WorkThread();
 
 	// fancontrol.cpp
-	int ReadEcStatus(FCSTATE* pfcstate);
+	BOOL LockECAccess();
 
-	int ReadEcRaw(FCSTATE* pfcstate);
+	void FreeECAccess();
+
+	BOOL SampleMatch(FCSTATE* smp1, FCSTATE* smp2);
+
+	BOOL ReadEcStatus(FCSTATE* pfcstate);
+
+	BOOL ReadEcRaw(FCSTATE* pfcstate);
 
 	int HandleData();
 
@@ -253,11 +259,11 @@ protected:
 	);
 
 	// portio.cpp
-	int WaitForFlags(char flags, BOOL onoff = false, int timeout = 1000);
+	BOOL WaitForFlags(char flags, BOOL onoff = false, int timeout = 1000) const;
 
-	int ReadByteFromEC(int offset, char* pdata);
+	BOOL ReadByteFromEC(int offset, char* pdata);
 
-	int WriteByteToEC(int offset, char data);
+	BOOL WriteByteToEC(int offset, char data);
 
 public:
 
