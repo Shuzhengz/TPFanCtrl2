@@ -636,6 +636,10 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
 BOOL
 FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 
+	// At any point in time, a failure in "ReadByteFromEC" or "WriteByteToEC"
+	// is a reason to abort the entire process and return "false" to indicate failure."
+	// This process will be retried by the caller.
+
 	pfcstate->FanCtrl = -1;
 
 	// Status Register
@@ -645,7 +649,7 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 	}
 
 	//
-	// Fan 2 first
+	// Fan 2 next
 	//
 
 	// Select 
@@ -685,33 +689,6 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 		this->Trace("failed to read FanSpeedHighByte 1 from EC");
 		return false;
 	}
-		break;
-
-	}
-
-	return true;
-}
-
-//-------------------------------------------------------------------------
-//  read fan and temperatures from embedded controller
-//-------------------------------------------------------------------------
-BOOL
-FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
-
-	// At any point in time, a failure in "ReadByteFromEC" or "WriteByteToEC"
-	// is a reason to abort the entire process and return "false" to indicate failure."
-	// This process will be retried by the caller.
-
-	pfcstate->FanCtrl = -1;
-
-	//
-	// Get Status Register first
-	if (!ReadEcCtrlReg(&pfcstate->FanCtrl)) return false;
-
-	//
-	// Fan 2 next
-	//
-
 
 	// Get Sensors finally
 
@@ -720,6 +697,7 @@ FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
 	memset(pfcstate->Sensors, 0, sizeof(pfcstate->Sensors));
 
 	if (!this->UseTWR) {
+		
 		idxtemp = 0;
 
 		for (i = 0; i < 8; i++) {    // temp sensors 0x78 - 0x7f
