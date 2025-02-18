@@ -373,8 +373,9 @@ FANCONTROL::SmartControl(void) {
 
 	// fan speed ramp up or down?
 	if (newfanctrl != -1 && newfanctrl != this->State.FanCtrl) {
-		//if (newfanctrl==0x80) { // switch to BIOS-auto mode
-		//	//this->ModeToDialog(1); // bios
+		//if (newfanctrl == 0x80) {  
+		    // switch to BIOS-auto mode
+		//	this->ModeToDialog(1);    
 		//}
 
 		// do not change if hyst zone, determine which hyst zone if we are in based on previous temp
@@ -396,11 +397,6 @@ FANCONTROL::SmartControl(void) {
 		}
 
 		this->LastSmartLevel = levelIndex; 
-		this->SetFan("Smart", newfanctrl);
-	}
-
-	// fan speed needs change?
-	if (newfanctrl != -1 && newfanctrl != fanctrl) {
 		this->SetFan("Smart", newfanctrl);
 	}
 
