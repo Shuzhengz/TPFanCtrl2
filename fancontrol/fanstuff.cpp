@@ -382,20 +382,21 @@ FANCONTROL::SmartControl(void) {
 		SMARTENTRY newLevel = this->SmartLevels[levelIndex];
 		if (this->LastSmartLevel < 0) { // ignore hist on first time setting fan
 			this->LastSmartLevel = levelIndex;
-			return ok = this->SetFan("Smart", newfanctrl);
+			this->SetFan("Smart", newfanctrl);
+			return;
 		}
 
 		if (this->MaxTemp < this->SmartLevels[this->LastSmartLevel].temp) {
 			if (this->MaxTemp > newLevel.temp - newLevel.hystDown)
-				return ok; // cooling
+				return; // cooling
 		}
 		else {
 			if (this->MaxTemp < newLevel.temp + newLevel.hystUp)
-				return ok; // rising 
+				return; // rising 
 		}
 
 		this->LastSmartLevel = levelIndex; 
-		ok = this->SetFan("Smart", newfanctrl);
+		this->SetFan("Smart", newfanctrl);
 	}
 
 	// fan speed needs change?
