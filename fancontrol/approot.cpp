@@ -114,7 +114,6 @@ DWORD InstallService(bool quiet)
     char ExePath[MAX_PATH];
     GetModuleFileName(NULL, ExePath, sizeof(ExePath));
 	sprintf_s(ExePath+strlen(ExePath),sizeof(ExePath)-strlen(ExePath)," -s");
-//	sprintf_s(ExePath,sizeof(ExePath)," -s");
 
     SC_HANDLE svc = CreateService(SCMgr, g_ServiceName, g_ServiceName, SERVICE_ALL_ACCESS,
         SERVICE_WIN32_OWN_PROCESS | SERVICE_INTERACTIVE_PROCESS, SERVICE_AUTO_START, SERVICE_ERROR_NORMAL, 
@@ -241,10 +240,6 @@ void WorkerThread(void *dummy)
 {
 	char curdir[MAX_PATH]= "";
 	
-	//   #ifdef _DEBUG   
-	//   Sleep(30000);
-	//   #endif
-
 	hInstRes=GetModuleHandle(NULL);
 	hInstApp=hInstRes;
 
@@ -289,8 +284,6 @@ void WorkerThread(void *dummy)
 
 		FANCONTROL fc(hInstApp);
 
-		fc.Test();
-
         g_dialogWnd = fc.GetDialogWnd();
 
 		fc.ProcessDialog();
@@ -309,7 +302,6 @@ void WorkerThread(void *dummy)
 
 void debug(const char *msg)
 {
-
 	FILE *flog;
     errno_t errflog = fopen_s(&flog,"fancontrol_debug.log", "ab");
 	if (!errflog) {

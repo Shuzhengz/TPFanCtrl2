@@ -33,20 +33,17 @@ FANCONTROL::ReadConfig(const char* configfile)
 	strncpy_s(this->MenuLabelSM1, sizeof(this->MenuLabelSM1), "Smart Level 1", 14);
 	strncpy_s(this->MenuLabelSM2, sizeof(this->MenuLabelSM1), "Smart Level 2", 14);
 
-
-
-
 	//TODO: memcpy
 	//for (i= 0; i<15; i++) {SensorOffset[i]=0;}
 	//for (i= 0; i<15; i++) {FSensorOffset[i]=0;}
 	setzero(SensorOffset, sizeof(SensorOffset));
 	setzero(FSensorOffset, sizeof(FSensorOffset));
 
-	this->State.FanSpeedHi1 = 0x00;
-	this->State.FanSpeedLo1 = 0x00;
-	this->State.FanSpeedHi2 = 0x00;
-	this->State.FanSpeedLo2 = 0x00;
-	this->fanspeed = 0;
+	this->State.Fan1SpeedHi = 0x00;
+	this->State.Fan1SpeedLo = 0x00;
+	this->State.Fan2SpeedHi = 0x00;
+	this->State.Fan2SpeedLo = 0x00;
+	this->fan1speed = 0;
 	this->IndSmartLevel = 0;
 	//
 	// read from file
@@ -167,7 +164,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																						if (_strnicmp(buf, "HK_BIOS=", 8) == 0) {
 																							this->HK_BIOS_Method = buf[8] - 0x30;
 																							this->HK_BIOS = buf[10];
-																							if ((this->HK_BIOS == 0x46) & (buf[11] > 0x30) & (buf[11] < 0x40))
+																							if ((this->HK_BIOS == 0x46) && (buf[11] > 0x30) && (buf[11] < 0x40))
 																								this->HK_BIOS = 0x70 + atoi(buf + 11) - 1;
 																						}
 
@@ -175,7 +172,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																							if (_strnicmp(buf, "HK_Manual=", 10) == 0) {
 																								this->HK_Manual_Method = buf[10] - 0x30;
 																								this->HK_Manual = buf[12];
-																								if ((this->HK_Manual == 0x46) & (buf[13] > 0x30) & (buf[13] < 0x40))
+																								if ((this->HK_Manual == 0x46) && (buf[13] > 0x30) && (buf[13] < 0x40))
 																									this->HK_Manual = 0x70 + atoi(buf + 13) - 1;
 																							}
 
@@ -183,7 +180,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																								if (_strnicmp(buf, "HK_Smart=", 9) == 0) {
 																									this->HK_Smart_Method = buf[9] - 0x30;
 																									this->HK_Smart = buf[11];
-																									if ((this->HK_Smart == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																									if ((this->HK_Smart == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																										this->HK_Smart = 0x70 + atoi(buf + 12) - 1;
 																								}
 
@@ -191,7 +188,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																									if (_strnicmp(buf, "HK_SM1=", 7) == 0) {
 																										this->HK_SM1_Method = buf[7] - 0x30;
 																										this->HK_SM1 = buf[9];
-																										if ((this->HK_SM1 == 0x46) & (buf[10] > 0x30) & (buf[10] < 0x40))
+																										if ((this->HK_SM1 == 0x46) && (buf[10] > 0x30) && (buf[10] < 0x40))
 																											this->HK_SM1 = 0x70 + atoi(buf + 10) - 1;
 																									}
 
@@ -199,7 +196,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																										if (_strnicmp(buf, "HK_SM2=", 7) == 0) {
 																											this->HK_SM2_Method = buf[7] - 0x30;
 																											this->HK_SM2 = buf[9];
-																											if ((this->HK_SM2 == 0x46) & (buf[10] > 0x30) & (buf[10] < 0x40))
+																											if ((this->HK_SM2 == 0x46) && (buf[10] > 0x30) && (buf[10] < 0x40))
 																												this->HK_SM2 = 0x70 + atoi(buf + 10) - 1;
 																										}
 
@@ -207,7 +204,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																											if (_strnicmp(buf, "HK_TG_BS=", 9) == 0) {
 																												this->HK_TG_BS_Method = buf[9] - 0x30;
 																												this->HK_TG_BS = buf[11];
-																												if ((this->HK_TG_BS == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																												if ((this->HK_TG_BS == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																													this->HK_TG_BS = 0x70 + atoi(buf + 12) - 1;
 																											}
 
@@ -215,7 +212,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																												if (_strnicmp(buf, "HK_TG_BM=", 9) == 0) {
 																													this->HK_TG_BM_Method = buf[9] - 0x30;
 																													this->HK_TG_BM = buf[11];
-																													if ((this->HK_TG_BM == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																													if ((this->HK_TG_BM == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																														this->HK_TG_BM = 0x70 + atoi(buf + 12) - 1;
 																												}
 
@@ -223,7 +220,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																													if (_strnicmp(buf, "HK_TG_MS=", 9) == 0) {
 																														this->HK_TG_MS_Method = buf[9] - 0x30;
 																														this->HK_TG_MS = buf[11];
-																														if ((this->HK_TG_MS == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																														if ((this->HK_TG_MS == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																															this->HK_TG_MS = 0x70 + atoi(buf + 12) - 1;
 																													}
 
@@ -231,7 +228,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 																														if (_strnicmp(buf, "HK_TG_12=", 9) == 0) {
 																															this->HK_TG_12_Method = buf[9] - 0x30;
 																															this->HK_TG_12 = buf[11];
-																															if ((this->HK_TG_12 == 0x46) & (buf[12] > 0x30) & (buf[12] < 0x40))
+																															if ((this->HK_TG_12 == 0x46) && (buf[12] > 0x30) && (buf[12] < 0x40))
 																																this->HK_TG_12 = 0x70 + atoi(buf + 12) - 1;
 																														}
 
@@ -363,8 +360,6 @@ FANCONTROL::ReadConfig(const char* configfile)
 																																																												strncpy_s(this->gSensorNames[15], sizeof(this->gSensorNames[15]), buf + 13, 3);
 																																																											}
 			// End of Reading Sensor Names
-
-
 			// Read SensorOffsets
 																																																											else
 																																																												if (_strnicmp(buf, "SensorOffset1=", 14) == 0)
@@ -464,9 +459,8 @@ FANCONTROL::ReadConfig(const char* configfile)
 
 		ok = true;
 
-
-
 		this->Trace("Current Config:");
+		this->Trace(FANCONTROLVERSION);
 	}
 
 	else {
@@ -506,7 +500,6 @@ FANCONTROL::ReadConfig(const char* configfile)
 	sprintf_s(buf, sizeof(buf), "  IconLevels= %d %d %d, NoExtSensor= %d, Lev64Norm= %d",
 		this->IconLevels[0], this->IconLevels[1], this->IconLevels[2],
 		this->NoExtSensor, this->Lev64Norm);
-
 	this->Trace(buf);
 
 	sprintf_s(buf, sizeof(buf), "  Log2File= %d, Log2csv= %d, ShowAll= %d, IconColorFan= %d",
@@ -520,11 +513,9 @@ FANCONTROL::ReadConfig(const char* configfile)
 	if (Fahrenheit) {
 		strcpy_s(buf, sizeof(buf), "  ");
 		for (i = 0; this->SmartLevels[i].temp != -1; i++) {
-			sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° F->",
-				i > 0 ? ", " : "", this->SmartLevels[i].temp);
+			sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° F->", i > 0 ? ", " : "", this->SmartLevels[i].temp);
 			if (this->SmartLevels[i].fan != 0x80)
-				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d",
-					this->SmartLevels[i].fan);
+				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d", this->SmartLevels[i].fan);
 			else
 				strcat_s(buf, sizeof(buf), "0x80");
 		}
@@ -532,19 +523,15 @@ FANCONTROL::ReadConfig(const char* configfile)
 	else {
 		strcpy_s(buf, sizeof(buf), "  Levels= ");
 		for (i = 0; this->SmartLevels[i].temp != -1; i++) {
-			sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° C -> ",
-				i > 0 ? ",  " : "",
-				this->SmartLevels[i].temp);
+			sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° C -> ", i > 0 ? ",  " : "", this->SmartLevels[i].temp);
 			if (this->SmartLevels[i].fan != 0x80)
-				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d",
-					this->SmartLevels[i].fan);
+				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d", this->SmartLevels[i].fan);
 			else
 				strcat_s(buf, sizeof(buf), "0x80");
 		}
 	}
 
 	this->Trace(buf);
-
 
 	//Levels2	
 
@@ -553,11 +540,9 @@ FANCONTROL::ReadConfig(const char* configfile)
 		if (Fahrenheit) {
 			strcpy_s(buf, sizeof(buf), "  ");
 			for (i = 0; this->SmartLevels2[i].temp2 != -1; i++) {
-				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° F->",
-					i > 0 ? ", " : "", this->SmartLevels2[i].temp2);
+				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° F->", i > 0 ? ", " : "", this->SmartLevels2[i].temp2);
 				if (this->SmartLevels2[i].fan2 != 0x80)
-					sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d",
-						this->SmartLevels2[i].fan2);
+					sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d", this->SmartLevels2[i].fan2);
 				else
 					strcat_s(buf, sizeof(buf), "0x80");
 			}
@@ -565,12 +550,9 @@ FANCONTROL::ReadConfig(const char* configfile)
 		else {
 			strcpy_s(buf, sizeof(buf), "  Levels2= ");
 			for (i = 0; this->SmartLevels2[i].temp2 != -1; i++) {
-				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° C -> ",
-					i > 0 ? ",  " : "",
-					this->SmartLevels2[i].temp2);
+				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° C -> ", i > 0 ? ",  " : "", this->SmartLevels2[i].temp2);
 				if (this->SmartLevels2[i].fan2 != 0x80)
-					sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d",
-						this->SmartLevels2[i].fan2);
+					sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d", this->SmartLevels2[i].fan2);
 				else
 					strcat_s(buf, sizeof(buf), "0x80");
 			}
@@ -599,11 +581,12 @@ FANCONTROL::ReadConfig(const char* configfile)
 	this->Trace(buf);
 
 	sprintf_s(buf, sizeof(buf), "  IgnoreSensors= %s, ProcessPriority= %d, IconCycle= %d", IgnoreSensors, ProcessPriority, IconCycle);
+
 	this->Trace(buf);
 
 	sprintf_s(buf, sizeof(buf), "  BluetoothEDR= %d, NoWaitMessage= %d, ShowBiasedTemps= %d", this->BluetoothEDR, NoWaitMessage, ShowBiasedTemps);
-	this->Trace(buf);
 
+	this->Trace(buf);
 
 	//ManModeExit Fahrenheit to Celsius and v.v.
 
@@ -611,9 +594,9 @@ FANCONTROL::ReadConfig(const char* configfile)
 		this->ManModeExit = (this->ManModeExit * 9 / 5) + 32;
 
 	if (Fahrenheit)
-		this->ManModeExit2 = (this->ManModeExit - 32) * 5 / 9;
+		this->ManModeExitInternal = (this->ManModeExit - 32) * 5 / 9;
 	else
-		this->ManModeExit2 = this->ManModeExit;
+		this->ManModeExitInternal = this->ManModeExit;
 
 	sprintf_s(buf, sizeof(buf), "  ManModeExit= %d, SecWinUptime= %d, SecStartDelay= %d", this->ManModeExit, this->SecWinUptime, this->SecStartDelay);
 	this->Trace(buf);
@@ -639,8 +622,8 @@ FANCONTROL::ReadConfig(const char* configfile)
 			(
 				"del TPFanControl_last_csv.txt && ren TPFanControl_csv.txt TPFanControl_last_csv.txt"
 			);
-		sprintf_s(buf, sizeof(buf), "time;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;rpm;fan;switch;",
-			this->gSensorNames[0], this->gSensorNames[1], this->gSensorNames[2],
+		sprintf_s(buf, sizeof(buf), "time;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;rpm;fan;switch;", 
+			this->gSensorNames[0], this->gSensorNames[1], this->gSensorNames[2], 
 			this->gSensorNames[3], this->gSensorNames[4], this->gSensorNames[5],
 			this->gSensorNames[6], this->gSensorNames[7], this->gSensorNames[8],
 			this->gSensorNames[9], this->gSensorNames[10], this->gSensorNames[11]);
@@ -654,8 +637,8 @@ FANCONTROL::ReadConfig(const char* configfile)
 	this->iMaxTemp = 0;
 	this->iFarbeIconB = 10;
 	this->iFontIconB = 9;
-	this->lastfanspeed = 0;
-	this->fanspeed = 0;
+	this->lastfan1speed = 0;
+	this->fan1speed = 0;
 
 	return ok;
 
@@ -718,8 +701,6 @@ FANCONTROL::CurrentTimeLocalized(char* result, size_t sizeof_result)
 	// strncat_s(result,sizeof_result, otime, sizeof_result-strlen(result)-1);
 }
 
-
-
 //-------------------------------------------------------------------------
 //  
 //-------------------------------------------------------------------------
@@ -732,9 +713,6 @@ FANCONTROL::IsMinimized(void)
 
 	return wp.showCmd == SW_SHOWMINIMIZED;
 }
-
-
-
 
 //-------------------------------------------------------------------------
 //  show trace output in lower window part
@@ -771,7 +749,6 @@ FANCONTROL::Trace(const char* text)
 		p--;
 	}
 
-
 	// 
 	// write logfile
 	//
@@ -793,8 +770,6 @@ FANCONTROL::Trace(const char* text)
 	::SendDlgItemMessage(this->hwndDialog, 9200, EM_LINESCROLL, 0, 9999);
 }
 
-
-
 void
 FANCONTROL::Tracecsv(const char* text)
 {
@@ -806,7 +781,6 @@ FANCONTROL::Tracecsv(const char* text)
 		sprintf_s(line, sizeof(line), "%s; %s\r\n", datebuf, text);	// probably acpi reading conflict
 	else
 		strcpy_s(line, sizeof(line), "\r\n");
-
 
 	// write logfile
 	//
