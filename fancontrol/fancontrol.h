@@ -26,8 +26,7 @@
 #include "winstuff.h"
 #include "TaskbarTextIcon.h"
 
-
-#define FANCONTROLVERSION "2.2.0 Dual Fan"
+#define FANCONTROLVERSION "2.3.1 Dual Fan"
 
 #define WM__DISMISSDLG WM_USER+5
 #define WM__GETDATA WM_USER+6
@@ -60,15 +59,14 @@ protected:
 	struct FCSTATE {
 
 		char FanCtrl,
-			FanSpeedLo1,
-			FanSpeedHi1,
-			FanSpeedLo2,
-			FanSpeedHi2;
+			Fan1SpeedLo,
+			Fan1SpeedHi,
+			Fan2SpeedLo,
+			Fan2SpeedHi;
 
 		char Sensors[12];
 		int SensorAddr[12];
 		const char* SensorName[12];
-
 
 	} State;
 
@@ -114,7 +112,7 @@ protected:
 	int TaskbarNew;
 	int MaxTemp;
 	int iMaxTemp;
-	int fanspeed, lastfanspeed, showfanspeed;
+	int fan1speed, lastfan1speed, fan2speed, lastfan2speed;
 	int FanBeepFreq, FanBeepDura;
 	int MinimizeToSysTray,
 		Lev64Norm,
@@ -147,9 +145,10 @@ protected:
 		HK_TG_BM,
 		HK_TG_MS,
 		HK_TG_12;
+	int EC_CTRL, EC_DATA;
 	int BluetoothEDR;
 	int ManModeExit;
-	int ManModeExit2;
+	int ManModeExitInternal;
 	int ShowBiasedTemps;
 	int SecStartDelay;
 	char gSensorNames[17][4];
@@ -211,7 +210,6 @@ protected:
 	CTaskbarTextIcon** ppTbTextIcon;
 	MUTEXSEM* pTextIconMutex;
 
-
 	static int _stdcall
 		FANCONTROL_Thread(ULONG
 			parm) \
@@ -219,22 +217,26 @@ protected:
 
 	int WorkThread();
 
-
 	// fancontrol.cpp
-	int ReadEcStatus(FCSTATE* pfcstate);
+	bool LockECAccess();
 
-	int ReadEcRaw(FCSTATE* pfcstate);
+	void FreeECAccess();
+
+	bool SampleMatch(FCSTATE* smp1, FCSTATE* smp2);
+
+	bool ReadEcStatus(FCSTATE* pfcstate);
+
+	bool ReadEcRaw(FCSTATE* pfcstate);
 
 	int HandleData();
 
-	int SmartControl();
+	void SmartControl();
 
-	int SetFan(const char* source, int level, BOOL final = false);
+	int SetFan(const char* source, int level, bool final = false);
 
 	int SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit);
 
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
-
 
 	// misc.cpp
 	int ReadConfig(const char* filename);
@@ -245,25 +247,21 @@ protected:
 
 	void Tracecsvod(const char* textcsv);
 
-	BOOL IsMinimized(void);
+	bool IsMinimized(void) const;
 
 	void CurrentDateTimeLocalized(char* result, size_t sizeof_result);
 
 	void CurrentTimeLocalized(char* result, size_t sizeof_result);
 
 	HANDLE CreateThread(int(_stdcall
-
 		* fnct)(ULONG),
 		ULONG p
 	);
 
-
 	// portio.cpp
-	int ReadByteFromECint(int offset, char* pdata);
+	bool ReadByteFromEC(int offset, char* pdata);
 
-	int ReadByteFromEC(int offset, char* pdata);
-
-	int WriteByteToEC(int offset, char data);
+	bool WriteByteToEC(int offset, char data);
 
 public:
 
