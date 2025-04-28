@@ -1363,12 +1363,13 @@ FANCONTROL::DlgProc(HWND
 					ok = this->SetFan("Lid close, Switch to BIOS Mode", 0x80);
 					if (ok) {
 						this->Trace("Set to BIOS Mode");
-						::Sleep(1000);
+						::Sleep(2000);
 					}
 				}
 				else { // Lid opened
 					if (this->isLidClosed) {
 						// TODO: switch back to smart mode
+						this->ModeToDialog(2);
 					}
 					this->isLidClosed = false;
 					this->Trace("Lid opened detected.");
