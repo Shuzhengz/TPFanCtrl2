@@ -1368,8 +1368,8 @@ FANCONTROL::DlgProc(HWND
 				}
 				else { // Lid opened
 					if (this->isLidClosed) {
-						// TODO: switch back to smart mode
-						this->ModeToDialog(2);
+						// switch back to previous mode
+						this->ModeToDialog(this->PreviousMode);
 					}
 					this->isLidClosed = false;
 					this->Trace("Lid opened detected.");
