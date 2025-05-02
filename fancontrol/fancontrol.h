@@ -238,6 +238,10 @@ protected:
 
 	LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam);
 
+	// for detecting lid closing
+	HPOWERNOTIFY hPowerNotify;
+	bool isLidClosed = false;
+	int previousModeBeforeLidClose = -1;
 	// misc.cpp
 	int ReadConfig(const char* filename);
 
