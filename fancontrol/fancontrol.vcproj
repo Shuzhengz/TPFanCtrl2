@@ -78,7 +78,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="comctl32.lib"
+				AdditionalDependencies="comctl32.lib user32.lib"
 				OutputFile=".\Release/TPFanControl.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
