@@ -762,7 +762,7 @@ FANCONTROL::IsMinimized(void) const {
 //-------------------------------------------------------------------------
 void
 FANCONTROL::Trace(const char* text) {
-	char trace[16384] = "", datebuf[128] = "", line[256] = "", linecsv[256] = "";
+	char trace[16384] = "", datebuf[128] = "", line[512] = "", linecsv[512] = "";
 
 	this->CurrentDateTimeLocalized(datebuf, sizeof(datebuf));
 
@@ -808,7 +808,7 @@ FANCONTROL::Trace(const char* text) {
 
 void
 FANCONTROL::Tracecsv(const char* text) {
-	char trace[16384] = "", datebuf[128] = "", line[256] = "";
+	char trace[16384] = "", datebuf[128] = "", line[512] = "";
 
 	this->CurrentTimeLocalized(datebuf, sizeof(datebuf));
 
@@ -830,7 +830,7 @@ FANCONTROL::Tracecsv(const char* text) {
 
 void
 FANCONTROL::Tracecsvod(const char* text) {
-	char trace[16384] = "", datebuf[128] = "", line[256] = "";
+	char trace[16384] = "", datebuf[128] = "", line[512] = "";
 
 	this->CurrentDateTimeLocalized(datebuf, sizeof(datebuf));
 
