@@ -130,7 +130,7 @@ use it in manual mode only
 
 ### ThinkPad Z13 and P53
 
-Please use FanDjango's [V2.3.3 release](https://github.com/FanDjango/TPFanCtrl2/releases/tag/V2.3.3)
+Please use FanDjango's [V2.3.4 release](https://github.com/FanDjango/TPFanCtrl2/releases/tag/V2.3.4)
 
 ### Thinkbooks
 
