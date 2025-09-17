@@ -136,7 +136,7 @@ Some thinkbook models have different EC address, so the program might not work
 
 FanDjango is currently refactoring, streamlining and cleaning up TPFanControl2, clarifying messages and log texts and
 also adding some enhancements as requested by users in the issues here in this repo. These are **early beta** released under
-FanDjango's [V2.3.5 release](https://github.com/FanDjango/TPFanCtrl2/releases/tag/V2.3.5). When sufficient feedback is
+FanDjango's [V2.3.6 release](https://github.com/FanDjango/TPFanCtrl2/releases/tag/V2.3.6). When sufficient feedback is
 received these may be incorporated into the main trunk here.
 
 Confirmed support for: P53, Z13, Z16 Gen 1, P16 Gen1 AMD, T16 Gen1 AMD, X1 carbon gen12, X230T
