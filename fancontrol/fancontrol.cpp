@@ -1203,17 +1203,18 @@ FANCONTROL::DlgProc(HWND
 					return CDRF_NOTIFYITEMDRAW;
 				case CDDS_ITEMPREPAINT:
 				{
-					int idx = (int)lplvcd->nmcd.dwItemSpec;
-					if (idx >= 0 && idx < 12)
-					{
-						int temp = this->State.Sensors[idx];
-						if (temp >= this->IconLevels[2] && this->IconLevels[2] > 0)
-							lplvcd->clrText = RGB(255, 69, 0);
-						else if (temp >= this->IconLevels[1] && this->IconLevels[1] > 0)
-							lplvcd->clrText = RGB(255, 165, 0);
-						else if (temp >= this->IconLevels[0] && this->IconLevels[0] > 0)
-							lplvcd->clrText = RGB(210, 160, 0);
-					}
+					// Read temp from ListView column 2 to handle filtered rows correctly
+					char tempStr[16];
+					ListView_GetItemText(pnmh->hwndFrom,
+						(int)lplvcd->nmcd.dwItemSpec, 2,
+						tempStr, sizeof(tempStr));
+					int temp = atoi(tempStr);
+					if (temp >= this->IconLevels[2] && this->IconLevels[2] > 0)
+						lplvcd->clrText = RGB(255, 69, 0);
+					else if (temp >= this->IconLevels[1] && this->IconLevels[1] > 0)
+						lplvcd->clrText = RGB(255, 165, 0);
+					else if (temp >= this->IconLevels[0] && this->IconLevels[0] > 0)
+						lplvcd->clrText = RGB(210, 160, 0);
 					return CDRF_NEWFONT;
 				}
 				default:
