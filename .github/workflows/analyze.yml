@@ -1,0 +1,37 @@
+name: Static Code Analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  analyze:
+    name: MSVC Code Analysis
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Run MSBuild with Code Analysis
+        run: |
+          msbuild fancontrol/fancontrol.sln `
+            /p:Configuration=Debug `
+            /p:Platform=Win32 `
+            /p:EnableMicrosoftCodeAnalysis=true `
+            /p:RunCodeAnalysis=true `
+            /t:Build
+
+      - name: Upload Analysis Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: |
+            **/*.log
+            **/Debug/*.log
