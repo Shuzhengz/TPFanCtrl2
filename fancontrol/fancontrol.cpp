@@ -19,6 +19,7 @@
 #include "tools.h"
 #include "taskbartexticon.h"
 #include "sysinfoapi.h"
+#include <commctrl.h>
 
 
 DEFINE_GUID(GUID_LIDSWITCH_STATE_CHANGE,
@@ -397,9 +398,35 @@ FANCONTROL::FANCONTROL(HINSTANCE hinstapp)
 
 		::SendDlgItemMessage(this->hwndDialog, 9200, EM_LIMITTEXT, 4096, 0);
 
-		_itoa_s(this->ManFanSpeed, buf, 10);
+		// Init temperature ListView columns (normal mode only)
+		{
+			HWND hLV = ::GetDlgItem(this->hwndDialog, 8101);
+			if (hLV) {
+				ListView_SetExtendedListViewStyle(hLV, LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_DOUBLEBUFFER);
+				LVCOLUMNA lvc = {0};
+				lvc.mask = LVCF_TEXT | LVCF_WIDTH | LVCF_FMT;
+				lvc.fmt = LVCFMT_LEFT;
+				lvc.cx = 28; lvc.pszText = (LPSTR)"#"; ListView_InsertColumn(hLV, 0, &lvc);
+				lvc.cx = 50; lvc.pszText = (LPSTR)"Name"; ListView_InsertColumn(hLV, 1, &lvc);
+				lvc.cx = 55; lvc.pszText = (LPSTR)"Temp"; ListView_InsertColumn(hLV, 2, &lvc);
+			}
+		}
 
-		::SetDlgItemText(this->hwndDialog, 8310, buf);
+		// Init manual mode ComboBox (normal mode only)
+		{
+			HWND hCB = ::GetDlgItem(this->hwndDialog, 8310);
+			if (hCB) {
+				SendMessageA(hCB, CB_ADDSTRING, 0, (LPARAM)"0 - Off (0%)");
+				SendMessageA(hCB, CB_ADDSTRING, 0, (LPARAM)"1 - 30%");
+				SendMessageA(hCB, CB_ADDSTRING, 0, (LPARAM)"2 - 40%");
+				SendMessageA(hCB, CB_ADDSTRING, 0, (LPARAM)"3 - 45%");
+				SendMessageA(hCB, CB_ADDSTRING, 0, (LPARAM)"4 - 50%");
+				SendMessageA(hCB, CB_ADDSTRING, 0, (LPARAM)"5 - 60%");
+				SendMessageA(hCB, CB_ADDSTRING, 0, (LPARAM)"6 - 65%");
+				SendMessageA(hCB, CB_ADDSTRING, 0, (LPARAM)"7 - 65%");
+				SendMessageA(hCB, CB_SETCURSEL, this->ManFanSpeed, 0);
+			}
+		}
 		this->hPowerNotify = RegisterPowerSettingNotification(this->hwndDialog, &GUID_LIDSWITCH_STATE_CHANGE, DEVICE_NOTIFY_WINDOW_HANDLE);
 	}
 
@@ -1164,6 +1191,39 @@ FANCONTROL::DlgProc(HWND
 		//	SetProcessWorkingSetSize(GetCurrentProcess(),65536,WANTED_MEM_SIZE);
 		break;
 
+	case WM_NOTIFY:
+		{
+			LPNMHDR pnmh = (LPNMHDR)mp2;
+			if (pnmh->idFrom == 8101 && pnmh->code == NM_CUSTOMDRAW)
+			{
+				LPNMLVCUSTOMDRAW lplvcd = (LPNMLVCUSTOMDRAW)mp2;
+				switch (lplvcd->nmcd.dwDrawStage)
+				{
+				case CDDS_PREPAINT:
+					return CDRF_NOTIFYITEMDRAW;
+				case CDDS_ITEMPREPAINT:
+				{
+					// Read temp from ListView column 2 to handle filtered rows correctly
+					char tempStr[16];
+					ListView_GetItemText(pnmh->hwndFrom,
+						(int)lplvcd->nmcd.dwItemSpec, 2,
+						tempStr, sizeof(tempStr));
+					int temp = atoi(tempStr);
+					if (temp >= this->IconLevels[2] && this->IconLevels[2] > 0)
+						lplvcd->clrText = RGB(255, 69, 0);
+					else if (temp >= this->IconLevels[1] && this->IconLevels[1] > 0)
+						lplvcd->clrText = RGB(255, 165, 0);
+					else if (temp >= this->IconLevels[0] && this->IconLevels[0] > 0)
+						lplvcd->clrText = RGB(210, 160, 0);
+					return CDRF_NEWFONT;
+				}
+				default:
+					return CDRF_DODEFAULT;
+				}
+			}
+		}
+		break;
+
 	case WM_COMMAND:
 		if (
 			HIWORD(mp1)	== BN_CLICKED || HIWORD(mp1) == EN_CHANGE)
@@ -1179,50 +1239,7 @@ FANCONTROL::DlgProc(HWND
 			if (cmd == 7001 || cmd == 7002)
 			{
 				this->ShowAllFromDialog();
-
-				int i;
-				for (i = 0;	i < 12; i++)
-				{
-					int temp = this->State.Sensors[i];
-
-					if (temp < 128 && temp != 0)
-					{
-						if (Fahrenheit)
-							sprintf_s(obuf2, sizeof(obuf2), "%d° F", temp * 9 / 5 + 32);
-						else
-							sprintf_s(obuf2, sizeof(obuf2), "%d° C", temp);
-
-						size_t strlen_templist2 = strlen_s(templist2, sizeof(templist2));
-
-						if (SlimDialog && StayOnTop)
-							sprintf_s(templist2	+ strlen_templist2, sizeof(templist2) - strlen_templist2,
-								"%d %s %s (0x%02x)", i + 1, this->State.SensorName[i], obuf2, this->State.SensorAddr[i]);
-						else
-							sprintf_s(templist2	+ strlen_templist2, sizeof(templist2) - strlen_templist2,
-								"%d %s %s", i + 1, this->State.SensorName[i], obuf2);
-
-						strcat_s(templist2, sizeof(templist2), "\r\n");
-					}
-					else
-					{
-						if (this->ShowAll == 1)
-						{
-							sprintf_s(obuf2, sizeof(obuf2), "n/a");
-								size_t strlen_templist2 = strlen_s(templist2, sizeof(templist2));
-
-							if (SlimDialog && StayOnTop)
-								sprintf_s(templist2	+ strlen_templist2, sizeof(templist2) - strlen_templist2,
-									"%d %s %s (0x%02x)", i + 1, this->State.SensorName[i], obuf2, this->State.SensorAddr[i]);
-							else
-								sprintf_s(templist2	+ strlen_templist2, sizeof(templist2) - strlen_templist2,
-									"%d %s %s", i + 1, this->State.SensorName[i], obuf2);
-
-							strcat_s(templist2, sizeof(templist2), "\r\n");
-						}
-					}
-				}
-				::SetDlgItemText(this->hwndDialog, 8101, templist2);
-				this->icontemp = this->State.Sensors[iMaxTemp];
+				this->UpdateTempDisplay();
 			};
 			//end temp display
 
@@ -1776,4 +1793,56 @@ void FANCONTROL::RemoveTextIcons(void) {
 	else {
 		_ASSERT(false);//Mutex not av within 10 sec
 	}
+}
+
+
+//-------------------------------------------------------------------------
+//  update temperature ListView display
+//-------------------------------------------------------------------------
+void
+FANCONTROL::UpdateTempDisplay(void)
+{
+	HWND hLV = ::GetDlgItem(this->hwndDialog, 8101);
+	if (!hLV) return;
+
+	ListView_DeleteAllItems(hLV);
+
+	LVITEMA lvi = {0};
+	lvi.mask = LVIF_TEXT;
+	char buf[32];
+
+	for (int i = 0; i < 12; i++)
+	{
+		int temp = this->State.Sensors[i];
+		BOOL show = (temp < 128 && temp != 0) || (this->ShowAll == 1);
+
+		if (show)
+		{
+			// Column 0: index
+			sprintf_s(buf, sizeof(buf), "%d", i + 1);
+			lvi.iItem = i;
+			lvi.iSubItem = 0;
+			lvi.pszText = buf;
+			int idx = ListView_InsertItem(hLV, &lvi);
+
+			// Column 1: sensor name
+			ListView_SetItemText(hLV, idx, 1, (LPSTR)this->State.SensorName[i]);
+
+			// Column 2: temperature
+			if (temp < 128 && temp != 0)
+			{
+				if (Fahrenheit)
+					sprintf_s(buf, sizeof(buf), "%d F", temp * 9 / 5 + 32);
+				else
+					sprintf_s(buf, sizeof(buf), "%d C", temp);
+			}
+			else
+			{
+				strcpy_s(buf, sizeof(buf), "n/a");
+			}
+			ListView_SetItemText(hLV, idx, 2, buf);
+		}
+	}
+
+	this->icontemp = this->State.Sensors[this->iMaxTemp];
 }

@@ -285,6 +285,8 @@ public:
 	void ProcessTextIcons(void);
 
 	void RemoveTextIcons(void);
+
+	void UpdateTempDisplay(void);
 };
 
 #endif // FANCONTROL_H

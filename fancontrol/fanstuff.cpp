@@ -181,7 +181,7 @@ FANCONTROL::HandleData(void) {
 		}
 	}
 
-	::SetDlgItemText(this->hwndDialog, 8101, templist2);
+	this->UpdateTempDisplay();
 
 	this->icontemp = this->State.Sensors[iMaxTemp];
 
@@ -290,13 +290,23 @@ FANCONTROL::HandleData(void) {
 			this->Trace(obuf);
 		}
 
-		::GetDlgItemText(this->hwndDialog, 8310, manlevel, sizeof(manlevel));
-
-		if (isdigit(manlevel[0]) && atoi(manlevel) >= 0 && atoi(manlevel) <= 255) {
-			if (this->State.FanCtrl != atoi(manlevel))
-				ok = this->SetFan("Manual", atoi(manlevel));
-			else
-				ok = true;
+		// Normal mode: ComboBox; Slim mode: fallback to text
+		if (this->SlimDialog != 1) {
+			int sel = (int)::SendMessage(::GetDlgItem(this->hwndDialog, 8310), CB_GETCURSEL, 0, 0);
+			if (sel >= 0 && sel <= 7) {
+				if (this->State.FanCtrl != sel)
+					ok = this->SetFan("Manual", sel);
+				else
+					ok = true;
+			}
+		} else {
+			::GetDlgItemText(this->hwndDialog, 8310, manlevel, sizeof(manlevel));
+			if (isdigit(manlevel[0]) && atoi(manlevel) >= 0 && atoi(manlevel) <= 255) {
+				if (this->State.FanCtrl != atoi(manlevel))
+					ok = this->SetFan("Manual", atoi(manlevel));
+				else
+					ok = true;
+			}
 		}
 
 		break;
