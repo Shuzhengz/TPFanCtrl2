@@ -82,6 +82,10 @@ protected:
 		int temp2, fan2, hystUp2, hystDown2;
 	} SmartLevels2[32];
 
+	// independent smart curve for fan 2 (LevelFan2= in ini); when present,
+	// Level=/Level2= drive fan 1 only and this table drives fan 2
+	SMARTENTRY SmartLevelsFan2[32];
+
 	struct FSMARTENTRY {        //fahrenheit values
 		int ftemp, ffan;
 	} FSmartLevels[32];
@@ -90,6 +94,9 @@ protected:
 		int offs, hystMin, hystMax; // min and max temp values that offs takes effect. -1 to disable
 	} SensorOffset[16];
 	int LastSmartLevel = -1;
+	int LastSmartLevelFan2 = -1;
+	int Fan2Ctrl = -1;             // last level written to fan 2 in per-fan mode (-1 = unknown)
+	bool PerFanLevels = false;     // true when any LevelFan2= lines were parsed
 	int IconLevels[3];    // temp levels for coloring the icon
 	int FIconLevels[3];    // fahrenheit temp levels for coloring the icon
 	int CurrentIcon;
@@ -232,7 +239,8 @@ protected:
 
 	void SmartControl();
 
-	int SetFan(const char* source, int level, bool final = false);
+	int SetFan(const char* source, int level, bool final = false, int level2 = -1);
+	int SmartDecision(SMARTENTRY* levels, int* lastLevel, int loopBase, int compareCtrl);
 
 	int SetHdw(const char* source, int hdwctrl, int HdwOffset, int AnyWayBit);
 

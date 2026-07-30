@@ -45,6 +45,7 @@ Example of configurable parameters:
 - Max read errors before the program auto shuts down
 - Log program log to file & log data to CSV file
 - Configure the fan curve in smart mode
+- Configure an independent smart curve per fan on dual fan machines (`LevelFan2=`), e.g. to keep a noisy fan off until higher temperatures
 - Configure a second smart mode that is accessable in the tray
 - Temperature threshold to exit the manual mode
 

@@ -315,10 +315,7 @@ FANCONTROL::HandleData(void) {
 //-------------------------------------------------------------------------
 void
 FANCONTROL::SmartControl(void) {
-	int i,
-		newfanctrl = -1,
-		levelIndex = -1,
-		fanctrl = this->State.FanCtrl;
+	int fanctrl = this->State.FanCtrl;
 	char obuf[256] = "";
 
 	if (this->PreviousMode == 1) {
@@ -344,27 +341,60 @@ FANCONTROL::SmartControl(void) {
 //5 Level = 95   64  0   0 
 //6 Level = 105 128  0   0 
 
-	newfanctrl = -1;
+	bool recalc = (fanctrl > 7 && (fanctrl != 64 || !Lev64Norm)) || this->PreviousMode == 3 || this->PreviousMode == 1;
+	if (recalc)
+		fanctrl = 0;
 
-	if ((fanctrl > 7 && (fanctrl != 64 || !Lev64Norm)) || this->PreviousMode == 3 || this->PreviousMode == 1) {
+	int new1 = this->SmartDecision(this->SmartLevels, &this->LastSmartLevel, fanctrl, this->State.FanCtrl);
+
+	if (!this->PerFanLevels) {
+		if (new1 != -1)
+			this->SetFan("Smart", new1);
+		return;
+	}
+
+	// independent fan 2 curve: evaluate against its own shadow state
+	int cur2 = this->Fan2Ctrl;
+	int loopBase2 = (recalc || cur2 < 0 || (cur2 > 7 && (cur2 != 64 || !Lev64Norm))) ? 0 : cur2;
+	int new2 = this->SmartDecision(this->SmartLevelsFan2, &this->LastSmartLevelFan2, loopBase2, cur2);
+
+	if (new1 != -1 || new2 != -1) {
+		int lev1 = new1 != -1 ? new1 : this->State.FanCtrl;
+		int lev2 = new2 != -1 ? new2 : (cur2 >= 0 ? cur2 : 0);
+		this->SetFan("Smart", lev1, false, lev2);
+	}
+
+	return;
+}
+
+//-------------------------------------------------------------------------
+//  decide the new level for one fan from its smart table, honoring
+//  hysteresis; returns the new fan level, or -1 for "no change"
+//-------------------------------------------------------------------------
+int
+FANCONTROL::SmartDecision(SMARTENTRY* levels, int* lastLevel, int loopBase, int compareCtrl) {
+	int i,
+		newfanctrl = -1,
+		levelIndex = -1;
+
+	if (loopBase == 0 && compareCtrl != 0) {
 		newfanctrl = 0;
 		levelIndex = 0;
-		fanctrl = 0;
 	}
 
 	// Check for fan speed ramp upwards
-	for (i = 0; this->SmartLevels[i].temp != -1; i++) {
-		if (this->MaxTemp >= this->SmartLevels[i].temp && this->SmartLevels[i].fan >= fanctrl) {
-			newfanctrl = this->SmartLevels[i].fan;
+	for (i = 0; levels[i].temp != -1; i++) {
+		if (this->MaxTemp >= levels[i].temp && levels[i].fan >= loopBase) {
+			newfanctrl = levels[i].fan;
 			levelIndex = i;
 		}
 	}
 
 	// Check for fan speed ramp downwards
 	if (newfanctrl == -1) {
-		for (i = 0; this->SmartLevels[i].temp != -1; i++) {
-			if (this->MaxTemp <= this->SmartLevels[i].temp && this->SmartLevels[i].fan < fanctrl) {
-				newfanctrl = this->SmartLevels[i].fan;
+		for (i = 0; levels[i].temp != -1; i++) {
+			if (this->MaxTemp <= levels[i].temp && levels[i].fan < loopBase) {
+				newfanctrl = levels[i].fan;
 				levelIndex = i;
 				break;
 			}
@@ -372,53 +402,53 @@ FANCONTROL::SmartControl(void) {
 	}
 
 	// fan speed ramp up or down?
-	if (newfanctrl != -1 && newfanctrl != this->State.FanCtrl) {
-		//if (newfanctrl == 0x80) {  
-		    // switch to BIOS-auto mode
-		//	this->ModeToDialog(1);    
-		//}
-
+	if (newfanctrl != -1 && newfanctrl != compareCtrl) {
 		// do not change if hyst zone, determine which hyst zone if we are in based on previous temp
 		// DO NOT HAVE HYSTERESIS OVERLAP WITH FAN TEMPS IN CONFIG!
-		SMARTENTRY newLevel = this->SmartLevels[levelIndex];
-		if (this->LastSmartLevel < 0) { // ignore hyst on first time setting fan
-			this->LastSmartLevel = levelIndex;
-			this->SetFan("Smart", newfanctrl);
-			return;
+		SMARTENTRY newLevel = levels[levelIndex];
+		if (*lastLevel < 0) { // ignore hyst on first time setting fan
+			*lastLevel = levelIndex;
+			return newfanctrl;
 		}
 
-		if (this->MaxTemp < this->SmartLevels[this->LastSmartLevel].temp) {
+		if (this->MaxTemp < levels[*lastLevel].temp) {
 			if (this->MaxTemp > newLevel.temp - newLevel.hystDown)
-				return; // cooling
+				return -1; // cooling
 		}
 		else {
 			if (this->MaxTemp < newLevel.temp + newLevel.hystUp)
-				return; // rising 
+				return -1; // rising
 		}
 
-		this->LastSmartLevel = levelIndex; 
-		this->SetFan("Smart", newfanctrl);
+		*lastLevel = levelIndex;
+		return newfanctrl;
 	}
 
-	return;
+	return -1;
 }
 
 //-------------------------------------------------------------------------
 //  set fan state via EC
 //-------------------------------------------------------------------------
 int
-FANCONTROL::SetFan(const char* source, int fanctrl, bool final) {
+FANCONTROL::SetFan(const char* source, int fanctrl, bool final, int fanctrl2) {
 	int ok = 0;
 	int fan1_ok = 0;
 	int fan2_ok = 0;
 	char obuf[256] = "", obuf2[256], datebuf[128];
+
+	if (fanctrl2 < 0)
+		fanctrl2 = fanctrl;   // default: both fans get the same level
 
 	if (this->FanBeepFreq && this->FanBeepDura)
 		::Beep(this->FanBeepFreq, this->FanBeepDura);
 
 	this->CurrentDateTimeLocalized(datebuf, sizeof(datebuf));
 
-	sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "%s: Set fan control to 0x%02x, ", source, fanctrl);
+	if (fanctrl2 != fanctrl)
+		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "%s: Set fan control to 0x%02x/0x%02x, ", source, fanctrl, fanctrl2);
+	else
+		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "%s: Set fan control to 0x%02x, ", source, fanctrl);
 	if (this->IndSmartLevel == 1 && this->SmartLevels2[0].temp2 != 0 && source == "Smart")
 		sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "Mode 2, ");
 	if (this->IndSmartLevel == 0 && this->SmartLevels2[0].temp2 != 0 && source == "Smart")
@@ -436,12 +466,15 @@ FANCONTROL::SetFan(const char* source, int fanctrl, bool final) {
 			::Sleep(100);
 
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN2);
-			ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
+			ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl2);
 
 			::Sleep(100);
 
 			// verify completion of fan2
-			fan2_ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &this->State.FanCtrl);
+			char fan2read = 0;
+			fan2_ok = this->ReadByteFromEC(TP_ECOFFSET_FAN, &fan2read);
+			if (fan2_ok)
+				this->Fan2Ctrl = (unsigned char)fan2read;
 
 			::Sleep(100);
 

@@ -28,7 +28,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 {
 	char buf[1024];
 
-	int i, ok = false, lcnt1 = 0, lcnt2 = 0;
+	int i, ok = false, lcnt1 = 0, lcnt2 = 0, lcntF2 = 0;
 
 	int ProcessPriority = 2;
 
@@ -151,6 +151,12 @@ FANCONTROL::ReadConfig(const char* configfile)
 			if (_strnicmp(buf, "level2=", 7) == 0) {
 				sscanf_s(buf + 7, "%d %d %d %d", &this->SmartLevels2[lcnt2].temp2, &this->SmartLevels2[lcnt2].fan2, &this->SmartLevels2[lcnt1].hystUp2, &this->SmartLevels2[lcnt1].hystDown2);
 				lcnt2++;
+				continue;
+			}
+
+			if (_strnicmp(buf, "levelfan2=", 10) == 0) {
+				sscanf_s(buf + 10, "%d %d %d %d", &this->SmartLevelsFan2[lcntF2].temp, &this->SmartLevelsFan2[lcntF2].fan, &this->SmartLevelsFan2[lcntF2].hystUp, &this->SmartLevelsFan2[lcntF2].hystDown);
+				lcntF2++;
 				continue;
 			}
 
@@ -517,6 +523,12 @@ FANCONTROL::ReadConfig(const char* configfile)
 			this->SmartLevels2[lcnt2].fan2 = 0x80;
 		}
 
+		if (lcntF2) {
+			this->SmartLevelsFan2[lcntF2].temp = -1;
+			this->SmartLevelsFan2[lcntF2].fan = 0x80;
+			this->PerFanLevels = true;
+		}
+
 		ok = true;
 
 		this->Trace("Current Config:");
@@ -614,6 +626,21 @@ FANCONTROL::ReadConfig(const char* configfile)
 				else
 					strcat_s(buf, sizeof(buf), "0x80");
 			}
+		}
+		this->Trace(buf);
+	}
+
+	//LevelFan2 (independent fan 2 curve)
+
+	if (this->PerFanLevels)
+	{
+		strcpy_s(buf, sizeof(buf), "  LevelsFan2= ");
+		for (i = 0; this->SmartLevelsFan2[i].temp != -1; i++) {
+			sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%s%d° %s -> ", i > 0 ? ",  " : "", this->SmartLevelsFan2[i].temp, Fahrenheit ? "F" : "C");
+			if (this->SmartLevelsFan2[i].fan != 0x80)
+				sprintf_s(buf + strlen(buf), sizeof(buf) - strlen(buf), "%d", this->SmartLevelsFan2[i].fan);
+			else
+				strcat_s(buf, sizeof(buf), "0x80");
 		}
 		this->Trace(buf);
 	}
