@@ -33,6 +33,8 @@
 
 # Visual Studio Settings
 *.vs/
+*.VC.db
+*.vcxproj.user
 
 ## Debugging folder
 *Debug/

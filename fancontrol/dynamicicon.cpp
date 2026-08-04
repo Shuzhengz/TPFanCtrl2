@@ -1,4 +1,4 @@
-﻿#include "_prec.h"
+#include "_prec.h"
 #include "DynamicIcon.h"
 #include <string.h>
 
@@ -104,9 +104,6 @@ CDynamicIcon::CDynamicIcon(const char *line1, const char *line2, const int iFarb
     }
     DeleteObject(hfnt);
 
-    DeleteObject(hBrush);//
-
-
     DeleteObject(hBrush);
     DeleteObject(rgn);
 
@@ -167,7 +164,3 @@ HFONT CDynamicIcon::CreateFont(const HDC hDC) {
 
     return CreateFontIndirect(&lf);
 };
-
-
-
-

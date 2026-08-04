@@ -38,10 +38,6 @@ FANCONTROL::HandleData(void) {
 		manlevel[16] = "", title2[128] = "";
 	int i, maxtemp, imaxtemp, ok = 0;
 
-	//
-	// determine highest temp.
-	//
-
 	// build a list of sensors to ignore, separated by "|", e.g. "|XC1|BAT|CPU|"
 	char what[16], list[128];
 	sprintf_s(list, sizeof(list), "|%s|", this->IgnoreSensors);
@@ -54,13 +50,12 @@ FANCONTROL::HandleData(void) {
 	imaxtemp = 0;
 	int senstemp;
 	for (i = 0; i < 12; i++) {
-		sprintf_s(what, sizeof(what), "|%s|", this->State.SensorName[i]); // name (e.g. "|CPU|") to match against list above
+		sprintf_s(what, sizeof(what), "|%s|", this->State.SensorName[i]);
 
-		if (this->State.Sensors[i] != 0x80 && this - State.Sensors[i] != 0x00 && strstr(list, what) == 0) {
+		if (this->State.Sensors[i] != 0x80 && this->State.Sensors[i] != 0x00 && strstr(list, what) == 0) {
 			int isens = this->State.Sensors[i];
 			int ioffs = this->SensorOffset[i].offs;
 
-			// do not apply offset if inside of temp range
 			int calcTemp = isens - SensorOffset[i].offs;
 			if (isens >= SensorOffset[i].hystMin && isens <= SensorOffset[i].hystMax)
 				ioffs = 0;
@@ -335,16 +330,7 @@ FANCONTROL::SmartControl(void) {
 		this->Trace(obuf);
 	}
 
-//i         Temp Fan Hup Hdown 
-//0 Level = 50   0   0   0 
-//1 Level = 60   1   0   5 <--- means, when going down switch to this level at 55
-//2 Level = 70   2   0   0 
-//3 Level = 80   4   5   0 <--- means, when going up, switch this level at 85
-//4 Level = 90   7   0   0 
-//5 Level = 95   64  0   0 
-//6 Level = 105 128  0   0 
-
-	newfanctrl = -1;
+  newfanctrl = -1;
 
 	if ((fanctrl > 7 && (fanctrl != 64 || !Lev64Norm)) || this->PreviousMode == 3 || this->PreviousMode == 1) {
 		newfanctrl = 0;
@@ -373,13 +359,7 @@ FANCONTROL::SmartControl(void) {
 
 	// fan speed ramp up or down?
 	if (newfanctrl != -1 && newfanctrl != this->State.FanCtrl) {
-		//if (newfanctrl == 0x80) {  
-		    // switch to BIOS-auto mode
-		//	this->ModeToDialog(1);    
-		//}
 
-		// do not change if hyst zone, determine which hyst zone if we are in based on previous temp
-		// DO NOT HAVE HYSTERESIS OVERLAP WITH FAN TEMPS IN CONFIG!
 		SMARTENTRY newLevel = this->SmartLevels[levelIndex];
 		if (this->LastSmartLevel < 0) { // ignore hyst on first time setting fan
 			this->LastSmartLevel = levelIndex;
@@ -447,7 +427,6 @@ FANCONTROL::SetFan(const char* source, int fanctrl, bool final) {
 
 			// verify completion of fan1
 			ok = this->WriteByteToEC(TP_ECOFFSET_FAN_SWITCH, TP_ECVALUE_SELFAN1);
-			//ok = this->WriteByteToEC(TP_ECOFFSET_FAN, fanctrl);
 
 			::Sleep(100);
 
@@ -472,13 +451,6 @@ FANCONTROL::SetFan(const char* source, int fanctrl, bool final) {
 		}
 		else {
 			sprintf_s(obuf + strlen(obuf), sizeof(obuf) - strlen(obuf), "FAILED!!");
-
-			/*			::Beep(880, 300);
-						::Sleep(200);
-						::Beep(880, 300);
-						::Sleep(200);
-						::Beep(880, 300);
-			*/
 
 			ok = false;
 		}
@@ -564,13 +536,6 @@ FANCONTROL::SampleMatch(FCSTATE* smp1, FCSTATE* smp2) {
 	// match for identical fanctrl settings
 	if (smp1->FanCtrl != smp2->FanCtrl) return false;
 
-	// insert any further match criteria here:
-	// -----------------------
-	//
-	// if (......) ......
-	//
-	// -----------------------
-
 	return TRUE;
 }
 
@@ -610,11 +575,6 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
 
 	if (!this->LockECAccess()) return false;
 
-	// reading from the EC seems to yield erratic results at times (probably
-	// due to collision with other drivers reading from the port).  So try
-	// up to ten times to read two samples which look ok and have matching
-	// values, using the above match function
-
 	for (int i = 0; i < numTries; i++) {
 		if (this->ReadEcRaw(&sample1) && this->ReadEcRaw(&sample2) && this->SampleMatch(&sample1, &sample2)) {
 			memcpy(pfcstate, &sample2, sizeof(*pfcstate));
@@ -636,10 +596,6 @@ FANCONTROL::ReadEcStatus(FCSTATE* pfcstate) {
 //-------------------------------------------------------------------------
 bool
 FANCONTROL::ReadEcRaw(FCSTATE* pfcstate) {
-
-	// At any point in time, a failure in "ReadByteFromEC" or "WriteByteToEC"
-	// is a reason to abort the entire process and return "false" to indicate failure.
-	// This process will be retried by the caller of this routine.
 
 	pfcstate->FanCtrl = -1;
 
