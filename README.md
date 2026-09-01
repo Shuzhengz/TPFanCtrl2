@@ -21,6 +21,8 @@ and should be used at your own risk. For more information, please refer to <http
 Please note that I'm very busy with other work for the time being so it'll take a while for me to get to new issues, however please feel free to create pull requests,
 I will review those as soon as possible.
 
+Also check out scorpion421's plugin [here](https://github.com/scorpion421/TPFanCtrl2---Fan-Control-Plugin)
+
 ## Requirements
 
 To avoid errors, either install [tvicport](https://www.entechtaiwan.com/dev/port/index.shtm) manually or install the original version of TPFanControl found 
@@ -132,7 +134,7 @@ use it in manual mode only
 
 Some thinkbook models have different EC address, so the program might not work
 
-### Bleeding Edge Releases
+## Bleeding Edge Releases
 
 FanDjango is currently refactoring, streamlining and cleaning up TPFanControl2, clarifying messages and log texts and
 also adding some enhancements as requested by users in the issues here in this repo. These are **early beta** released under
@@ -145,7 +147,7 @@ Confirmed support for: P53, Z13, Z16 Gen 1, Z16 Gen 2, P16 Gen1 AMD, T16 Gen1 AM
 
 Please open a pull request and have at lease one review to merge it into main
 
-By doing so, you agree to didicate your contribution to the public domain. In compliance with the Unlicense license, you must agree to the following:
+By doing so, you agree to dedicate your contribution to the public domain. In compliance with the Unlicense license, you must agree to the following:
 
 > I dedicate any and all copyright interest in this software to the
 public domain. I make this dedication for the benefit of the public at
