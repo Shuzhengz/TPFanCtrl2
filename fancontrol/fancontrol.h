@@ -157,6 +157,12 @@ protected:
 	int StayOnTop;
 	int ShowAll;
 	int ShowTempIcon;
+	int ErraticSensorGuard;
+	int SensorPrev[12];
+	int SensorJumpLo[12];
+	int SensorJumpHi[12];
+	int SensorFlaps[12];
+	char SensorErratic[12];
 	char IgnoreSensors[256];
 	char MenuLabelSM1[32];
 	char MenuLabelSM2[32];

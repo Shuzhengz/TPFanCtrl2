@@ -48,6 +48,13 @@ FANCONTROL::ReadConfig(const char* configfile)
 
 	this->IndSmartLevel = 0;
 
+	this->ErraticSensorGuard = 1;
+	setzero(SensorPrev, sizeof(SensorPrev));
+	setzero(SensorJumpLo, sizeof(SensorJumpLo));
+	setzero(SensorJumpHi, sizeof(SensorJumpHi));
+	setzero(SensorFlaps, sizeof(SensorFlaps));
+	setzero(SensorErratic, sizeof(SensorErratic));
+
 	//
 	// read from file
 	//
@@ -476,6 +483,12 @@ FANCONTROL::ReadConfig(const char* configfile)
 				continue;
 			}
 
+			// quarantine sensors whose readings swing back and forth between cycles
+			if (_strnicmp(buf, "ErraticSensorGuard=", 19) == 0) {
+				this->ErraticSensorGuard = atoi(buf + 19);
+				continue;
+			}
+
 			if (_strnicmp(buf, "IgnoreSensors=", 14) == 0) {
 				char* p = buf + 14, * p2 = this->IgnoreSensors;
 				while (*p) {	// copy excluding space and tab
@@ -636,7 +649,7 @@ FANCONTROL::ReadConfig(const char* configfile)
 	}
 	this->Trace(buf);
 
-	sprintf_s(buf, sizeof(buf), "  IgnoreSensors= %s, ProcessPriority= %d, IconCycle= %d", IgnoreSensors, ProcessPriority, IconCycle);
+	sprintf_s(buf, sizeof(buf), "  IgnoreSensors= %s, ErraticSensorGuard= %d, ProcessPriority= %d, IconCycle= %d", IgnoreSensors, ErraticSensorGuard, ProcessPriority, IconCycle);
 	this->Trace(buf);
 
 	sprintf_s(buf, sizeof(buf), "  BluetoothEDR= %d, NoWaitMessage= %d, ShowBiasedTemps= %d", this->BluetoothEDR, NoWaitMessage, ShowBiasedTemps);
