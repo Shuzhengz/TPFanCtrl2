@@ -54,6 +54,35 @@ FANCONTROL::HandleData(void) {
 
 		if (this->State.Sensors[i] != 0x80 && this->State.Sensors[i] != 0x00 && strstr(list, what) == 0) {
 			int isens = this->State.Sensors[i];
+
+			// a register that keeps jumping between the same two values holds no
+			// temperature. A real sensor never repeats the exact endpoints of a
+			// twenty degree leap, so three identical round trips quarantine it.
+			if (this->ErraticSensorGuard) {
+				int prev = this->SensorPrev[i];
+				if (prev && !this->SensorErratic[i] && abs(isens - prev) >= 20) {
+					int lo = __min(prev, isens), hi = __max(prev, isens);
+					if (lo == this->SensorJumpLo[i] && hi == this->SensorJumpHi[i]) {
+						if (++this->SensorFlaps[i] >= 3) {
+							this->SensorErratic[i] = 1;
+							char ebuf[96];
+							sprintf_s(ebuf, sizeof(ebuf), "Sensor %s jumps between %d and %d, ignoring it",
+								this->State.SensorName[i], lo, hi);
+							this->Trace(ebuf);
+						}
+					}
+					else {
+						this->SensorJumpLo[i] = lo;
+						this->SensorJumpHi[i] = hi;
+						this->SensorFlaps[i] = 1;
+					}
+				}
+				this->SensorPrev[i] = isens;
+
+				if (this->SensorErratic[i])
+					continue;
+			}
+
 			int ioffs = this->SensorOffset[i].offs;
 
 			int calcTemp = isens - SensorOffset[i].offs;
